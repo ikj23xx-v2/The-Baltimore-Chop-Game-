@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile with linked auth providers and username rate limiting metadata",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique Firebase user UID"
+        },
+        "email": {
+          "type": "string",
+          "description": "Account email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name from Google or Apple"
+        },
+        "username": {
+          "type": "string",
+          "description": "Unique game handle, rate-limited to once monthly and 5 times annually"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture avatar URL"
+        },
+        "providers": {
+          "type": "string",
+          "description": "Comma separated linked auth providers (e.g. google.com, apple.com)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation ISO timestamp"
+        },
+        "lastUsernameChangeAt": {
+          "type": "string",
+          "description": "Timestamp of the most recent username change"
+        },
+        "usernameChangesThisYear": {
+          "type": "number",
+          "description": "Count of username modifications during the current rolling year"
+        },
+        "annualQuotaRemaining": {
+          "type": "number",
+          "description": "Remaining username changes allowed this year (max 5)"
+        }
+      },
+      "required": ["id", "username"]
+    },
+    "UsernameRecord": {
+      "title": "UsernameRecord",
+      "description": "Unique handle lookup index to ensure no duplicate usernames",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Lowercased username"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owning user UID"
+        },
+        "claimedAt": {
+          "type": "string",
+          "description": "Claim timestamp"
+        }
+      },
+      "required": ["username", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Individual player profiles, linked accounts, and username history"
+    },
+    "/usernames/{usernameLower}": {
+      "schema": "UsernameRecord",
+      "description": "Global unique username reservation index"
+    }
+  }
+}
