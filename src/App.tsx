@@ -80,6 +80,18 @@ import { JerseyAvatar } from './components/JerseyAvatar';
 import { CommunityRankBadge } from './components/CommunityRankBadge';
 import { recordDailyLogin, getSevenDayStreakStatus } from './utils/loginStreak';
 import { authService, UserAccountProfile } from './services/authService';
+import { LofiPlayerToggle } from './components/LofiPlayerToggle';
+import { ChopVaultBankModal } from './components/ChopVaultBankModal';
+import { HobbyShopCatalogue } from './components/HobbyShopCatalogue';
+import { SeriesRecapModal } from './components/SeriesRecapModal';
+import { BetaFeedbackModal } from './components/BetaFeedbackModal';
+import { ChopCardDeckNavigator, DeckNavigationTab } from './components/ChopCardDeckNavigator';
+import { ArtOfChopBanner } from './components/ArtOfChopBanner';
+import { ChopSlabCase } from './components/ChopSlabCase';
+import { getInitialBankAccount, recordTransaction } from './engine/bankingLedger';
+import { BankAccountState } from './types/banking';
+import { ProductSKU, PRODUCT_CATALOG } from './types/boxProducts';
+import { analyzeSeriesPerformance, SeriesGameBoxScore, SeriesRecapReport } from './engine/seriesAnalysisEngine';
 
 // Contract navigation tab type
 export type ActiveTab = 
@@ -88,7 +100,8 @@ export type ActiveTab =
   | 'REFRAC_FORGE'
   | 'MARKETPLACE'
   | 'CHOP_HOUSE' // Community Forum Hub
-  | 'GM_CONSOLE';
+  | 'GM_CONSOLE'
+  | 'HOBBY_OUTPOST';
 
 export default function App() {
   // --- NAVIGATION VIEW TABS ---
@@ -161,6 +174,13 @@ export default function App() {
   const [isPortalOpen, setIsPortalOpen] = useState(false);
   const [isChopExtremeOpen, setIsChopExtremeOpen] = useState(false);
   const [inspectedCardForStats, setInspectedCardForStats] = useState<PlayerCard | null>(null);
+
+  // --- BANKING LEDGER & SERIES RECAP STATE ---
+  const [bankAccount, setBankAccount] = useState<BankAccountState>(() => getInitialBankAccount());
+  const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  const [isSeriesRecapOpen, setIsSeriesRecapOpen] = useState(false);
+  const [seriesRecapData, setSeriesRecapData] = useState<SeriesRecapReport | null>(null);
+  const [isBetaFeedbackOpen, setIsBetaFeedbackOpen] = useState(false);
 
   // --- REFRACTOR FORGE INLINE STATE ---
   const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
@@ -429,26 +449,127 @@ export default function App() {
 
     const game1 = simulateSeriesGame(userRating, oppRating, directiveBonus);
     const game2 = simulateSeriesGame(userRating, oppRating, directiveBonus);
-    const wonCount = (game1.won ? 1 : 0) + (game2.won ? 1 : 0);
+    const game3 = simulateSeriesGame(userRating, oppRating, directiveBonus);
+    const wonCount = (game1.won ? 1 : 0) + (game2.won ? 1 : 0) + (game3.won ? 1 : 0);
 
     setSeasonRecord(prev => ({
       ...prev,
       wins: prev.wins + wonCount,
-      losses: prev.losses + (2 - wonCount),
-      gamesPlayed: prev.gamesPlayed + 2
+      losses: prev.losses + (3 - wonCount),
+      gamesPlayed: prev.gamesPlayed + 3
     }));
     setSeasonProgress(prev => ({
       ...prev,
-      regularSeasonGamesPlayed: prev.regularSeasonGamesPlayed + 2,
+      regularSeasonGamesPlayed: prev.regularSeasonGamesPlayed + 3,
       rankedWins: prev.rankedWins + wonCount,
-      rankedLosses: prev.rankedLosses + (2 - wonCount)
+      rankedLosses: prev.rankedLosses + (3 - wonCount)
     }));
 
-    setSimSeriesFeedback(
-      `Series ${simSeriesNumber} vs ${simOpponent}: Game 1: ${game1.userRuns}-${game1.oppRuns} (${game1.won ? 'W' : 'L'}), Game 2: ${game2.userRuns}-${game2.oppRuns} (${game2.won ? 'W' : 'L'}). Rubber match set up in 9th inning!`
+    // Generate comprehensive series box scores
+    const boxScores: SeriesGameBoxScore[] = [
+      {
+        gameNumber: 1,
+        userRuns: game1.userRuns,
+        cpuRuns: game1.oppRuns,
+        userHits: game1.won ? 8 : 5,
+        cpuHits: game1.won ? 4 : 7,
+        userErrors: game1.won ? 0 : 1,
+        rispOpportunities: 4,
+        rispHits: game1.won ? 2 : 1,
+        startersInningsPitched: 6.2,
+        chopHitsAttempted: 3,
+        chopHitsConverted: 2,
+      },
+      {
+        gameNumber: 2,
+        userRuns: game2.userRuns,
+        cpuRuns: game2.oppRuns,
+        userHits: game2.won ? 9 : 6,
+        cpuHits: game2.won ? 3 : 8,
+        userErrors: 0,
+        rispOpportunities: 5,
+        rispHits: game2.won ? 3 : 1,
+        startersInningsPitched: 7.0,
+        chopHitsAttempted: 4,
+        chopHitsConverted: 3,
+      },
+      {
+        gameNumber: 3,
+        userRuns: game3.userRuns,
+        cpuRuns: game3.oppRuns,
+        userHits: game3.won ? 7 : 4,
+        cpuHits: game3.won ? 5 : 9,
+        userErrors: game3.won ? 0 : 2,
+        rispOpportunities: 3,
+        rispHits: game3.won ? 2 : 0,
+        startersInningsPitched: 5.1,
+        chopHitsAttempted: 2,
+        chopHitsConverted: 1,
+      },
+    ];
+
+    const recap = analyzeSeriesPerformance(
+      `S-${simSeriesNumber}`,
+      boxScores,
+      {
+        name: simOpponent,
+        bias: simOffensiveDirective === 'SMALL_BALL' ? 'SINKER_HEAVY' : 'SLIDER_SPECIALIST'
+      }
     );
-    addLog(`⚔️ Series ${simSeriesNumber} simulated vs ${simOpponent}: ${wonCount}-2 record with ${simOffensiveDirective} directive.`, 'info');
+
+    setSeriesRecapData(recap);
+    setIsSeriesRecapOpen(true);
+
+    // Record bank winnings if series won
+    if (wonCount >= 2) {
+      try {
+        const reward = wonCount === 3 ? 150 : 75;
+        const { updatedAccount } = recordTransaction(bankAccount, {
+          type: 'CREDIT',
+          currency: 'VENDING_TOKENS',
+          amount: reward,
+          category: 'SERIES_WIN_REWARD',
+          description: `Series ${simSeriesNumber} Victory Purse vs ${simOpponent}`,
+        });
+        setBankAccount(updatedAccount);
+        setVendingTokens(updatedAccount.vendingTokenBalance);
+      } catch {
+        // ignore
+      }
+    }
+
+    setSimSeriesFeedback(
+      `Series ${simSeriesNumber} vs ${simOpponent} Complete: ${wonCount}W - ${3 - wonCount}L. Recap Generated!`
+    );
+    addLog(`⚔️ Series ${simSeriesNumber} post-mortem ready vs ${simOpponent}: ${wonCount}-3 finish.`, 'info');
     soundManager.playButtonClick();
+  };
+
+  // Purchase hobby/retail box with vending tokens via double-entry ledger
+  const handlePurchaseBox = (sku: ProductSKU) => {
+    const prod = PRODUCT_CATALOG[sku];
+    if (!prod) return;
+    if (bankAccount.vendingTokenBalance < prod.tokenCost) {
+      addLog(`Insufficient Vending Tokens for ${prod.name}! Required: ${prod.tokenCost} tokens.`, 'info');
+      return;
+    }
+    try {
+      const { updatedAccount } = recordTransaction(bankAccount, {
+        type: 'DEBIT',
+        currency: 'VENDING_TOKENS',
+        amount: prod.tokenCost,
+        category: 'BOX_PURCHASE',
+        description: `Factory Sealed Rip: ${prod.name} (${prod.packCount} Packs)`,
+      });
+      setBankAccount(updatedAccount);
+      setVendingTokens(updatedAccount.vendingTokenBalance);
+      soundManager.playPackRip();
+      addLog(`📦 Unsealed ${prod.name}! ${prod.guarantees.join(', ')}`, 'homerun');
+      setIsPackRipOpen(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      addLog(`Transaction Failed: ${msg}`, 'info');
+    }
   };
 
   // Deploy manager tactical card
@@ -531,6 +652,23 @@ export default function App() {
 
           {/* Quick Hub Launchers */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <LofiPlayerToggle />
+
+            {/* Chop Vault Banking Button */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsBankModalOpen(true);
+              }}
+              className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-mono font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 rounded-xl transition-all whitespace-nowrap shrink-0 shadow flex items-center gap-1.5 cursor-pointer"
+              title="Open Double-Entry Bank Vault & Ledger"
+            >
+              <span>🪙</span>
+              <span className="font-mono font-black">{bankAccount.vendingTokenBalance.toLocaleString()}</span>
+              <span className="hidden sm:inline text-[10px] text-slate-400">TOKENS</span>
+            </button>
+
             <button
               type="button"
               onClick={() => {
@@ -541,6 +679,21 @@ export default function App() {
               title="30 Franchises Top 25 WAR Vault & Knowledge Base"
             >
               <span>🏛️</span> <span className="hidden md:inline">Franchise</span> Vault
+            </button>
+
+            {/* Beta Feedback Dispatch Button */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsBetaFeedbackOpen(true);
+              }}
+              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer"
+              title="Dispatch Beta Scouting & Balance Feedback"
+            >
+              <span>📋</span>
+              <span className="hidden sm:inline">Scout Report</span>
+              <span className="text-[9px] px-1 py-0.2 rounded bg-amber-400 text-slate-950 font-black">BETA</span>
             </button>
 
             {/* User Profile */}
@@ -656,6 +809,20 @@ export default function App() {
               }`}
             >
               <span>💼</span> GM Console & Vault
+            </button>
+
+            {/* 7. HOBBY_OUTPOST */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setMainTab('HOBBY_OUTPOST');
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
+                mainTab === 'HOBBY_OUTPOST' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <span>📦</span> Hobby Outpost
             </button>
 
             <span className="w-px h-4 bg-white/10 mx-1 shrink-0" />
@@ -1399,147 +1566,65 @@ export default function App() {
           </div>
         )}
 
+        {/* ---------------- VIEW 7: HOBBY & RETAIL BOX OUTPOST ---------------- */}
+        {mainTab === 'HOBBY_OUTPOST' && (
+          <div className="space-y-6">
+            <ArtOfChopBanner />
+            <HobbyShopCatalogue
+              userTokenBalance={bankAccount.vendingTokenBalance}
+              onPurchaseBox={handlePurchaseBox}
+            />
+          </div>
+        )}
+
       </main>
 
-      {/* ================= 4. RESPONSIVE FLOATING DOCK ================= */}
-      <aside 
-        aria-label="Quick Actions Dock" 
-        className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-40 liquid-glass-dock rounded-full px-2 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1 sm:gap-2 shadow-2xl max-w-[96vw] overflow-x-auto scrollbar-none whitespace-nowrap"
-      >
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('ARENA');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'ARENA' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
-          }`}
-          title="Showdown Arena"
-        >
-          <span>🏟️</span> <span className="hidden sm:inline">Arena</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('DEPTH_CHART');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'DEPTH_CHART' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
-          }`}
-          title="Stick-To-The-Board Grid"
-        >
-          <span>📋</span> <span className="hidden sm:inline">Board</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('REFRAC_FORGE');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'REFRAC_FORGE' ? 'glass-pill-active' : 'text-yellow-300 hover:text-white'
-          }`}
-          title="Refractor Forge & Rainbows"
-        >
-          <span>✨</span> <span className="hidden sm:inline">Forge</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('MARKETPLACE');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'MARKETPLACE' ? 'glass-pill-active' : 'text-orange-400 hover:text-white'
-          }`}
-          title="Seasonal Sets & Marketplace"
-        >
-          <span>🛍️</span> <span className="hidden sm:inline">Market</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('CHOP_HOUSE');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'CHOP_HOUSE' ? 'glass-pill-active' : 'text-amber-400 hover:text-white'
-          }`}
-          title="The Chop House Forum"
-        >
-          <span>🥩</span> <span className="hidden sm:inline">Chop House</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('GM_CONSOLE');
-          }}
-          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'GM_CONSOLE' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
-          }`}
-          title="GM Operations & WAR Vault"
-        >
-          <span>💼</span> <span className="hidden sm:inline">GM Ops</span>
-        </button>
-
-        <span className="w-px h-4 bg-white/20 mx-0.5 shrink-0" />
-
-        {/* Quick Rip Foil Pack */}
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setIsPackRipOpen(true);
-          }}
-          className="px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-display font-black uppercase bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 shadow-[0_0_15px_rgba(249,115,22,0.5)] hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 shrink-0"
-          title="Rip Sealed Foil Pack"
-        >
-          <span>⚡</span> <span className="font-black">Rip Pack</span>
-        </button>
-
-        <span className="w-px h-4 bg-white/20 mx-0.5 shrink-0" />
-
-        <button
-          type="button"
-          onClick={() => setIsDraftOpen(true)}
-          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs font-display font-bold uppercase text-amber-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-1 shrink-0"
-          title="Casino Jackpot Draft"
-        >
-          <span>🎰</span> <span className="hidden sm:inline">Draft</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsVendingOpen(true)}
-          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs font-display font-bold uppercase text-emerald-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-1 shrink-0"
-          title="Equipment Vending"
-        >
-          <span>🥫</span> <span className="hidden sm:inline">Vending</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setIsChopExtremeOpen(true);
-          }}
-          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs font-display font-black uppercase text-red-400 hover:text-white hover:bg-red-950/50 transition-all flex items-center gap-1 shrink-0 border border-red-500/30"
-          title="Chop Extreme 4 Pillars"
-        >
-          <span>🏆</span> <span className="hidden sm:inline">Extreme</span>
-        </button>
-      </aside>
+      {/* ================= 4. RESPONSIVE FLOATING DECK NAVIGATOR ================= */}
+      <ChopCardDeckNavigator
+        activeTab={
+          mainTab === 'ARENA' ? 'ARENA' :
+          mainTab === 'DEPTH_CHART' ? 'ROSTER' :
+          mainTab === 'HOBBY_OUTPOST' ? 'HOBBY' :
+          mainTab === 'MARKETPLACE' ? 'BINDER' :
+          mainTab === 'CHOP_HOUSE' ? 'CLUBHOUSE' :
+          'ARENA'
+        }
+        onSelectTab={(tab: DeckNavigationTab) => {
+          soundManager.playButtonClick();
+          if (tab === 'ARENA') setMainTab('ARENA');
+          else if (tab === 'ROSTER') setMainTab('DEPTH_CHART');
+          else if (tab === 'HOBBY') setMainTab('HOBBY_OUTPOST');
+          else if (tab === 'BINDER') setMainTab('MARKETPLACE');
+          else if (tab === 'CLUBHOUSE') setMainTab('CHOP_HOUSE');
+          else if (tab === 'BANK') setIsBankModalOpen(true);
+          else if (tab === 'SEASON') setIsFranchiseOpen(true);
+          else if (tab === 'ALMANAC') setIsAlmanacOpen(true);
+        }}
+      />
 
       {/* ================= 5. COMPLETE MODALS SUITE ================= */}
       
+      {/* Chop Vault & Mini-Banking Ledger Modal */}
+      <ChopVaultBankModal
+        isOpen={isBankModalOpen}
+        onClose={() => setIsBankModalOpen(false)}
+        bankAccount={bankAccount}
+      />
+
+      {/* 3-Game Series Post-Mortem Diagnostic & Scouting Report Modal */}
+      {seriesRecapData && (
+        <SeriesRecapModal
+          isOpen={isSeriesRecapOpen}
+          onClose={() => setIsSeriesRecapOpen(false)}
+          recap={seriesRecapData}
+          onAdvanceToNextSeries={() => {
+            setSimSeriesNumber((prev) => prev + 1);
+            setIsSeriesRecapOpen(false);
+            addLog(`🚀 Advanced to Series ${simSeriesNumber + 1}! Opponent scouting intel active.`, 'chop');
+          }}
+        />
+      )}
+
       {/* Chop Extreme Sabermetric Hub Modal (4 Pillars + RE24 Calculator) */}
       <ChopExtremeHubModal
         isOpen={isChopExtremeOpen}
@@ -1737,6 +1822,22 @@ export default function App() {
         }}
         onOpenCardDetails={(card) => {
           setInspectedCardForStats(card);
+        }}
+      />
+
+      {/* Beta Feedback & Scouting Report Dispatch Modal */}
+      <BetaFeedbackModal
+        isOpen={isBetaFeedbackOpen}
+        onClose={() => setIsBetaFeedbackOpen(false)}
+        currentUser={{
+          uid: userProfile?.uid || 'gm_guest',
+          email: userProfile?.email || 'spizike23@gmail.com',
+          displayName: userProfile?.displayName || userProfile?.username || 'Baltimore GM',
+        }}
+        seasonInfo={{
+          seasonNumber: seasonProgress.seasonNumber,
+          gamesPlayed: seasonProgress.regularSeasonGamesPlayed,
+          difficulty: 'VETERAN',
         }}
       />
 

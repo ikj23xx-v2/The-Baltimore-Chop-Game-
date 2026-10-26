@@ -22,6 +22,7 @@ import {
   Eye,
   MapPin
 } from 'lucide-react';
+import { CommissionerAlmanacBanner } from './CommissionerAlmanacBanner';
 
 interface CardAlmanacModalProps {
   isOpen: boolean;
@@ -197,6 +198,10 @@ export const CardAlmanacModal: React.FC<CardAlmanacModalProps> = ({
         {/* ================= TAB 1: ALL CARDS SEARCH & GRID ================= */}
         {activeTab === 'ALL_CARDS' && (
           <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="mb-3 shrink-0">
+              <CommissionerAlmanacBanner />
+            </div>
+
             {/* Search and Filters Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3 shrink-0">
               {/* Search Box */}

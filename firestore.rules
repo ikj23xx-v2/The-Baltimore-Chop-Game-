@@ -35,5 +35,11 @@ service cloud.firestore {
       allow create: if true;
       allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId);
     }
+
+    // Beta feedback and scouting reports
+    match /beta_feedback/{feedbackId} {
+      allow create: if true;
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId);
+    }
   }
 }

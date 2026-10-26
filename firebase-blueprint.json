@@ -81,6 +81,22 @@
         "status": { "type": "string", "description": "OPEN, RESOLVED, etc." }
       },
       "required": ["userId", "errorMessage"]
+    },
+    "BetaFeedback": {
+      "title": "BetaFeedback",
+      "description": "Beta player scouting report, bug submission, or balance tuning feedback",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Reporting user ID" },
+        "userEmail": { "type": "string", "description": "Account email address" },
+        "username": { "type": "string", "description": "Display name or GM handle" },
+        "category": { "type": "string", "description": "BUG, BALANCE, FEATURE_REQUEST, CARD_ART, GENERAL" },
+        "subject": { "type": "string", "description": "Topic or summary of the report" },
+        "description": { "type": "string", "description": "Detailed explanation" },
+        "rating": { "type": "number", "description": "Gameplay satisfaction rating 1 to 5" },
+        "status": { "type": "string", "description": "NEW, TRIAGED, IN_PROGRESS, RESOLVED" }
+      },
+      "required": ["userId", "category", "subject", "description"]
     }
   },
   "firestore": {
@@ -95,6 +111,10 @@
     "/crm_issues/{issueId}": {
       "schema": "CRMIssue",
       "description": "Scout CRM Copilot tickets and user bug reports"
+    },
+    "/beta_feedback/{feedbackId}": {
+      "schema": "BetaFeedback",
+      "description": "Beta GM scouting reports and gameplay balance feedback"
     }
   }
 }
