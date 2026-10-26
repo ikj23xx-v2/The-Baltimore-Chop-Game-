@@ -12,16 +12,23 @@ import { MLB_TEAMS, MLBTeamInfo } from '../data/mlbTeams';
 import { teamThemeService } from '../services/teamThemeService';
 import { authService, UserAccountProfile } from '../services/authService';
 import { REWARD_CONFIG } from '../config/rewardsConfig';
+import { hobbyAudio } from '../utils/hobbySoundEngine';
 
 interface SplashLoginGateProps {
-  onLoginSuccess: (profile?: UserAccountProfile, bonusTokens?: number) => void;
+  onLoginSuccess: (profile?: UserAccountProfile, bonusTokens?: number, selectedTeam?: string) => void;
+  onClose?: () => void;
+  initialTeam?: string;
 }
 
-export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess }) => {
+export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ 
+  onLoginSuccess, 
+  onClose,
+  initialTeam = 'Baltimore Orioles'
+}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [selectedTeam, setSelectedTeam] = useState('Baltimore Orioles');
+  const [selectedTeam, setSelectedTeam] = useState<string>(initialTeam);
   
   const [authStep, setAuthStep] = useState<'METHOD_SELECT' | 'DETAILS_FORM'>('METHOD_SELECT');
   const [selectedMethod, setSelectedMethod] = useState<'GOOGLE' | 'APPLE' | 'EMAIL' | null>(null);
@@ -41,6 +48,7 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
 
   const handleOAuth = async (providerName: 'GOOGLE' | 'APPLE') => {
     setError('');
+    hobbyAudio.playCardShuffleFlick();
     try {
       let provider;
       if (providerName === 'GOOGLE') {
@@ -66,17 +74,18 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
   };
 
   const handleEmailInitiation = () => {
+    hobbyAudio.playCardShuffleFlick();
     setSelectedMethod('EMAIL');
     setAuthStep('DETAILS_FORM');
   };
 
-  const triggerPostAuthAnimation = (savedProfile: UserAccountProfile, bonusAmount: number) => {
+  const triggerPostAuthAnimation = (savedProfile: UserAccountProfile, bonusAmount: number, teamName: string) => {
     setAnimatingEntrance(true);
     playSynthCrowdCheer();
     
     // Hold 3.2s for the retro tunnel walkout sequence
     setTimeout(() => {
-      onLoginSuccess(savedProfile, bonusAmount);
+      onLoginSuccess(savedProfile, bonusAmount, teamName);
     }, 3200);
   };
 
@@ -117,6 +126,7 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
     try {
       localStorage.setItem('baltimore_chop_local_user_v1', JSON.stringify(profile));
       localStorage.setItem('the_baltimore_chop_onboarding_completed', 'true');
+      sessionStorage.setItem('chop_splash_dismissed', 'true');
       
       // Update team theme
       const team = MLB_TEAMS.find((t: MLBTeamInfo) => t.name === selectedTeam);
@@ -127,173 +137,238 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
       // ignore
     }
 
-    triggerPostAuthAnimation(profile, bonusAmount);
+    triggerPostAuthAnimation(profile, bonusAmount, selectedTeam);
+  };
+
+  const handleGuestQuickEnter = () => {
+    hobbyAudio.playBoxOpen();
+    const guestProfile: UserAccountProfile = {
+      uid: `gm_guest_${Date.now()}`,
+      email: 'guest@thebaltimorechop.app',
+      displayName: 'Guest GM',
+      username: 'CamdenSlugger',
+      photoURL: null,
+      isAnonymous: true,
+      linkedProviders: ['anonymous'],
+      createdAt: Date.now(),
+      lastUsernameChangeAt: null,
+      usernameHistory: []
+    };
+    try {
+      sessionStorage.setItem('chop_splash_dismissed', 'true');
+    } catch {
+      // ignore
+    }
+    triggerPostAuthAnimation(guestProfile, REWARD_CONFIG.EMAIL_SIGNUP_BONUS_TOKENS, selectedTeam);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center font-mono text-amber-100 p-4 select-none relative overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center font-mono text-amber-100 p-3 sm:p-6 select-none overflow-y-auto">
       
       {/* 1. CINEMATIC RETRO TUNNEL WALKOUT ANIMATION */}
       {animatingEntrance ? (
-        <div className="absolute inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center text-center p-4">
-          <div className="relative w-full max-w-3xl h-[420px] border-4 border-amber-500 rounded-3xl overflow-hidden shadow-2xl bg-[#030712] flex flex-col justify-between p-6">
-            <div className="absolute inset-0 pointer-events-none opacity-60">
-              <div className="absolute -top-10 left-12 w-48 h-64 bg-amber-400/10 blur-3xl rounded-full" />
-              <div className="absolute -top-10 right-12 w-48 h-64 bg-amber-400/10 blur-3xl rounded-full" />
-              <svg className="w-full h-full" viewBox="0 0 800 500" preserveAspectRatio="none">
-                <path d="M 0,0 L 800,0 L 800,500 L 520,500 C 520,260 280,260 280,500 L 0,500 Z" fill="#020617" />
-              </svg>
-            </div>
+        <div className="w-full max-w-3xl border-4 border-amber-500 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(245,158,11,0.35)] bg-[#030712] flex flex-col justify-between p-6 sm:p-8 animate-fadeIn relative">
+          <div className="absolute inset-0 pointer-events-none opacity-60">
+            <div className="absolute -top-10 left-12 w-48 h-64 bg-amber-400/10 blur-3xl rounded-full" />
+            <div className="absolute -top-10 right-12 w-48 h-64 bg-amber-400/10 blur-3xl rounded-full" />
+            <svg className="w-full h-full" viewBox="0 0 800 500" preserveAspectRatio="none">
+              <path d="M 0,0 L 800,0 L 800,500 L 520,500 C 520,260 280,260 280,500 L 0,500 Z" fill="#020617" />
+            </svg>
+          </div>
 
-            <div className="relative z-10 flex justify-between items-center border-b border-amber-500/30 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-slate-900 border border-amber-400 flex items-center justify-center">
-                  <div className="w-3.5 h-3.5 border border-amber-400 rotate-45 flex items-center justify-center">
-                    <span className="-rotate-45 text-[9px]">⚾</span>
-                  </div>
+          <div className="relative z-10 flex justify-between items-center border-b border-amber-500/30 pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-slate-900 border border-amber-400 flex items-center justify-center">
+                <div className="w-3.5 h-3.5 border border-amber-400 rotate-45 flex items-center justify-center">
+                  <span className="-rotate-45 text-[9px]">⚾</span>
                 </div>
-                <span className="text-xs font-black text-amber-400 tracking-wider">
-                  THE BALTIMORE CHOP™ STADIUM
-                </span>
               </div>
-              <span className="text-[10px] text-emerald-400 font-bold animate-pulse">● CROWD ROARING</span>
+              <span className="text-xs font-black text-amber-400 tracking-wider">
+                THE BALTIMORE CHOP™ STADIUM TUNNEL
+              </span>
             </div>
+            <span className="text-[10px] text-emerald-400 font-bold animate-pulse">● CROWD ROARING</span>
+          </div>
 
-            <div className="relative z-10 flex flex-col items-center justify-center py-6">
-              <div className="text-5xl animate-bounce filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
-                🚶‍♂️🏏
-              </div>
-              <h2 className="text-lg font-black text-amber-400 tracking-widest mt-4 animate-pulse">
-                EMERGING ONTO THE FIELD...
-              </h2>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
-                Welcome GM {username || 'Pro'} • Claiming your Welcome Grant!
-              </p>
+          <div className="relative z-10 flex flex-col items-center justify-center py-8">
+            <div className="text-6xl animate-bounce filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)]">
+              🚶‍♂️🏏
             </div>
+            <h2 className="text-xl sm:text-2xl font-black text-amber-400 tracking-widest mt-5 animate-pulse text-center">
+              EMERGING ONTO THE FIELD...
+            </h2>
+            <p className="text-xs text-slate-300 uppercase tracking-widest mt-1 text-center font-bold">
+              Welcome GM {username || 'Pro'} • Claiming 2,500 Token Welcome Grant!
+            </p>
+            <p className="text-[10px] text-amber-300/80 mt-1">
+              Active Franchise: {selectedTeam}
+            </p>
+          </div>
 
-            <div className="relative z-10 w-full max-w-xs mx-auto">
-              <div className="w-full h-2 bg-slate-900 border border-amber-500/40 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-amber-400" 
-                  style={{ width: '100%', animation: 'loadingBar 3.2s cubic-bezier(0.42, 0, 0.58, 1) forwards' }} 
-                />
-              </div>
-              <span className="text-[9px] text-amber-300/60 block mt-2">Claiming Pack & Starting Season...</span>
+          <div className="relative z-10 w-full max-w-sm mx-auto">
+            <div className="w-full h-3 bg-slate-900 border border-amber-500/50 rounded-full overflow-hidden p-0.5 shadow-inner">
+              <div 
+                className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" 
+                style={{ width: '100%', animation: 'loadingBar 3.2s cubic-bezier(0.42, 0, 0.58, 1) forwards' }} 
+              />
+            </div>
+            <div className="flex justify-between items-center text-[9px] text-amber-300/70 mt-2">
+              <span>Synthesizing Stadium Ambience...</span>
+              <span>100% Ready</span>
             </div>
           </div>
         </div>
       ) : (
 
         /* 2. SPLASH & ONBOARDING MESH */
-        <div className="relative w-full max-w-4xl min-h-[500px] border-4 border-amber-500/80 rounded-[32px] bg-slate-900 shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        <div className="relative w-full max-w-4xl min-h-[520px] border-4 border-amber-500/80 rounded-[32px] bg-slate-900 shadow-[0_0_90px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col md:flex-row animate-scaleUp">
           
+          {/* Top-Right Quick Close / Guest Pass */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleGuestQuickEnter}
+              className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-[10px] font-bold tracking-wider hover:text-amber-100 transition-all flex items-center gap-1 cursor-pointer"
+              title="Skip authentication and enter the ballpark as guest"
+            >
+              <span>⚾ Guest Field Pass</span>
+              <span>→</span>
+            </button>
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-xs border border-white/10 transition-colors cursor-pointer"
+                title="Close Splash Gate"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
           {/* Left Panel: Game Branding & Bonus Highlights */}
-          <div className="w-full md:w-1/2 p-8 flex flex-col justify-between bg-slate-950 border-b md:border-b-0 md:border-r border-slate-800">
+          <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between bg-slate-950 border-b md:border-b-0 md:border-r border-slate-800">
             <div>
-              <h1 className="text-2xl font-black text-amber-400 tracking-wider leading-none">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">⚾</span>
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                  OFFICIAL HOBBY ENGINE
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-amber-400 tracking-wider leading-tight">
                 THE BALTIMORE CHOP™
               </h1>
-              <p className="text-[10px] text-slate-400 font-bold tracking-wide mt-1">
-                Official Baseball Card Collecting, 26-Man Lineup Strategy & High-Bounce Simulation Engine
+              <p className="text-[11px] text-slate-300 font-sans tracking-wide mt-2 leading-relaxed">
+                Official Baseball Card Collecting, 26-Man Lineup Strategy & High-Bounce Simulation Engine.
               </p>
 
               {/* Bonus Vending Machine Incentive Banner */}
-              <div className="mt-6 bg-[#160f06] border border-amber-500/30 p-4 rounded-2xl relative overflow-hidden">
-                <div className="flex items-center justify-between gap-3">
+              <div className="mt-5 bg-gradient-to-br from-[#1c1206] to-[#0a0703] border-2 border-amber-500/50 p-4 rounded-2xl relative overflow-hidden shadow-lg">
+                <div className="flex items-center justify-between gap-3 relative z-10">
                   <div>
-                    <span className="text-[9px] font-bold text-amber-400 block tracking-wider uppercase mb-1">
-                      NEW GM SIGNUP GRANT
-                    </span>
-                    <h3 className="text-xs font-black text-white">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[9.5px] font-black text-amber-400 tracking-wider uppercase">
+                        NEW GM SIGNUP GRANT
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-black text-white">
                       1500 Base + 1,000 Bonus = <span className="text-amber-400">2,500 Vending Tokens</span>
                     </h3>
-                    <p className="text-[9px] text-emerald-400 font-mono mt-0.5">
-                      ✓ Enough to rip a 750-Token Hobby Box right away!
+                    <p className="text-[10px] text-emerald-400 font-mono mt-1 font-bold">
+                      ✓ Instant grant: Rip a 750-Token Hobby Box right away!
                     </p>
                   </div>
-                  <span className="text-3xl filter drop-shadow">📦</span>
+                  <span className="text-4xl filter drop-shadow">📦</span>
                 </div>
               </div>
             </div>
 
             {/* Ballpark visual preview block */}
-            <div className="mt-6 bg-slate-900 border border-slate-800 p-3 rounded-2xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-950 border border-amber-500/20 overflow-hidden relative flex-shrink-0 flex items-center justify-center text-xl">
+            <div className="mt-6 bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-slate-950 border border-amber-500/30 flex-shrink-0 flex items-center justify-center text-2xl shadow-inner">
                 🏟️
               </div>
               <div>
-                <span className="text-[9.5px] font-bold text-amber-300 block">THE BALTIMORE CHOP™</span>
-                <span className="text-[8px] text-slate-400 block">No player likeness • 100% independent simulation</span>
+                <span className="text-[11px] font-bold text-amber-300 block">Camden Yards & 30 Ballparks</span>
+                <span className="text-[9px] text-slate-400 block">360° Refractors • Double-Entry Ledger • Web Audio Synthesis</span>
               </div>
             </div>
           </div>
 
           {/* Right Panel: Account Authorization Gate */}
-          <div className="w-full md:w-1/2 p-8 flex flex-col justify-between bg-slate-900">
+          <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between bg-slate-900">
             <div>
               <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
-                <span className="text-xs font-bold text-amber-400">CREDENTIALS & GM SIGNIN</span>
-                <span className="text-[9px] text-slate-500">v2.1-STABLE</span>
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">CREDENTIALS & GM SIGNIN</span>
+                <span className="text-[9px] text-slate-500 font-mono">v2.1-PROD</span>
               </div>
 
               {authStep === 'METHOD_SELECT' ? (
                 /* SELECT ID PROVIDER */
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <span className="text-[10px] text-slate-400 tracking-wider uppercase block">
-                      STEP 1: CHOOSE ACCOUNT AUTHENTICATION
+                <div className="space-y-3.5">
+                  <div className="text-left mb-2">
+                    <span className="text-[11px] font-bold text-slate-200 block">
+                      STEP 1: CHOOSE AUTHENTICATION
+                    </span>
+                    <span className="text-[9.5px] text-slate-400">
+                      Link your identity to claim your welcome bonus.
                     </span>
                   </div>
 
-                  {error && <div className="text-[10px] text-red-400 bg-red-950/40 p-2.5 rounded-xl">{error}</div>}
+                  {error && (
+                    <div className="text-[10px] text-red-300 bg-red-950/60 border border-red-800 p-2.5 rounded-xl">
+                      {error}
+                    </div>
+                  )}
 
                   <button
                     type="button"
                     onClick={() => handleOAuth('GOOGLE')}
-                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98"
+                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">🌐</span>
+                      <span className="text-xl group-hover:scale-110 transition-transform">🌐</span>
                       <div className="text-left">
-                        <div className="text-xs font-bold text-white">Google ID</div>
+                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Google ID</div>
                         <div className="text-[9px] text-slate-500">1-Tap Fast Link</div>
                       </div>
                     </div>
-                    <span className="text-[8px] font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/25">
-                      +1000 TOKENS
+                    <span className="text-[8.5px] font-bold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">
+                      +1,000 TOKENS
                     </span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleOAuth('APPLE')}
-                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98"
+                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">🍎</span>
+                      <span className="text-xl group-hover:scale-110 transition-transform">🍎</span>
                       <div className="text-left">
-                        <div className="text-xs font-bold text-white">Apple ID</div>
-                        <div className="text-[9px] text-slate-500">iCloud Sync</div>
+                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Apple ID</div>
+                        <div className="text-[9px] text-slate-500">iCloud Secure Sync</div>
                       </div>
                     </div>
-                    <span className="text-[8px] font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/25">
-                      +1000 TOKENS
+                    <span className="text-[8.5px] font-bold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">
+                      +1,000 TOKENS
                     </span>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleEmailInitiation}
-                    className="w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98"
+                    className="w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">✉️</span>
+                      <span className="text-xl group-hover:scale-110 transition-transform">✉️</span>
                       <div className="text-left">
-                        <div className="text-xs font-bold text-white">Email / Guest</div>
-                        <div className="text-[9px] text-slate-500">Standard Login</div>
+                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Email / Custom GM</div>
+                        <div className="text-[9px] text-slate-500">Standard Password Login</div>
                       </div>
                     </div>
-                    <span className="text-[8px] font-bold bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">
+                    <span className="text-[8.5px] font-bold bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
                       +500 TOKENS
                     </span>
                   </button>
@@ -302,7 +377,7 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
                 /* onboarding detail setup screen */
                 <form onSubmit={handleSubmitRegistration} className="space-y-3.5">
                   <div className="flex justify-between items-center text-[10px] text-slate-400 mb-1">
-                    <span>STEP 2: GENERAL MANAGER SETUP</span>
+                    <span className="font-bold text-amber-300">STEP 2: GENERAL MANAGER SETUP</span>
                     <button 
                       type="button" 
                       onClick={() => setAuthStep('METHOD_SELECT')} 
@@ -312,7 +387,11 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
                     </button>
                   </div>
 
-                  {error && <div className="text-[10px] text-red-400 bg-red-950/40 p-2.5 rounded-xl">{error}</div>}
+                  {error && (
+                    <div className="text-[10px] text-red-300 bg-red-950/60 border border-red-800 p-2.5 rounded-xl">
+                      {error}
+                    </div>
+                  )}
 
                   {selectedMethod === 'EMAIL' && (
                     <>
@@ -372,7 +451,7 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
 
                   <button
                     type="submit"
-                    className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs py-3 rounded-xl transition-all shadow-md mt-4 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs py-3 rounded-xl transition-all shadow-lg mt-3 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                   >
                     <span>⚾</span> Claim Welcome Pack & Begin ({getBonusTokens()})
                   </button>
@@ -384,6 +463,7 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
               <button
                 type="button"
                 onClick={() => {
+                  hobbyAudio.playCardShuffleFlick();
                   setIsSigningUp(!isSigningUp);
                   setAuthStep('METHOD_SELECT');
                 }}
@@ -391,7 +471,13 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
               >
                 {isSigningUp ? 'Return to Login' : 'Need a new profile? Sign Up'}
               </button>
-              <span className="text-[8.5px] text-slate-500">Apache-2.0</span>
+              <button
+                type="button"
+                onClick={handleGuestQuickEnter}
+                className="text-slate-400 hover:text-amber-300 text-[10px] underline cursor-pointer"
+              >
+                Direct Guest Play →
+              </button>
             </div>
           </div>
 
@@ -403,7 +489,8 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({ onLoginSuccess
 
 function playSynthCrowdCheer() {
   try {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const audioCtx = new AudioCtx();
     const duration = 2.8;
     const bufferSize = audioCtx.sampleRate * duration;
     const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);

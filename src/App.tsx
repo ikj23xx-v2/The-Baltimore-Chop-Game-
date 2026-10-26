@@ -93,6 +93,7 @@ import { ChopWalletModal } from './components/ChopWalletModal';
 import { ChopControlCenter } from './components/ChopControlCenter';
 import { OnboardingSplashModal } from './components/OnboardingSplashModal';
 import { SplashLoginGate } from './components/SplashLoginGate';
+import { MLB_TEAMS } from './data/mlbTeams';
 import { SocialShareModal } from './components/SocialShareModal';
 import { DigitalCardShop3D, StoreItem } from './components/DigitalCardShop3D';
 import { CardRipWorkbench } from './components/CardRipWorkbench';
@@ -195,9 +196,9 @@ export default function App() {
   const [isSeasonalBinderOpen, setIsSeasonalBinderOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [walletSpent, setWalletSpent] = useState<{ daily: number; monthly: number }>({ daily: 0, monthly: 0 });
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
-    return typeof window !== 'undefined' ? localStorage.getItem('the_baltimore_chop_onboarding_completed') !== 'true' : true;
-  });
+  // --- PRIMARY SPLASH SCREEN & GM AUTHENTICATION GATE ---
+  // Defaults to true on launch so every visitor experiences the proper splash screen immediately!
+  const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(true);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
   const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
   const [is3DShopOpen, setIs3DShopOpen] = useState(false);
@@ -651,7 +652,7 @@ export default function App() {
       setMainTab(selectedMode as ActiveTab);
     }
 
-    setIsOnboardingOpen(false);
+    setIsSplashLoginOpen(false);
     soundManager.playHomeRunFanfare();
     addLog(`🎉 Welcome GM @${newProfile.username}! Granted +${totalStartingTokens} Tokens & ${startingCredits} Credits.`, 'chop');
   };
@@ -726,9 +727,12 @@ export default function App() {
           {/* Brand & Active Team Theme Badge (Compact) */}
           <button
             type="button"
-            onClick={() => setIsSplashOpen(true)}
-            className="flex items-center gap-2 group text-left transition-transform active:scale-95"
-            title="Click to Switch Ballpark & Team"
+            onClick={() => {
+              soundManager.playButtonClick();
+              setIsSplashLoginOpen(true);
+            }}
+            className="flex items-center gap-2 group text-left transition-transform active:scale-95 cursor-pointer"
+            title="Click to Open Splash Screen & Change Team"
           >
             <div 
               className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center font-display font-black text-xs sm:text-sm shadow border border-white/20 transition-all group-hover:scale-105"
@@ -743,20 +747,35 @@ export default function App() {
             </div>
           </button>
 
-          {/* Center: iOS / Android Style Control Center Pull-Down Pill */}
-          <button
-            type="button"
-            onClick={() => {
-              soundManager.playButtonClick();
-              setIsControlCenterOpen(!isControlCenterOpen);
-            }}
-            className="px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-amber-300 font-mono text-[11px] sm:text-xs font-bold shadow-[0_0_15px_rgba(251,191,36,0.18)] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-            title="Pull down iOS/Android Control Center"
-          >
-            <span className="text-xs sm:text-sm">🎛️</span>
-            <span className="hidden xs:inline">Control Center</span>
-            <span className="text-amber-400 text-[10px]">⌄</span>
-          </button>
+          {/* Center: Splash Screen Entrance & iOS / Android Style Control Center */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsSplashLoginOpen(true);
+              }}
+              className="px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/40 text-amber-300 font-mono text-[11px] sm:text-xs font-bold shadow-[0_0_12px_rgba(251,191,36,0.2)] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              title="Open Splash Screen & GM Entrance Gate"
+            >
+              <span>🏟️</span>
+              <span className="hidden sm:inline">Splash Screen</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsControlCenterOpen(!isControlCenterOpen);
+              }}
+              className="px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-amber-300 font-mono text-[11px] sm:text-xs font-bold shadow-[0_0_15px_rgba(251,191,36,0.18)] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              title="Pull down iOS/Android Control Center"
+            >
+              <span className="text-xs sm:text-sm">🎛️</span>
+              <span className="hidden xs:inline">Control Center</span>
+              <span className="text-amber-400 text-[10px]">⌄</span>
+            </button>
+          </div>
 
           {/* Right: Balance, Social Share & Profile */}
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -1852,7 +1871,7 @@ export default function App() {
         bankAccount={bankAccount}
         userProfile={userProfile}
         onOpenWallet={() => setIsWalletOpen(true)}
-        onOpenSwitchTeam={() => setIsSplashOpen(true)}
+        onOpenSwitchTeam={() => setIsSplashLoginOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSocialShare={() => setIsSocialShareOpen(true)}
         onSelectMode={(mode) => {
@@ -1862,11 +1881,13 @@ export default function App() {
         }}
       />
 
-      {/* First-Time Splash Login Gate & Cinematic Retro Tunnel Walkout */}
-      {isOnboardingOpen && (
+      {/* Primary Splash Login Gate & Cinematic Retro Tunnel Walkout */}
+      {isSplashLoginOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <SplashLoginGate
-            onLoginSuccess={(profile, bonusTokens) => {
+            initialTeam={currentTeamTheme.name}
+            onClose={() => setIsSplashLoginOpen(false)}
+            onLoginSuccess={(profile, bonusTokens, chosenTeam) => {
               const finalProfile = profile || {
                 uid: `gm_${Date.now()}`,
                 email: 'manager@thebaltimorechop.app',
@@ -1880,7 +1901,14 @@ export default function App() {
                 usernameHistory: []
               };
               const bonus = bonusTokens ?? REWARD_CONFIG.GOOGLE_SIGNUP_BONUS_TOKENS;
+              if (chosenTeam) {
+                const theme = teamThemeService.setFavoriteTeam(chosenTeam);
+                if (theme) {
+                  handleTeamSelected(theme);
+                }
+              }
               handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'ARENA');
+              setIsSplashLoginOpen(false);
             }}
           />
         </div>
