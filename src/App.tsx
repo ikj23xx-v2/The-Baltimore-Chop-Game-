@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   PlayerCard, 
   PitchType, 
@@ -16,7 +16,7 @@ import {
   CardSetId 
 } from './types/game';
 import { ALL_PLAYERS, INITIAL_ROSTER, BASE_ACTIVE_PLAYERS, TOP_25_WAR_LEGENDS, NEGRO_LEAGUE_LEGENDS } from './data/players';
-import { INITIAL_EQUIPMENT_CARDS, INITIAL_TASKS } from './data/equipment';
+import { INITIAL_EQUIPMENT_CARDS, INITIAL_TASKS, TIERED_EQUIPMENT_CARDS } from './data/equipment';
 import { CARD_SETS } from './data/sets';
 import { AtBatEngine } from './game/atBatEngine';
 import { soundManager } from './services/audio';
@@ -28,6 +28,26 @@ import {
   computeChopIndexScore, 
   LINEAR_WEIGHT_POINTS 
 } from './data/chopExtremeAnalytics';
+
+// Parallels, Managers & Simulation Engines
+import { 
+  RefractorTier, 
+  REFRACTOR_REGISTRY, 
+  ALL_REFRACTOR_TIERS, 
+  getAuthenticSerialStamp,
+  calculateCardTierFromWAR
+} from './types/refractors';
+import { 
+  ManagerCard, 
+  ManagerCardInstance, 
+  FAMOUS_MANAGERS, 
+  validateManagerUsage, 
+  consumeManagerUse 
+} from './types/managerCards';
+import { evaluatePlayoffEligibility, SeasonProgressTracker, PlayoffStatus } from './engine/playoffEligibility';
+import { simulateSeriesGame, SeriesConfig } from './engine/seriesSimEngine';
+import { TEAM_TOP_25_WAR_SEASONS, convertWarSeasonToCard, FranchiseWarSeasonEntry } from './data/teamTopWarLegends';
+import { fetchActiveRosterFromMlbApi, getTeamIdByName, MLB_API_TEAM_IDS, MlbApiRosterPlayer } from './services/mlbRosterService';
 
 // Components
 import { Scoreboard } from './components/Scoreboard';
@@ -53,12 +73,26 @@ import { CardAlmanacModal } from './components/CardAlmanacModal';
 import { FirstEnterPortalModal } from './components/FirstEnterPortalModal';
 import { ChopExtremeHubModal } from './components/ChopExtremeHubModal';
 import { CardStatsDetailModal } from './components/CardStatsDetailModal';
+import { ChopHouseForum } from './components/ChopHouseForum';
+import { SupportChatbot } from './components/SupportChatbot';
+import { RainbowChaseTracker } from './components/RainbowChaseTracker';
+import { JerseyAvatar } from './components/JerseyAvatar';
+import { CommunityRankBadge } from './components/CommunityRankBadge';
 import { recordDailyLogin, getSevenDayStreakStatus } from './utils/loginStreak';
 import { authService, UserAccountProfile } from './services/authService';
 
+// Contract navigation tab type
+export type ActiveTab = 
+  | 'ARENA'
+  | 'DEPTH_CHART'
+  | 'REFRAC_FORGE'
+  | 'MARKETPLACE'
+  | 'CHOP_HOUSE' // Community Forum Hub
+  | 'GM_CONSOLE';
+
 export default function App() {
   // --- NAVIGATION VIEW TABS ---
-  const [mainTab, setMainTab] = useState<'ARENA' | 'DRAFT_BOARD' | 'SETS' | 'EXTREME'>('ARENA');
+  const [mainTab, setMainTab] = useState<ActiveTab>('ARENA');
 
   // --- ROSTER & PLAYERS ---
   const [roster, setRoster] = useState<PlayerCard[]>(INITIAL_ROSTER);
@@ -128,31 +162,119 @@ export default function App() {
   const [isChopExtremeOpen, setIsChopExtremeOpen] = useState(false);
   const [inspectedCardForStats, setInspectedCardForStats] = useState<PlayerCard | null>(null);
 
+  // --- REFRACTOR FORGE INLINE STATE ---
+  const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
+  const [forgeTierPreview, setForgeTierPreview] = useState<RefractorTier>('SILVER_REFRACTOR');
+
+  // --- GM CONSOLE & VAULT STATE ---
+  const [vaultSelectedTeam, setVaultSelectedTeam] = useState<string>('Baltimore Orioles');
+  const [liveMlbRoster, setLiveMlbRoster] = useState<MlbApiRosterPlayer[]>([]);
+  const [isLoadingMlbRoster, setIsLoadingMlbRoster] = useState(false);
+  const [mlbRosterError, setMlbRosterError] = useState<string | null>(null);
+
+  // Series simulation state
+  const [simSeriesNumber, setSimSeriesNumber] = useState<number>(18);
+  const [simOpponent, setSimOpponent] = useState<string>('New York Yankees');
+  const [simOffensiveDirective, setSimOffensiveDirective] = useState<'SMALL_BALL' | 'BALANCED' | 'POWER_HUNT'>('BALANCED');
+  const [simDefensiveAlignment, setSimDefensiveAlignment] = useState<'STANDARD' | 'NO_DOUBLES' | 'INFIELD_IN' | 'SHIFT'>('STANDARD');
+  const [simSeriesFeedback, setSimSeriesFeedback] = useState<string | null>(null);
+
+  // Manager Card instances
+  const [managerInstances, setManagerInstances] = useState<ManagerCardInstance[]>([
+    {
+      instanceId: 'inst_weaver_01',
+      managerId: 'mgr_earl_weaver',
+      managerName: 'Earl Weaver',
+      archetype: 'THREE_TRUE_OUTCOMES',
+      seasonLocked: 1,
+      usesRemaining: 5,
+      maxUses: 5,
+      isExhausted: false
+    },
+    {
+      instanceId: 'inst_herzog_01',
+      managerId: 'mgr_whitey_herzog',
+      managerName: 'Whitey Herzog',
+      archetype: 'SMALL_BALL',
+      seasonLocked: 1,
+      usesRemaining: 4,
+      maxUses: 5,
+      isExhausted: false
+    },
+    {
+      instanceId: 'inst_hyde_01',
+      managerId: 'mgr_brandon_hyde',
+      managerName: 'Brandon Hyde',
+      archetype: 'ANALYTICS_SAVVY',
+      seasonLocked: 1,
+      usesRemaining: 5,
+      maxUses: 5,
+      isExhausted: false
+    }
+  ]);
+  const [selectedManagerInstance, setSelectedManagerInstance] = useState<ManagerCardInstance>(managerInstances[0]);
+
+  // Playoff Tracker State
+  const [seasonProgress, setSeasonProgress] = useState<SeasonProgressTracker>({
+    managerId: userProfile?.uid || 'mgr-01',
+    seasonNumber: 1,
+    regularSeasonGamesPlayed: seasonRecord.gamesPlayed,
+    rankedWins: seasonRecord.wins,
+    rankedLosses: seasonRecord.losses,
+    currentWinStreak: streakCount,
+    bankedMatchesRemaining: 4
+  });
+
   // --- ACTIVE THEME STATE (Dynamic Team Styling) ---
   const [currentTeamTheme, setCurrentTeamTheme] = useState<ActiveTeamTheme>(() => teamThemeService.getActiveTheme());
 
   // Subscribe to team theme updates
-  React.useEffect(() => {
+  useEffect(() => {
     return teamThemeService.subscribe((newTheme) => {
       setCurrentTeamTheme(newTheme);
+      setVaultSelectedTeam(newTheme.name);
     });
   }, []);
 
   // Subscribe to auth updates
-  React.useEffect(() => {
+  useEffect(() => {
     return authService.subscribe((profile) => {
       setUserProfile(profile);
     });
   }, []);
 
+  // Synchronize Live MLB 26-Man Active Roster from official MLB Stats API
+  const syncLiveMlbRoster = async (teamName: string) => {
+    setIsLoadingMlbRoster(true);
+    setMlbRosterError(null);
+    try {
+      const teamId = getTeamIdByName(teamName);
+      const players = await fetchActiveRosterFromMlbApi(teamId);
+      setLiveMlbRoster(players);
+      addLog(`📡 Synced live 26-man roster from MLB Stats API for ${teamName} (${players.length} active players).`, 'info');
+    } catch (err) {
+      setMlbRosterError('Unable to connect to live MLB Stats API. Showing cached franchise records.');
+    } finally {
+      setIsLoadingMlbRoster(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mainTab === 'GM_CONSOLE') {
+      syncLiveMlbRoster(vaultSelectedTeam);
+    }
+  }, [mainTab, vaultSelectedTeam]);
+
   // Handle franchise team selection
   const handleTeamSelected = (teamTheme: ActiveTeamTheme) => {
     teamThemeService.setActiveTheme(teamTheme);
     setCurrentTeamTheme(teamTheme);
+    setVaultSelectedTeam(teamTheme.name);
 
     const teamRoster = getRosterForTeam(teamTheme.name);
     setRoster(teamRoster);
     setActiveBatterIndex(0);
+    setForgeSelectedCard(teamRoster[0]);
 
     const aces = ALL_PLAYERS.filter(p => p.team !== teamTheme.name && (p.position === 'SP' || p.position === 'RP'));
     if (aces.length > 0) {
@@ -165,7 +287,7 @@ export default function App() {
   };
 
   // Record daily login on launch
-  React.useEffect(() => {
+  useEffect(() => {
     const res = recordDailyLogin();
     setStreakStatus(getSevenDayStreakStatus());
     if (res.isNewDay) {
@@ -174,7 +296,7 @@ export default function App() {
   }, []);
 
   // Listen for hidden Ops shortcut (Ctrl+Shift+O or Cmd+Shift+O) or URL hash #ops
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'o') {
         e.preventDefault();
@@ -216,24 +338,6 @@ export default function App() {
     ]);
   };
 
-  // Update tasks
-  const updateTask = (category: TaskRequirement['category'], countDelta = 1) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.category === category && !t.completed) {
-          const next = t.currentCount + countDelta;
-          if (next >= t.targetCount) {
-            setVendingTokens((tok) => tok + t.rewardTokens);
-            addLog(`🎖️ CHALLENGE COMPLETED: "${t.name}"! +🪙 ${t.rewardTokens} Vending Tokens awarded!`, 'chop');
-            return { ...t, currentCount: next, completed: true };
-          }
-          return { ...t, currentCount: next };
-        }
-        return t;
-      })
-    );
-  };
-
   // Sound toggle
   const handleToggleMute = () => {
     const muted = soundManager.toggleMute();
@@ -245,302 +349,188 @@ export default function App() {
     if (isPitching) return;
     setIsPitching(true);
 
-    // 1. Generate pitcher delivery
     const pitch = AtBatEngine.generatePitch(opposingPitcher);
     setPitchSequence((prev) => [pitch, ...prev.slice(0, 2)]);
 
-    // Equipment Buffs
-    const buffs = inventory
-      .filter((i) => i.equipped)
-      .reduce(
-        (acc, item) => ({
-          contactBonus: (acc.contactBonus || 0) + (item.buffStats.contactBonus || 0),
-          powerBonus: (acc.powerBonus || 0) + (item.buffStats.powerBonus || 0),
-          chopBounceBonus: (acc.chopBounceBonus || 0) + (item.buffStats.chopBounceBonus || 0),
-          pitchHintAccuracy: (acc.pitchHintAccuracy || 0) + (item.buffStats.pitchHintAccuracy || 0)
-        }),
-        { contactBonus: 0, powerBonus: 0, chopBounceBonus: 0, pitchHintAccuracy: 0 }
+    const isZoneGuess = selectedZone === pitch.zone;
+    const isPitchGuess = selectedPitchType === pitch.type;
+    const isBaltimoreChop = activeSkill === 'BALTIMORE_CHOP';
+
+    setTimeout(() => {
+      const outcome = AtBatEngine.resolvePitch(
+        pitch,
+        {
+          guessType: selectedPitchType,
+          guessZone: selectedZone,
+          specialSkill: activeSkill,
+        },
+        activeBatter,
+        opposingPitcher,
+        {},
+        streakCount
       );
 
-    // 2. Resolve showdown
-    const res = AtBatEngine.resolvePitch(
-      pitch,
-      { guessType: selectedPitchType, guessZone: selectedZone, specialSkill: activeSkill },
-      activeBatter,
-      opposingPitcher,
-      buffs,
-      streakCount
-    );
+      triggerHapticFeedback(outcome.hapticPattern || 'HEAVY');
 
-    // 3. Audio & Haptics
-    triggerHapticFeedback(res.hapticPattern);
-    if (res.isBaltimoreChop) {
-      soundManager.playBaltimoreChop();
-      updateTask('CHOP', 1);
-    } else if (res.outcome === 'HOME_RUN') {
-      soundManager.playBatCrack(true);
-      soundManager.playOrganCharge();
-      updateTask('HOMERUN', 1);
-    } else if (res.outcome === 'DOUBLE' || res.outcome === 'SINGLE' || res.outcome === 'TRIPLE') {
-      soundManager.playBatCrack(true);
-    } else if (res.outcome === 'STRIKEOUT') {
-      soundManager.playUmpireCall(true);
-      updateTask('STRIKEOUT', 1);
-    } else {
-      soundManager.playBatCrack(false);
-    }
-
-    // 4. Calculate Situational Leverage & RE24 Linear Weights Points
-    const leverage = calculateLeverageIndex(inning, homeScore - awayScore, { first: baseRunners[0], second: baseRunners[1], third: baseRunners[2] }, outs);
-    const eventType = 
-      res.outcome === 'HOME_RUN' ? 'HOME_RUN' :
-      res.outcome === 'TRIPLE' ? 'TRIPLE' :
-      res.outcome === 'DOUBLE' ? 'DOUBLE' :
-      (res.outcome === 'SINGLE' || res.isBaltimoreChop) ? 'SINGLE' :
-      res.outcome === 'WALK' ? 'WALK' :
-      res.outcome === 'STRIKEOUT' ? 'STRIKEOUT' : 'OUT';
-
-    const isBarrel = (res.hitData?.exitVelocity || 80) >= 98;
-    const chopScore = computeChopIndexScore(eventType, leverage, { barrelContact: isBarrel });
-
-    // 5. Update Game State
-    setTimeout(() => {
-      setIsPitching(false);
-
-      if (res.isBaltimoreChop) {
-        const runnerRes = AtBatEngine.advanceRunners(baseRunners, 1);
-        setBaseRunners(runnerRes.nextRunners);
-        if (runnerRes.runsScored > 0) {
-          setHomeScore((s) => s + runnerRes.runsScored);
-        }
-        setFranchisePoints((pts) => pts + Math.max(15, chopScore.totalChopIndex));
-        setStreakCount((c) => c + 1);
-        resetCount();
-        addLog(`⚡ BALTIMORE CHOP! [RE24 +${chopScore.totalChopIndex} pts · LI ${leverage.leverageIndex}x] ${res.description}`, 'chop');
-      } else if (res.outcome === 'HOME_RUN') {
-        const runnerRes = AtBatEngine.advanceRunners(baseRunners, 4);
-        setBaseRunners(runnerRes.nextRunners);
-        setHomeScore((s) => s + runnerRes.runsScored);
-        setFranchisePoints((pts) => pts + Math.max(100, chopScore.totalChopIndex));
-        setStreakCount((c) => c + 1);
-        resetCount();
-        addLog(`🚀 NO-DOUBTER HOME RUN! [RE24 +${chopScore.totalChopIndex} pts · ${leverage.tier} LEVERAGE ${leverage.multiplier}x] ${res.description}`, 'homerun');
-      } else if (res.outcome === 'DOUBLE') {
-        const runnerRes = AtBatEngine.advanceRunners(baseRunners, 2);
-        setBaseRunners(runnerRes.nextRunners);
-        if (runnerRes.runsScored > 0) setHomeScore((s) => s + runnerRes.runsScored);
-        setFranchisePoints((pts) => pts + Math.max(30, chopScore.totalChopIndex));
-        setStreakCount((c) => c + 1);
-        resetCount();
-        addLog(`💥 GAPPAGE DOUBLE! [RE24 +${chopScore.totalChopIndex} pts] ${res.description}`, 'hit');
-      } else if (res.outcome === 'SINGLE') {
-        const runnerRes = AtBatEngine.advanceRunners(baseRunners, 1);
-        setBaseRunners(runnerRes.nextRunners);
-        if (runnerRes.runsScored > 0) setHomeScore((s) => s + runnerRes.runsScored);
-        setFranchisePoints((pts) => pts + Math.max(20, chopScore.totalChopIndex));
-        setStreakCount((c) => c + 1);
-        resetCount();
-        addLog(`⚾ BASE HIT! [RE24 +${chopScore.totalChopIndex} pts] ${res.description}`, 'hit');
-      } else if (res.outcome === 'GROUNDOUT' || res.outcome === 'FLYOUT') {
-        recordOut(`${res.description} [RE24 -27 pts]`);
-      } else {
-        const nextStrikes = strikes + 1;
-        if (nextStrikes >= 3) {
-          recordOut(`Whiff on ${pitch.velocity} mph ${pitch.type}. Strike 3! [RE24 -30 pts]`);
+      if (outcome.outcome === 'HOME_RUN') {
+        soundManager.playHomeRunFanfare();
+        setFranchisePoints((p) => p + 500);
+        setHomeScore((s) => s + 2);
+        setStreakCount((s) => s + 1);
+        addLog(`💥 CRUSHED! ${activeBatter.name} launches a game-tying 2-run home run! (+500 pts)`, 'homerun');
+      } else if (outcome.isBaltimoreChop || outcome.outcome === 'INFIELD_SINGLE_CHOP' || outcome.outcome === 'SINGLE' || outcome.outcome === 'DOUBLE' || outcome.outcome === 'TRIPLE') {
+        soundManager.playBatCrack(true);
+        setFranchisePoints((p) => p + 250);
+        setStreakCount((s) => s + 1);
+        if (outcome.isBaltimoreChop || outcome.outcome === 'INFIELD_SINGLE_CHOP') {
+          addLog(`🪓 BALTIMORE CHOP! High-bounce single over third base! Runner scores! (+250 pts)`, 'chop');
+          setHomeScore((s) => s + 1);
         } else {
-          setStrikes(nextStrikes);
-          addLog(`Count moves to ${balls}-${nextStrikes} on a ${pitch.velocity} mph ${pitch.type}.`, 'out');
+          addLog(`⚡ CLEAN HIT! ${activeBatter.name} ropes a base hit! (+200 pts)`, 'hit');
         }
-      }
-    }, 600);
-  };
-
-  const recordOut = (desc: string) => {
-    const nextOuts = outs + 1;
-    if (nextOuts >= 3) {
-      setOuts(0);
-      resetCount();
-      setStreakCount(0);
-      if (halfInning === 'TOP') {
-        setHalfInning('BOTTOM');
-        addLog(`3 Outs recorded. Side retired. Bottom of Inning ${inning} underway!`, 'out');
       } else {
-        setHalfInning('TOP');
-        setInning((i) => i + 1);
-        addLog(`3 Outs recorded. Moving into Inning ${inning + 1}!`, 'out');
+        soundManager.playUmpireCall(true);
+        setOuts((o) => (o >= 2 ? 0 : o + 1));
+        setStreakCount(0);
+        addLog(`💨 OUT: ${outcome.description} (${opposingPitcher.name} nasty ${pitch.type}).`, 'out');
       }
-    } else {
-      setOuts(nextOuts);
-      resetCount();
-      addLog(desc, 'out');
-    }
+
+      setIsPitching(false);
+    }, 450);
   };
 
-  const resetCount = () => {
-    setBalls(0);
-    setStrikes(0);
-  };
-
-  // Franchise simulation
-  const handleSimulateGames = (count: number) => {
-    const teamContactAvg = roster.reduce((acc, p) => acc + p.stats.contact, 0) / roster.length;
-    const teamWarAvg = roster.reduce((acc, p) => acc + p.bRefWar, 0) / roster.length;
-    
-    let wins = 0;
-    for (let i = 0; i < count; i++) {
-      const roll = Math.random() * 100 + (teamWarAvg > 5 ? 15 : 5) + (teamContactAvg > 80 ? 10 : 0);
-      if (roll > 50) wins++;
-    }
-    const losses = count - wins;
-    const pts = wins * 65;
-
-    setSeasonRecord((prev) => ({
+  // Simulate franchise games
+  const handleSimulateGames = (gameCount: number): { winsAdded: number; pointsEarned: number } => {
+    const wins = Math.floor(gameCount * 0.6);
+    const losses = gameCount - wins;
+    const pointsEarned = wins * 80;
+    setSeasonRecord(prev => ({
       ...prev,
       wins: prev.wins + wins,
       losses: prev.losses + losses,
-      gamesPlayed: prev.gamesPlayed + count
+      gamesPlayed: prev.gamesPlayed + gameCount
     }));
-    setFranchisePoints((p) => p + pts);
-
-    if (wins >= count * 0.6) {
-      updateTask('SEASON', 1);
-    }
-
-    return { winsAdded: wins, pointsEarned: pts };
+    setSeasonProgress(prev => ({
+      ...prev,
+      regularSeasonGamesPlayed: prev.regularSeasonGamesPlayed + gameCount,
+      rankedWins: prev.rankedWins + wins,
+      rankedLosses: prev.rankedLosses + losses
+    }));
+    setFranchisePoints(p => p + pointsEarned);
+    addLog(`⚡ Simulated ${gameCount} franchise games: +${wins}W -${losses}L (+${pointsEarned} pts)`, 'info');
+    return { winsAdded: wins, pointsEarned };
   };
 
+  // Run Quick-Sim Series Game in GM Console
+  const handleSimulateQuickSeries = () => {
+    const directiveBonus = simOffensiveDirective === 'SMALL_BALL' ? 0.04 : simOffensiveDirective === 'POWER_HUNT' ? 0.02 : 0.0;
+    const userRating = 88;
+    const oppRating = 85;
+
+    const game1 = simulateSeriesGame(userRating, oppRating, directiveBonus);
+    const game2 = simulateSeriesGame(userRating, oppRating, directiveBonus);
+    const wonCount = (game1.won ? 1 : 0) + (game2.won ? 1 : 0);
+
+    setSeasonRecord(prev => ({
+      ...prev,
+      wins: prev.wins + wonCount,
+      losses: prev.losses + (2 - wonCount),
+      gamesPlayed: prev.gamesPlayed + 2
+    }));
+    setSeasonProgress(prev => ({
+      ...prev,
+      regularSeasonGamesPlayed: prev.regularSeasonGamesPlayed + 2,
+      rankedWins: prev.rankedWins + wonCount,
+      rankedLosses: prev.rankedLosses + (2 - wonCount)
+    }));
+
+    setSimSeriesFeedback(
+      `Series ${simSeriesNumber} vs ${simOpponent}: Game 1: ${game1.userRuns}-${game1.oppRuns} (${game1.won ? 'W' : 'L'}), Game 2: ${game2.userRuns}-${game2.oppRuns} (${game2.won ? 'W' : 'L'}). Rubber match set up in 9th inning!`
+    );
+    addLog(`⚔️ Series ${simSeriesNumber} simulated vs ${simOpponent}: ${wonCount}-2 record with ${simOffensiveDirective} directive.`, 'info');
+    soundManager.playButtonClick();
+  };
+
+  // Deploy manager tactical card
+  const handleDeployManagerCard = () => {
+    const validation = validateManagerUsage(selectedManagerInstance, seasonProgress.seasonNumber, simSeriesNumber);
+    if (!validation.canUse) {
+      alert(validation.error);
+      return;
+    }
+    const updated = consumeManagerUse(selectedManagerInstance);
+    setSelectedManagerInstance(updated);
+    setManagerInstances(prev => prev.map(m => m.instanceId === updated.instanceId ? updated : m));
+    soundManager.playRefractorShine();
+    addLog(`🎖️ TACTICAL DEPLOYMENT: Manager ${updated.managerName} activated! (${updated.usesRemaining} uses remaining this season).`, 'chop');
+  };
+
+  // Refractor Forge parallel upgrade
+  const handleUpgradeCardParallel = (targetTier: RefractorTier) => {
+    const config = REFRACTOR_REGISTRY[targetTier];
+    const cost = targetTier === 'SUPERFRACTOR' ? 5 : targetTier === 'GOLD_WAVE' ? 3 : 1;
+    if (vendingTokens < cost) {
+      alert(`Need ${cost} Vending Tokens to forge ${config.displayName}! Visit equipment vending or challenges.`);
+      return;
+    }
+
+    setVendingTokens(tok => tok - cost);
+    soundManager.playRefractorShine();
+
+    const serialStamp = getAuthenticSerialStamp(targetTier, forgeSelectedCard.cardNo || 42);
+    const updatedCard: PlayerCard = {
+      ...forgeSelectedCard,
+      refractorTier: targetTier === 'SUPERFRACTOR' ? 'SUPERFRACTOR_1_OF_1' : targetTier === 'GOLD_WAVE' ? 'GOLD_WAVE' : targetTier === 'SAPPHIRE' ? 'SAPPHIRE' : targetTier === 'ATOMIC_MOJO' ? 'ATOMIC_MOJO' : targetTier === 'SILVER_REFRACTOR' ? 'RAINBOW' : 'BASE',
+      serialStamp
+    };
+
+    setForgeSelectedCard(updatedCard);
+    setRoster(prev => prev.map(p => p.id === updatedCard.id ? updatedCard : p));
+    addLog(`✨ FORGED: ${updatedCard.name} upgraded to ${config.displayName}! Stamped: ${serialStamp || 'Core'}`, 'chop');
+  };
+
+  // Playoff status computation
+  const playoffStatus: PlayoffStatus = evaluatePlayoffEligibility(seasonProgress);
+
   return (
-    <div className="min-h-screen bg-[#070b12] text-slate-100 flex flex-col items-center pb-24 selection:bg-orange-600 selection:text-white">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-orange-500 selection:text-white pb-28">
       
-      {/* ================= 1. CLEAN OPAQUE SOLID TOP HEADER ================= */}
-      <header className="w-full bg-[#0a0f18] border-b border-white/10 sticky top-0 z-40 px-3 sm:px-6 py-2.5 shadow-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      {/* ================= 1. PREMIUM BALLPARK HEADER ================= */}
+      <header className="sticky top-0 z-40 w-full bg-[#0a0f1d]/90 backdrop-blur-md border-b border-white/10 px-3 sm:px-6 py-2.5 sm:py-3 transition-all">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           
-          {/* Logo & Brand (With Reliable Fallback) */}
-          <div 
-            onClick={() => {
-              soundManager.playButtonClick();
-              setIsPortalOpen(true);
-            }}
-            className="flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer group"
-            title="Click to open Knowledge Base & Season Card Collection"
-          >
-            <img
-              src="/chop-logo.jpeg"
-              alt="The Baltimore Chop"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border-2 border-orange-500 shadow-[0_0_12px_rgba(234,88,12,0.5)] group-hover:scale-105 transition-transform shrink-0"
-              onError={(e) => {
-                e.currentTarget.src = '/icon.svg';
-              }}
-            />
-            <div>
-              <div className="flex items-center gap-1">
-                <span className="text-lg sm:text-xl font-display font-black tracking-wider text-orange-500 uppercase block leading-none">
-                  THE BALTIMORE CHOP
-                </span>
-                <span className="text-[10px] font-display font-black text-amber-400 -mt-2">
-                  ™
+          {/* Brand & Active Team Theme Badge */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsSplashOpen(true)}
+              className="flex items-center gap-2 group text-left transition-transform active:scale-95"
+              title="Click to Switch Ballpark & Team"
+            >
+              <div 
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-display font-black text-sm sm:text-lg shadow-lg border border-white/20 transition-all group-hover:scale-105"
+                style={{ backgroundColor: currentTeamTheme.primaryColor, color: currentTeamTheme.secondaryColor }}
+              >
+                <span>{currentTeamTheme.logoIcon}</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-display font-black text-sm sm:text-lg tracking-wider text-white uppercase group-hover:text-amber-400 transition-colors">
+                    {currentTeamTheme.name}
+                  </span>
+                  <span className="text-[10px] font-mono font-bold text-orange-400 bg-orange-950/70 border border-orange-500/30 px-1.5 py-0.2 rounded-full hidden sm:inline">
+                    {currentTeamTheme.league} {currentTeamTheme.division}
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400 hidden xs:inline">
+                  {currentTeamTheme.ballpark} · Change Team ⟲
                 </span>
               </div>
-              <span className="text-[9px] font-mono tracking-widest text-amber-400/90 font-bold uppercase">
-                MLB TRADING CARD SHOWDOWN
-              </span>
-            </div>
+            </button>
           </div>
 
-          {/* Active Franchise & Stadium Tunnel Walkout Selector */}
-          <button
-            type="button"
-            onClick={() => {
-              soundManager.playButtonClick();
-              setIsSplashOpen(true);
-            }}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all shadow-md hover:scale-105 active:scale-95 group shrink-0"
-            style={{
-              backgroundColor: `${currentTeamTheme.primaryColor}25`,
-              borderColor: `${currentTeamTheme.primaryColor}80`
-            }}
-            title="Click to Walk Out of the Stadium Tunnel & Change Your Favorite Team"
-          >
-            <div
-              className="w-4 h-4 rounded-full border border-white/80 shrink-0 shadow flex items-center justify-center text-[8px]"
-              style={{ backgroundColor: currentTeamTheme.primaryColor }}
-            >
-              ⚾
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-1">
-                <span className="text-[8px] font-mono font-black text-amber-400 uppercase tracking-widest leading-none">
-                  {currentTeamTheme.league === 'NEGRO_LEAGUES' ? 'NEGRO LEAGUES' : `${currentTeamTheme.league} · ${currentTeamTheme.division || 'MLB'}`}
-                </span>
-                <span className="text-[7px] text-slate-400 group-hover:text-amber-300">▼ TUNNEL</span>
-              </div>
-              <span className="text-xs font-display font-black text-white uppercase tracking-wider block leading-tight group-hover:text-amber-300">
-                {currentTeamTheme.name}
-              </span>
-            </div>
-          </button>
-
-          {/* Right Header Action Pills (Streamlined & Collision-Free) */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* PWA Install */}
-            <PWAInstallButton />
-
-            {/* Login Streak */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setStreakStatus(getSevenDayStreakStatus());
-                setIsStreakOpen(true);
-              }}
-              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-white border border-amber-500/40 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm whitespace-nowrap"
-              title="5-in-7 Days Login Streak Tracker & Rewards"
-            >
-              <span className="text-amber-400">🔥</span>
-              <span>{streakStatus.activeDaysCount}/5 <span className="hidden md:inline">Streak</span></span>
-            </button>
-
-            {/* Quick Rip Pack */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsPackRipOpen(true);
-              }}
-              className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 whitespace-nowrap"
-              title="Hobby Collect Foil Pack Rip"
-            >
-              <span>⚡</span> <span className="hidden sm:inline">Rip</span> Pack
-            </button>
-
-            {/* Cards Checklist */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsAlmanacOpen(true);
-              }}
-              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 hover:text-white border border-cyan-500/40 text-xs font-display font-bold uppercase transition-all flex items-center gap-1 whitespace-nowrap"
-              title="Verify All 30 Teams, Players & Sets"
-            >
-              <span>🗂️</span> <span className="hidden md:inline">Cards</span> Checklist
-            </button>
-
-            {/* Chop Extreme Hub Shortcut */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsChopExtremeOpen(true);
-              }}
-              className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-display font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1 shadow-md whitespace-nowrap"
-              title="Chop Extreme: The 4 Pillars & Sabermetric Mode"
-            >
-              <span>⚡</span> <span className="hidden sm:inline">Chop</span> Extreme
-            </button>
-
-            {/* Knowledge Base Portal Button */}
+          {/* Quick Hub Launchers */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => {
@@ -548,9 +538,9 @@ export default function App() {
                 setIsPortalOpen(true);
               }}
               className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-display font-black uppercase tracking-wider text-slate-950 bg-gradient-to-r from-amber-400 to-yellow-400 hover:brightness-110 rounded-xl transition-all whitespace-nowrap shrink-0 shadow flex items-center gap-1"
-              title="Knowledge Base & Season Card Collection"
+              title="30 Franchises Top 25 WAR Vault & Knowledge Base"
             >
-              <span>📚</span> <span className="hidden md:inline">Knowledge</span> Base
+              <span>🏛️</span> <span className="hidden md:inline">Franchise</span> Vault
             </button>
 
             {/* User Profile */}
@@ -563,7 +553,13 @@ export default function App() {
               className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/10 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm whitespace-nowrap"
               title="User Account Handle"
             >
-              <span className="text-orange-400">👤</span>
+              <JerseyAvatar
+                teamId="BAL"
+                username={userProfile?.username || 'Player'}
+                jerseyNumber={8}
+                size="sm"
+                className="w-5 h-5"
+              />
               <span className="text-[11px] truncate max-w-[65px] sm:max-w-[100px]">
                 @{userProfile?.username || 'Player'}
               </span>
@@ -573,11 +569,12 @@ export default function App() {
         </div>
       </header>
 
-      {/* ================= 2. DEDICATED SUB-NAVIGATION BAR (ZERO SQUISHING) ================= */}
+      {/* ================= 2. DEDICATED 6-TAB SUB-NAVIGATION BAR ================= */}
       <nav className="w-full bg-[#0c1320] border-b border-white/10 px-3 sm:px-6 py-2 flex items-center justify-between gap-3 overflow-x-auto scrollbar-none z-30">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2">
           
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            {/* 1. ARENA */}
             <button
               type="button"
               onClick={() => {
@@ -588,34 +585,80 @@ export default function App() {
                 mainTab === 'ARENA' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <span>🏟️</span> Showdown Arena
+              <span>🏟️</span> Arena
             </button>
 
+            {/* 2. DEPTH_CHART */}
             <button
               type="button"
               onClick={() => {
                 soundManager.playButtonClick();
-                setMainTab('DRAFT_BOARD');
+                setMainTab('DEPTH_CHART');
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'DRAFT_BOARD' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                mainTab === 'DEPTH_CHART' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <span>📋</span> Stick-To-The-Board Grid
+              <span>📋</span> 26-Man Depth Chart
             </button>
 
+            {/* 3. REFRAC_FORGE */}
             <button
               type="button"
               onClick={() => {
                 soundManager.playButtonClick();
-                setMainTab('SETS');
+                setMainTab('REFRAC_FORGE');
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'SETS' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                mainTab === 'REFRAC_FORGE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <span>🎴</span> Seasonal Sets (8)
+              <span>✨</span> Refractor Forge
             </button>
+
+            {/* 4. MARKETPLACE */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setMainTab('MARKETPLACE');
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
+                mainTab === 'MARKETPLACE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <span>🛍️</span> Marketplace & Sets
+            </button>
+
+            {/* 5. CHOP_HOUSE */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setMainTab('CHOP_HOUSE');
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
+                mainTab === 'CHOP_HOUSE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <span>🥩</span> The Chop House
+            </button>
+
+            {/* 6. GM_CONSOLE */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setMainTab('GM_CONSOLE');
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
+                mainTab === 'GM_CONSOLE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <span>💼</span> GM Console & Vault
+            </button>
+
+            <span className="w-px h-4 bg-white/10 mx-1 shrink-0" />
 
             <button
               type="button"
@@ -625,11 +668,11 @@ export default function App() {
               }}
               className="px-3 py-1.5 rounded-xl text-xs font-display font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 text-red-400 hover:text-white hover:bg-red-950/40 border border-red-500/30"
             >
-              <span>🔥</span> The 4 Pillars of Chop Extreme
+              <span>🔥</span> The 4 Pillars
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 text-xs font-mono text-slate-400 shrink-0">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-400 shrink-0">
             <span>Points: <strong className="text-amber-400">{franchisePoints.toLocaleString()}</strong></span>
             <span>·</span>
             <span>Tokens: <strong className="text-emerald-400">{vendingTokens}</strong></span>
@@ -641,7 +684,7 @@ export default function App() {
       {/* ================= 3. MAIN DASHBOARD CONTENT ================= */}
       <main className="w-full max-w-7xl mx-auto p-3 sm:p-6 space-y-6 pt-4">
         
-        {/* Ballpark Scoreboard (Cleanly Separated Below Header) */}
+        {/* Ballpark Scoreboard */}
         <Scoreboard
           homeScore={homeScore}
           awayScore={awayScore}
@@ -658,13 +701,19 @@ export default function App() {
           gameModeLabel={
             mainTab === 'ARENA'
               ? `At-Bat Showdown · ${currentTeamTheme.ballpark}`
-              : mainTab === 'DRAFT_BOARD'
+              : mainTab === 'DEPTH_CHART'
               ? `Stick-To-The-Board Matrix · 26-Man ${currentTeamTheme.name} Depth Chart`
-              : 'Seasonal Sets Vault · 8 Authentic Collector Series Sets'
+              : mainTab === 'REFRAC_FORGE'
+              ? `Refractor Forge & Rainbow Chase · 6 Authentic Parallels`
+              : mainTab === 'MARKETPLACE'
+              ? `Seasonal Sets Vault & Marketplace · 8 Authentic Collector Series`
+              : mainTab === 'CHOP_HOUSE'
+              ? `The Chop House · Clubhouse Forums, Leaderboard & Jersey Avatars`
+              : `GM Operations & 30-Franchise Top 25 Single-Season WAR Vault`
           }
         />
 
-        {/* VIEW 1: ARENA SHOWDOWN */}
+        {/* ---------------- VIEW 1: ARENA SHOWDOWN ---------------- */}
         {mainTab === 'ARENA' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: 3D Inspectable Card Stage with 360° Drag & Click-to-Inspect */}
@@ -771,8 +820,8 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 2: STICK-TO-THE-BOARD DEPTH CHART */}
-        {mainTab === 'DRAFT_BOARD' && (
+        {/* ---------------- VIEW 2: STICK-TO-THE-BOARD DEPTH CHART ---------------- */}
+        {mainTab === 'DEPTH_CHART' && (
           <DraftBoardGrid
             roster={roster}
             activeBatterId={activeBatter.id}
@@ -789,29 +838,188 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 3: 8 SEASONAL SETS VAULT */}
-        {mainTab === 'SETS' && (
+        {/* ---------------- VIEW 3: REFRACTOR FORGE & RAINBOW CHASE TRACKER ---------------- */}
+        {mainTab === 'REFRAC_FORGE' && (
+          <div className="space-y-6">
+            <div className="liquid-glass-panel rounded-3xl p-6 border border-yellow-500/40">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-display font-black text-amber-400 uppercase tracking-wide flex items-center gap-2">
+                    <span>✨</span> The Refractor Forge & Rainbow Chase
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-300 font-mono mt-1">
+                    Upgrade cards across 6 authentic parallels: Base Paper, Silver Refractor, Atomic Mojo (/150), Sapphire (/75), Gold Wave (/25), and 1/1 Superfractor.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono bg-slate-900 border border-white/10 px-3 py-1.5 rounded-xl text-amber-400 font-bold">
+                    🪙 {vendingTokens} Vending Tokens
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Forge Workspace Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Card Selector & 3D Tactile Stage */}
+              <div className="lg:col-span-5 liquid-glass-panel rounded-3xl p-5 flex flex-col items-center shadow-xl">
+                <div className="w-full flex items-center justify-between mb-3">
+                  <span className="text-xs font-display font-bold uppercase text-slate-400">
+                    Selected Card in Anvil
+                  </span>
+                  <select
+                    value={forgeSelectedCard.id}
+                    onChange={(e) => {
+                      const found = roster.find(p => p.id === e.target.value);
+                      if (found) setForgeSelectedCard(found);
+                    }}
+                    className="text-xs font-mono bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white focus:outline-none"
+                  >
+                    {roster.map(p => (
+                      <option key={p.id} value={p.id}>{p.name} ({p.position})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <Card3D
+                  card={forgeSelectedCard}
+                  interactive={true}
+                  overrideSetId={activeSetId}
+                  onInspect={() => setInspectedCardForStats(forgeSelectedCard)}
+                />
+
+                <div className="w-full mt-4 p-3 bg-slate-900/80 rounded-2xl border border-white/5 text-xs font-mono space-y-1.5">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Active Parallel:</span>
+                    <span className="font-bold text-amber-300">{forgeSelectedCard.refractorTier || 'BASE'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Stamped Serial:</span>
+                    <span className="font-bold text-cyan-400">{forgeSelectedCard.serialStamp || 'Core Core Core'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: 6 Parallels Matrix & Action Controls */}
+              <div className="lg:col-span-7 space-y-4">
+                {/* Rainbow Chase Carousel */}
+                <RainbowChaseTracker
+                  card={forgeSelectedCard}
+                  selectedTier={forgeTierPreview}
+                  onSelectTier={(tier) => setForgeTierPreview(tier)}
+                  onRainbowCompleted={(cardName) => {
+                    addLog(`🌈 MASTER RAINBOW UNLOCKED for ${cardName}! All 6 parallels assembled!`, 'chop');
+                  }}
+                />
+
+                {/* Parallel Upgrade Options */}
+                <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
+                  <h3 className="text-xs font-display font-black text-amber-400 uppercase tracking-wider">
+                    Forge Parallel Upgrade Anvil
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {ALL_REFRACTOR_TIERS.map(tier => {
+                      const cfg = REFRACTOR_REGISTRY[tier];
+                      const isCurrent = (forgeSelectedCard.refractorTier === 'SUPERFRACTOR_1_OF_1' && tier === 'SUPERFRACTOR') ||
+                                        (forgeSelectedCard.refractorTier === 'GOLD_WAVE' && tier === 'GOLD_WAVE') ||
+                                        (forgeSelectedCard.refractorTier === 'SAPPHIRE' && tier === 'SAPPHIRE') ||
+                                        (forgeSelectedCard.refractorTier === 'ATOMIC_MOJO' && tier === 'ATOMIC_MOJO') ||
+                                        (forgeSelectedCard.refractorTier === 'RAINBOW' && tier === 'SILVER_REFRACTOR') ||
+                                        (!forgeSelectedCard.refractorTier && tier === 'BASE');
+
+                      const tokenCost = tier === 'SUPERFRACTOR' ? 5 : tier === 'GOLD_WAVE' ? 3 : tier === 'BASE' ? 0 : 1;
+
+                      return (
+                        <div
+                          key={tier}
+                          onClick={() => setForgeTierPreview(tier)}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                            forgeTierPreview === tier
+                              ? 'bg-amber-950/40 border-amber-500 shadow-md ring-1 ring-amber-400'
+                              : 'bg-slate-950/50 border-slate-800 hover:border-slate-700'
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-display font-bold text-xs text-white">
+                                {cfg.displayName}
+                              </span>
+                              {cfg.serialMax && (
+                                <span className="text-[10px] font-mono font-bold text-amber-400 bg-black/60 px-1.5 py-0.5 rounded border border-white/5">
+                                  {cfg.serialMax === 1 ? '1/1' : `/${cfg.serialMax}`}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[10.5px] font-mono text-slate-400">
+                              +{cfg.attributeBoost} OVR Boost · {cfg.pointMultiplier}x Multiplier
+                            </p>
+                          </div>
+
+                          <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between">
+                            <span className="text-[10px] font-mono text-emerald-400">
+                              {tokenCost === 0 ? 'Free Base' : `🪙 ${tokenCost} Token${tokenCost > 1 ? 's' : ''}`}
+                            </span>
+                            {isCurrent ? (
+                              <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                                Current
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleUpgradeCardParallel(tier);
+                                }}
+                                className="px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-display font-black text-[10px] uppercase shadow"
+                              >
+                                Forge
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ---------------- VIEW 4: MARKETPLACE, SETS & RELICS ---------------- */}
+        {mainTab === 'MARKETPLACE' && (
           <div className="space-y-6">
             <div className="liquid-glass-panel rounded-3xl p-6 border border-orange-500/30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-display font-black text-white uppercase tracking-wide">
-                    The 8 Authentic Seasonal Sets Vault
+                    Seasonal Sets Vault & Marketplace
                   </h2>
                   <p className="text-xs text-slate-300 font-mono mt-1">
-                    Authentic 3D printed borders, refractor economies & 12-month release calendar
+                    8 authentic series releases, sealed foil pack ripping, and 35+ equipment & game-used relic artifacts.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsPackRipOpen(true)}
-                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  <span>⚡</span> Rip Sealed Pack Now
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsVendingOpen(true)}
+                    className="px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 font-display font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5"
+                  >
+                    <span>🥫</span> Vending Relics
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPackRipOpen(true)}
+                    className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-1.5"
+                  >
+                    <span>⚡</span> Rip Sealed Pack
+                  </button>
+                </div>
               </div>
             </div>
 
+            {/* 8 Authentic Sets Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {CARD_SETS.map((set) => {
                 const isSelected = activeSetId === set.id;
@@ -875,11 +1083,325 @@ export default function App() {
                 );
               })}
             </div>
+
+            {/* Featured 35+ Equipment Relics Highlights */}
+            <div className="liquid-glass-panel rounded-3xl p-6 border border-emerald-500/30 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-display font-black text-emerald-400 uppercase tracking-wide flex items-center gap-2">
+                    <span>🥫</span> Authenticated Equipment & Dugout Relics (35+ Items)
+                  </h3>
+                  <p className="text-xs text-slate-300 font-mono">
+                    Tier 1 (1 token), Tier 2 (3 tokens), Tier 3 (5 tokens) pulls with individual Certificate of Authenticity IDs.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsVendingOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-display font-black text-xs uppercase"
+                >
+                  Open Vending Machine
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                {TIERED_EQUIPMENT_CARDS.slice(0, 6).map((item) => (
+                  <div key={item.id} className="p-3 rounded-2xl bg-slate-900/80 border border-slate-800 text-center flex flex-col justify-between">
+                    <span className="text-3xl mb-1">{item.icon}</span>
+                    <h4 className="font-display font-bold text-xs text-white truncate">{item.name}</h4>
+                    <span className="text-[9px] font-mono text-emerald-400 mt-1">Tier {item.tier} · 🪙 {item.tokenVendingCost} Tok</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
+
+        {/* ---------------- VIEW 5: THE CHOP HOUSE FORUM & LEADERBOARDS ---------------- */}
+        {mainTab === 'CHOP_HOUSE' && (
+          <ChopHouseForum />
+        )}
+
+        {/* ---------------- VIEW 6: GM CONSOLE & 30 FRANCHISES TOP 25 WAR VAULT ---------------- */}
+        {mainTab === 'GM_CONSOLE' && (
+          <div className="space-y-6">
+            {/* Header Banner */}
+            <div className="liquid-glass-panel rounded-3xl p-6 border border-amber-500/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-display font-black text-amber-400 uppercase tracking-wide flex items-center gap-2">
+                  <span>💼</span> GM Operations & 30 Franchises WAR Vault
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 font-mono mt-1">
+                  Access official Top 25 single-season WAR records for all 30 MLB franchises, synchronize live 26-man active rosters via MLB Stats API, and manage 52-series simulation directives.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPortalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-display font-black text-xs uppercase shadow"
+                >
+                  Launch Vault Modal
+                </button>
+              </div>
+            </div>
+
+            {/* Top Section: Playoff Eligibility & Manager Deployments */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Playoff Eligibility Evaluator */}
+              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <h3 className="font-display font-bold text-sm text-white uppercase flex items-center gap-2">
+                    <span>🏆</span> Playoff Eligibility Tracker
+                  </h3>
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    playoffStatus.isQualified ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' : 'bg-amber-950 text-amber-300 border border-amber-500/40'
+                  }`}>
+                    {playoffStatus.isQualified ? 'QUALIFIED' : `${playoffStatus.gamesNeeded} GAMES NEEDED`}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                  <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400">PLAYED</span>
+                    <p className="text-base font-bold text-white">{seasonProgress.regularSeasonGamesPlayed}/60</p>
+                  </div>
+                  <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400">RECORD</span>
+                    <p className="text-base font-bold text-emerald-400">{seasonProgress.rankedWins}W-{seasonProgress.rankedLosses}L</p>
+                  </div>
+                  <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-[10px] text-slate-400">PVP MODE</span>
+                    <p className="text-[11px] font-bold text-amber-300 truncate">{playoffStatus.pvpMode}</p>
+                  </div>
+                </div>
+
+                <p className="text-xs font-mono text-slate-400 leading-relaxed bg-black/40 p-2.5 rounded-xl border border-white/5">
+                  <strong>Rules:</strong> {playoffStatus.rulesDescription}
+                </p>
+              </div>
+
+              {/* Tactical Manager Card Deployments */}
+              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <h3 className="font-display font-bold text-sm text-white uppercase flex items-center gap-2">
+                    <span>🎖️</span> Tactical Manager Deployments
+                  </h3>
+                  <span className="text-[10px] font-mono text-amber-400">
+                    Max 5 Uses Before Postseason
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    value={selectedManagerInstance.instanceId}
+                    onChange={(e) => {
+                      const found = managerInstances.find(m => m.instanceId === e.target.value);
+                      if (found) setSelectedManagerInstance(found);
+                    }}
+                    className="flex-1 bg-slate-950 border border-slate-800 text-xs font-mono text-white p-2 rounded-xl focus:outline-none"
+                  >
+                    {managerInstances.map(m => (
+                      <option key={m.instanceId} value={m.instanceId}>
+                        {m.managerName} ({m.archetype}) — {m.usesRemaining} Uses Left
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleDeployManagerCard}
+                    disabled={selectedManagerInstance.usesRemaining === 0}
+                    className="px-3 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-white font-display font-bold text-xs uppercase tracking-wider"
+                  >
+                    Deploy
+                  </button>
+                </div>
+
+                <p className="text-xs font-mono text-slate-400 bg-black/40 p-2.5 rounded-xl border border-white/5">
+                  <strong>Active Trait:</strong> {FAMOUS_MANAGERS.find(f => f.managerName === selectedManagerInstance.managerName)?.signatureTrait.description || 'Applies simulation modifiers.'}
+                </p>
+              </div>
+            </div>
+
+            {/* 30 Franchises Top 25 WAR Records & Live MLB API Sync View */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                <div>
+                  <h3 className="font-display font-bold text-base text-amber-400 uppercase flex items-center gap-2">
+                    <span>🏛️</span> 30 MLB Franchises Top 25 WAR Vault
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Official single-season franchise bRef WAR records alongside live active 26-man roster synchronization.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={vaultSelectedTeam}
+                    onChange={(e) => setVaultSelectedTeam(e.target.value)}
+                    className="bg-slate-950 border border-slate-700 text-xs font-mono text-amber-300 p-2 rounded-xl focus:outline-none"
+                  >
+                    {Object.keys(TEAM_TOP_25_WAR_SEASONS).map(teamName => (
+                      <option key={teamName} value={teamName}>{teamName}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => syncLiveMlbRoster(vaultSelectedTeam)}
+                    disabled={isLoadingMlbRoster}
+                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono flex items-center gap-1.5"
+                    title="Force refresh from MLB Stats API"
+                  >
+                    <span>🔄</span> {isLoadingMlbRoster ? 'Syncing...' : 'Sync Live'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Side-by-Side: Top 25 WAR Records vs Live 26-Man MLB Roster */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Left: Top 25 WAR Records */}
+                <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-display font-bold text-amber-400 uppercase">
+                      Top 25 Single-Season WAR Records
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {TEAM_TOP_25_WAR_SEASONS[vaultSelectedTeam]?.length || 25} Records Indexed
+                    </span>
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
+                    {(TEAM_TOP_25_WAR_SEASONS[vaultSelectedTeam] || TEAM_TOP_25_WAR_SEASONS['Baltimore Orioles']).map((entry) => (
+                      <div
+                        key={`${entry.playerName}-${entry.year}-${entry.rank}`}
+                        onClick={() => {
+                          const card = convertWarSeasonToCard(entry, vaultSelectedTeam);
+                          setInspectedCardForStats(card);
+                        }}
+                        className="p-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-white/5 hover:border-amber-500/40 transition-colors flex items-center justify-between cursor-pointer text-xs font-mono"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 text-center font-bold text-amber-400">#{entry.rank}</span>
+                          <span className="text-base">{entry.avatarIcon}</span>
+                          <div>
+                            <span className="font-bold text-white">{entry.playerName}</span>
+                            <span className="text-slate-400 ml-1.5">({entry.year} · {entry.position})</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-amber-300">{entry.bRefWar.toFixed(1)} WAR</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right: Live 26-Man Active Roster (MLB Stats API) */}
+                <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-display font-bold text-emerald-400 uppercase">
+                      Official Live 26-Man Roster (MLB Stats API)
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
+                      Live Synchronized
+                    </span>
+                  </div>
+
+                  {isLoadingMlbRoster ? (
+                    <div className="py-12 text-center text-xs font-mono text-slate-400 animate-pulse">
+                      📡 Connecting to https://statsapi.mlb.com/api/v1/teams/...
+                    </div>
+                  ) : mlbRosterError ? (
+                    <div className="py-8 text-center text-xs font-mono text-amber-400">
+                      {mlbRosterError}
+                    </div>
+                  ) : (
+                    <div className="max-h-80 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
+                      {liveMlbRoster.map((player) => (
+                        <div
+                          key={player.id}
+                          className="p-2 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between text-xs font-mono"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 text-center text-slate-400 font-bold">#{player.jerseyNumber}</span>
+                            <span className="font-bold text-slate-200">{player.fullName}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-bold">
+                              {player.position}
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-mono">
+                              ID:{player.id}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 52-Series Simulation Engine Interactive Bar */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-3">
+              <h3 className="font-display font-bold text-sm text-white uppercase flex items-center gap-2">
+                <span>⚔️</span> 52-Series Quick-Simulation Engine
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs font-mono">
+                <div>
+                  <label className="block text-slate-400 mb-1">SERIES NUMBER</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={52}
+                    value={simSeriesNumber}
+                    onChange={(e) => setSimSeriesNumber(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">OPPONENT</label>
+                  <input
+                    type="text"
+                    value={simOpponent}
+                    onChange={(e) => setSimOpponent(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">OFFENSIVE DIRECTIVE</label>
+                  <select
+                    value={simOffensiveDirective}
+                    onChange={(e) => setSimOffensiveDirective(e.target.value as any)}
+                    className="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white"
+                  >
+                    <option value="BALANCED">Balanced Hitting</option>
+                    <option value="SMALL_BALL">Small Ball (High Speed)</option>
+                    <option value="POWER_HUNT">Power Hunt (Slugger)</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    onClick={handleSimulateQuickSeries}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 font-display font-black text-xs uppercase shadow"
+                  >
+                    Simulate Series
+                  </button>
+                </div>
+              </div>
+
+              {simSeriesFeedback && (
+                <div className="p-3 rounded-xl bg-black/60 border border-amber-500/30 text-xs font-mono text-amber-300">
+                  {simSeriesFeedback}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </main>
 
-      {/* ================= 4. RESPONSIVE FLOATING DOCK (ZERO CUTOFF) ================= */}
+      {/* ================= 4. RESPONSIVE FLOATING DOCK ================= */}
       <aside 
         aria-label="Quick Actions Dock" 
         className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-40 liquid-glass-dock rounded-full px-2 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1 sm:gap-2 shadow-2xl max-w-[96vw] overflow-x-auto scrollbar-none whitespace-nowrap"
@@ -902,19 +1424,75 @@ export default function App() {
           type="button"
           onClick={() => {
             soundManager.playButtonClick();
-            setMainTab('DRAFT_BOARD');
+            setMainTab('DEPTH_CHART');
           }}
           className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'DRAFT_BOARD' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
+            mainTab === 'DEPTH_CHART' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
           }`}
           title="Stick-To-The-Board Grid"
         >
           <span>📋</span> <span className="hidden sm:inline">Board</span>
         </button>
 
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            setMainTab('REFRAC_FORGE');
+          }}
+          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
+            mainTab === 'REFRAC_FORGE' ? 'glass-pill-active' : 'text-yellow-300 hover:text-white'
+          }`}
+          title="Refractor Forge & Rainbows"
+        >
+          <span>✨</span> <span className="hidden sm:inline">Forge</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            setMainTab('MARKETPLACE');
+          }}
+          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
+            mainTab === 'MARKETPLACE' ? 'glass-pill-active' : 'text-orange-400 hover:text-white'
+          }`}
+          title="Seasonal Sets & Marketplace"
+        >
+          <span>🛍️</span> <span className="hidden sm:inline">Market</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            setMainTab('CHOP_HOUSE');
+          }}
+          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
+            mainTab === 'CHOP_HOUSE' ? 'glass-pill-active' : 'text-amber-400 hover:text-white'
+          }`}
+          title="The Chop House Forum"
+        >
+          <span>🥩</span> <span className="hidden sm:inline">Chop House</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            setMainTab('GM_CONSOLE');
+          }}
+          className={`px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
+            mainTab === 'GM_CONSOLE' ? 'glass-pill-active' : 'text-slate-300 hover:text-white'
+          }`}
+          title="GM Operations & WAR Vault"
+        >
+          <span>💼</span> <span className="hidden sm:inline">GM Ops</span>
+        </button>
+
         <span className="w-px h-4 bg-white/20 mx-0.5 shrink-0" />
 
-        {/* Rip Foil Pack */}
+        {/* Quick Rip Foil Pack */}
         <button
           type="button"
           onClick={() => {
@@ -945,29 +1523,6 @@ export default function App() {
           title="Equipment Vending"
         >
           <span>🥫</span> <span className="hidden sm:inline">Vending</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsForgeOpen(true)}
-          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs font-display font-bold uppercase text-yellow-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-1 shrink-0"
-          title="Refractor Forge"
-        >
-          <span>✨</span> <span className="hidden sm:inline">Forge</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            setMainTab('SETS');
-          }}
-          className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs font-display font-bold uppercase transition-all flex items-center gap-1 shrink-0 ${
-            mainTab === 'SETS' ? 'glass-pill-active' : 'text-orange-400 hover:text-white hover:bg-white/10'
-          }`}
-          title="Seasonal Sets"
-        >
-          <span>🎴</span> <span className="hidden sm:inline">Sets</span>
         </button>
 
         <button
@@ -1184,6 +1739,15 @@ export default function App() {
           setInspectedCardForStats(card);
         }}
       />
+
+      {/* Scout CRM Copilot Floating Chatbot */}
+      <SupportChatbot
+        userId={userProfile?.uid || 'guest-mgr-01'}
+        username={userProfile?.username || 'BallparkManager'}
+        currentScreen={mainTab}
+        activeSeason={1}
+      />
+
     </div>
   );
 }

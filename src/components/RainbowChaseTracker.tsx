@@ -149,7 +149,7 @@ export const RainbowChaseTracker: React.FC<RainbowChaseTrackerProps> = ({
               {/* Mini Shader swatch line */}
               <div className="mt-1 pt-1 border-t border-slate-700/60 flex items-center justify-between text-[8px] font-mono">
                 <span className="text-slate-400 uppercase">
-                  {config.shaderEffect.replace('_', ' ')}
+                  {(config.shaderEffect || 'core').replace('_', ' ')}
                 </span>
                 {hasUnlocked && (
                   <span className="text-emerald-400 font-bold">OWNED</span>

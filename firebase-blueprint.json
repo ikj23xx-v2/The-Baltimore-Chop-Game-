@@ -67,6 +67,20 @@
         }
       },
       "required": ["username", "userId"]
+    },
+    "CRMIssue": {
+      "title": "CRMIssue",
+      "description": "User reported bug or simulation anomaly logged to CRM",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Reporting user ID" },
+        "username": { "type": "string", "description": "User handle" },
+        "issueCategory": { "type": "string", "description": "Issue classification" },
+        "severity": { "type": "string", "description": "Severity level" },
+        "errorMessage": { "type": "string", "description": "User description" },
+        "status": { "type": "string", "description": "OPEN, RESOLVED, etc." }
+      },
+      "required": ["userId", "errorMessage"]
     }
   },
   "firestore": {
@@ -77,6 +91,10 @@
     "/usernames/{usernameLower}": {
       "schema": "UsernameRecord",
       "description": "Global unique username reservation index"
+    },
+    "/crm_issues/{issueId}": {
+      "schema": "CRMIssue",
+      "description": "Scout CRM Copilot tickets and user bug reports"
     }
   }
 }

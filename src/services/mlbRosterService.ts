@@ -108,3 +108,6 @@ export async function fetchTeamRoster(teamId: number): Promise<MlbApiRosterPlaye
 export function getTeamIdByName(teamName: string): number {
   return MLB_API_TEAM_IDS[teamName] || 110; // Default to Orioles (110)
 }
+
+export const fetchActiveRosterFromMlbApi = fetchTeamRoster;
+
