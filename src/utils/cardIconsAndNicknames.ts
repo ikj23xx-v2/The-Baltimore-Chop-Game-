@@ -7,6 +7,9 @@ export interface PositionIconData {
   roleName: string;
   fieldingZone: string;
   tacticalDescription: string;
+  bgGradient: string;
+  accentColor: string;
+  fieldSvgType: 'PITCHER_MOUND' | 'CATCHER_GEAR' | 'INFIELD_CORNER' | 'MIDDLE_INFIELD' | 'OUTFIELD_WALL' | 'BATTER_BOX';
 }
 
 export const POSITION_ICON_REGISTRY: Record<Position, PositionIconData> = {
@@ -15,77 +18,110 @@ export const POSITION_ICON_REGISTRY: Record<Position, PositionIconData> = {
     badge: 'MASK & CHEST',
     roleName: 'Field General / Backstop',
     fieldingZone: 'Home Plate Fortress',
-    tacticalDescription: 'Pitch framing, pop-time arm, and blocking dirt balls'
+    tacticalDescription: 'Pitch framing, pop-time arm, and blocking dirt balls',
+    bgGradient: 'from-amber-950/70 via-slate-900 to-amber-900/60',
+    accentColor: '#f59e0b',
+    fieldSvgType: 'CATCHER_GEAR'
   },
   '1B': {
     symbol: '🧤',
     badge: 'CORNER SCOOP',
     roleName: 'First Base Anchor',
     fieldingZone: 'Right Infield Corner',
-    tacticalDescription: 'Infield dig specialist and stretch target'
+    tacticalDescription: 'Infield dig specialist and stretch target',
+    bgGradient: 'from-orange-950/70 via-slate-900 to-amber-900/60',
+    accentColor: '#ea580c',
+    fieldSvgType: 'INFIELD_CORNER'
   },
   '2B': {
     symbol: '⚡',
     badge: 'KEYSTONE PIVOT',
     roleName: 'Second Base Pivot',
     fieldingZone: 'Middle Infield East',
-    tacticalDescription: 'Turn-two lightning release and shallow fly tracking'
+    tacticalDescription: 'Turn-two lightning release and shallow fly tracking',
+    bgGradient: 'from-blue-950/70 via-slate-900 to-cyan-900/60',
+    accentColor: '#38bdf8',
+    fieldSvgType: 'MIDDLE_INFIELD'
   },
   '3B': {
     symbol: '🧱',
     badge: 'HOT CORNER',
     roleName: 'The Hot Corner',
     fieldingZone: 'Left Infield Reflex Zone',
-    tacticalDescription: '110+ mph reflex dives and barehanded bare-down throws'
+    tacticalDescription: '110+ mph reflex dives and barehanded bare-down throws',
+    bgGradient: 'from-rose-950/70 via-slate-900 to-amber-900/60',
+    accentColor: '#f43f5e',
+    fieldSvgType: 'INFIELD_CORNER'
   },
   SS: {
     symbol: '🏹',
     badge: '6-HOLE CANNON',
     roleName: 'Shortstop Maestro',
     fieldingZone: 'Deep 6-Hole Infield',
-    tacticalDescription: 'Premier range captain with jump-throw accuracy'
+    tacticalDescription: 'Premier range captain with jump-throw accuracy',
+    bgGradient: 'from-indigo-950/70 via-slate-900 to-purple-900/60',
+    accentColor: '#818cf8',
+    fieldSvgType: 'MIDDLE_INFIELD'
   },
   LF: {
     symbol: '🌲',
     badge: 'LEFT MEADOW',
     roleName: 'Left Field Corner',
     fieldingZone: 'Outfield Left Alley',
-    tacticalDescription: 'Wall reads and tracking line-drive rockets'
+    tacticalDescription: 'Wall reads and tracking line-drive rockets',
+    bgGradient: 'from-emerald-950/70 via-slate-900 to-teal-900/60',
+    accentColor: '#10b981',
+    fieldSvgType: 'OUTFIELD_WALL'
   },
   CF: {
     symbol: '🦅',
     badge: 'GAP PATROL',
     roleName: 'Center Field Patrol',
     fieldingZone: 'Deep Center Pasture',
-    tacticalDescription: 'Outfield command, elite sprint speed, and dive robberies'
+    tacticalDescription: 'Outfield command, elite sprint speed, and dive robberies',
+    bgGradient: 'from-teal-950/70 via-slate-900 to-emerald-900/60',
+    accentColor: '#14b8a6',
+    fieldSvgType: 'OUTFIELD_WALL'
   },
   RF: {
     symbol: '🎯',
     badge: 'LASER CANNON',
     roleName: 'Right Field Arm',
     fieldingZone: 'Right Outfield Sector',
-    tacticalDescription: 'Deadly 95+ mph throws to third base and plate cutoffs'
+    tacticalDescription: 'Deadly 95+ mph throws to third base and plate cutoffs',
+    bgGradient: 'from-lime-950/70 via-slate-900 to-emerald-900/60',
+    accentColor: '#84cc16',
+    fieldSvgType: 'OUTFIELD_WALL'
   },
   DH: {
     symbol: '💥',
     badge: 'HEAVY LUMBER',
     roleName: 'Designated Masher',
     fieldingZone: 'Dugout Bat Rack',
-    tacticalDescription: 'Pure offensive barrel specialist with max exit velo'
+    tacticalDescription: 'Pure offensive barrel specialist with max exit velo',
+    bgGradient: 'from-red-950/70 via-slate-900 to-orange-900/60',
+    accentColor: '#ef4444',
+    fieldSvgType: 'BATTER_BOX'
   },
   SP: {
     symbol: '🔥',
     badge: 'ROTATION ACE',
     roleName: 'Starting Pitcher',
     fieldingZone: 'The 60ft-6in Mound',
-    tacticalDescription: 'Deep arsenal command, tunnel sequencing, and pitch stamina'
+    tacticalDescription: 'Deep arsenal command, tunnel sequencing, and pitch stamina',
+    bgGradient: 'from-amber-950/70 via-slate-900 to-red-900/60',
+    accentColor: '#f59e0b',
+    fieldSvgType: 'PITCHER_MOUND'
   },
   RP: {
     symbol: '🔒',
     badge: 'BULLPEN LOCK',
     roleName: 'Relief Fireman / Closer',
     fieldingZone: 'Late-Inning High Leverage',
-    tacticalDescription: 'High-leverage punchouts and swing-and-miss stuff'
+    tacticalDescription: 'High-leverage punchouts and swing-and-miss stuff',
+    bgGradient: 'from-zinc-950 via-slate-900 to-amber-950/80',
+    accentColor: '#fbbf24',
+    fieldSvgType: 'PITCHER_MOUND'
   }
 };
 

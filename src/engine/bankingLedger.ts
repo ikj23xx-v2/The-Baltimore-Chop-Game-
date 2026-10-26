@@ -3,6 +3,8 @@ import { BankAccountState, BankTransaction, CurrencyType, TransactionCategory } 
 
 const STORAGE_KEY = 'chop_bank_ledger_state_v1';
 
+import { REWARD_CONFIG } from '../config/rewardsConfig';
+
 export function getInitialBankAccount(userId: string = 'manager_player_1'): BankAccountState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -16,30 +18,33 @@ export function getInitialBankAccount(userId: string = 'manager_player_1'): Bank
     // fallback
   }
 
+  const initialTokens = REWARD_CONFIG.STARTER_BASE_TOKENS + REWARD_CONFIG.GOOGLE_SIGNUP_BONUS_TOKENS;
+  const initialCredits = REWARD_CONFIG.STARTER_BASE_CREDITS;
+
   const initialAccount: BankAccountState = {
     userId,
-    vendingTokenBalance: 1250,
-    leagueCreditBalance: 300,
+    vendingTokenBalance: initialTokens,
+    leagueCreditBalance: initialCredits,
     transactions: [
       {
         id: 'tx_init_tokens',
         timestamp: Date.now() - 86400000,
         type: 'CREDIT',
         currency: 'VENDING_TOKENS',
-        amount: 1250,
+        amount: initialTokens,
         category: 'ADMIN_ADJUSTMENT',
-        description: 'Season Opening Welcome Token Allocation',
-        balanceAfter: 1250,
+        description: 'New GM Franchise Welcome Grant (Tokens for Hobby Box Rips)',
+        balanceAfter: initialTokens,
       },
       {
         id: 'tx_init_credits',
         timestamp: Date.now() - 86400000,
         type: 'CREDIT',
         currency: 'LEAGUE_CREDITS',
-        amount: 300,
-        category: 'SERIES_WIN_REWARD',
-        description: 'Spring Training Exhibition Victory Purse',
-        balanceAfter: 300,
+        amount: initialCredits,
+        category: 'ADMIN_ADJUSTMENT',
+        description: 'Franchise Operations & 26-Man Lineup Credit Reserve',
+        balanceAfter: initialCredits,
       },
     ],
   };

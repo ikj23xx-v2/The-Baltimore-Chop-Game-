@@ -24,12 +24,14 @@ interface AccountProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   onBroadcastLog?: (msg: string, type: 'chop' | 'info') => void;
+  onAwardShareTokens?: (amount: number, platform: string) => void;
 }
 
 export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({
   isOpen,
   onClose,
-  onBroadcastLog
+  onBroadcastLog,
+  onAwardShareTokens,
 }) => {
   const [profile, setProfile] = useState<UserAccountProfile | null>(authService.getProfile());
   const [newUsername, setNewUsername] = useState('');
@@ -244,6 +246,48 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* ================= SOCIAL MEDIA SHARING & REWARDS ================= */}
+          <div className="rounded-2xl p-4 bg-slate-950/70 border border-amber-500/30">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-display font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                <span>📣</span> Social Media Sharing & Free Tokens
+              </span>
+              <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
+                +250 Tokens / Share
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400 mb-3">
+              Share your franchise invite code with friends on social media to earn unlimited token replenishment!
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { name: 'X / Twitter', icon: '𝕏', action: () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('⚾ Build your dream 26-man roster on The Baltimore Chop™! Join with my invite code: @' + (currentProfile?.username || 'GM'))}`, '_blank') },
+                { name: 'Threads', icon: '🧵', action: () => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent('⚾ Join me on The Baltimore Chop™! 26-man lineup strategy & high-bounce simulation: @' + (currentProfile?.username || 'GM'))}`, '_blank') },
+                { name: 'Facebook', icon: '📘', action: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}`, '_blank') },
+                { name: 'Instagram', icon: '📷', action: () => {
+                  navigator.clipboard.writeText(`Join me on The Baltimore Chop™ with invite code @${currentProfile?.username || 'GM'}: ${window.location.origin}`);
+                  if (onBroadcastLog) onBroadcastLog('Copied Instagram story invite text to clipboard!', 'info');
+                  window.open('https://www.instagram.com/', '_blank');
+                }},
+              ].map((plat) => (
+                <button
+                  key={plat.name}
+                  type="button"
+                  onClick={() => {
+                    plat.action();
+                    if (onAwardShareTokens) onAwardShareTokens(250, plat.name);
+                    if (onBroadcastLog) onBroadcastLog(`Shared on ${plat.name}! +250 Vending Tokens awarded.`, 'chop');
+                  }}
+                  className="p-2.5 rounded-xl bg-slate-900 hover:bg-amber-500/15 border border-slate-800 hover:border-amber-400/60 text-center transition-all cursor-pointer flex flex-col items-center gap-1"
+                >
+                  <span className="text-base">{plat.icon}</span>
+                  <span className="text-[10px] font-bold text-slate-200">{plat.name}</span>
+                </button>
+              ))}
             </div>
           </div>
 

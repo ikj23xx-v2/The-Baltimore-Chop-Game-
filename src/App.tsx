@@ -90,6 +90,10 @@ import { ArtOfChopBanner } from './components/ArtOfChopBanner';
 import { ArtOfChopGallery } from './components/ArtOfChopGallery';
 import { SeasonalBinderGallery } from './components/SeasonalBinderGallery';
 import { ChopWalletModal } from './components/ChopWalletModal';
+import { ChopControlCenter } from './components/ChopControlCenter';
+import { OnboardingSplashModal } from './components/OnboardingSplashModal';
+import { SocialShareModal } from './components/SocialShareModal';
+import { REWARD_CONFIG } from './config/rewardsConfig';
 import { ChopSlabCase } from './components/ChopSlabCase';
 import { getInitialBankAccount, recordTransaction } from './engine/bankingLedger';
 import { BankAccountState } from './types/banking';
@@ -188,6 +192,11 @@ export default function App() {
   const [isSeasonalBinderOpen, setIsSeasonalBinderOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [walletSpent, setWalletSpent] = useState<{ daily: number; monthly: number }>({ daily: 0, monthly: 0 });
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? localStorage.getItem('the_baltimore_chop_onboarding_completed') !== 'true' : true;
+  });
+  const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+  const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
 
   // --- REFRACTOR FORGE INLINE STATE ---
   const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
@@ -604,6 +613,63 @@ export default function App() {
     }
   };
 
+  // Complete onboarding signup, tutorial & starting mode selection
+  const handleOnboardingComplete = (
+    newProfile: UserAccountProfile,
+    bonusTokens: number,
+    startingCredits: number,
+    selectedMode: string
+  ) => {
+    setUserProfile(newProfile);
+    try {
+      localStorage.setItem('the_baltimore_chop_onboarding_completed', 'true');
+    } catch {
+      // ignore
+    }
+
+    const totalStartingTokens = REWARD_CONFIG.STARTER_BASE_TOKENS + bonusTokens;
+    try {
+      const { updatedAccount } = recordTransaction(bankAccount, {
+        type: 'CREDIT',
+        currency: 'VENDING_TOKENS',
+        amount: totalStartingTokens,
+        category: 'ADMIN_ADJUSTMENT',
+        description: `Welcome Grant: ${REWARD_CONFIG.STARTER_BASE_TOKENS} Base + ${bonusTokens} Provider Bonus`,
+      });
+      setBankAccount(updatedAccount);
+      setVendingTokens(updatedAccount.vendingTokenBalance);
+    } catch {
+      // ignore
+    }
+
+    if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(selectedMode)) {
+      setMainTab(selectedMode as ActiveTab);
+    }
+
+    setIsOnboardingOpen(false);
+    soundManager.playHomeRunFanfare();
+    addLog(`🎉 Welcome GM @${newProfile.username}! Granted +${totalStartingTokens} Tokens & ${startingCredits} Credits.`, 'chop');
+  };
+
+  // Viral social media sharing credit reward
+  const handleAwardShareTokens = (amount: number, platformName: string) => {
+    try {
+      const { updatedAccount } = recordTransaction(bankAccount, {
+        type: 'CREDIT',
+        currency: 'VENDING_TOKENS',
+        amount,
+        category: 'ADMIN_ADJUSTMENT',
+        description: `Social Viral Share Bounty: ${platformName} (+${amount} Tokens)`,
+      });
+      setBankAccount(updatedAccount);
+      setVendingTokens(updatedAccount.vendingTokenBalance);
+      soundManager.playRefractorShine();
+      addLog(`📣 SHARED ON ${platformName.toUpperCase()}: +${amount} Vending Tokens credited!`, 'chop');
+    } catch (err: unknown) {
+      console.error(err);
+    }
+  };
+
   // Deploy manager tactical card
   const handleDeployManagerCard = () => {
     const validation = validateManagerUsage(selectedManagerInstance, seasonProgress.seasonNumber, simSeriesNumber);
@@ -648,84 +714,74 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-orange-500 selection:text-white pb-28">
       
-      {/* ================= 1. PREMIUM BALLPARK HEADER ================= */}
-      <header className="sticky top-0 z-40 w-full bg-[#0a0f1d]/90 backdrop-blur-md border-b border-white/10 px-3 sm:px-6 py-2.5 sm:py-3 transition-all">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+      {/* ================= 1. COMPACT SLEEK BALLPARK HEADER ================= */}
+      <header className="sticky top-0 z-40 w-full bg-[#0a0f1d]/95 backdrop-blur-md border-b border-white/10 px-3 sm:px-6 py-2 transition-all">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           
-          {/* Brand & Active Team Theme Badge */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsSplashOpen(true)}
-              className="flex items-center gap-2 group text-left transition-transform active:scale-95"
-              title="Click to Switch Ballpark & Team"
+          {/* Brand & Active Team Theme Badge (Compact) */}
+          <button
+            type="button"
+            onClick={() => setIsSplashOpen(true)}
+            className="flex items-center gap-2 group text-left transition-transform active:scale-95"
+            title="Click to Switch Ballpark & Team"
+          >
+            <div 
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center font-display font-black text-xs sm:text-sm shadow border border-white/20 transition-all group-hover:scale-105"
+              style={{ backgroundColor: currentTeamTheme.primaryColor, color: currentTeamTheme.secondaryColor }}
             >
-              <div 
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-display font-black text-sm sm:text-lg shadow-lg border border-white/20 transition-all group-hover:scale-105"
-                style={{ backgroundColor: currentTeamTheme.primaryColor, color: currentTeamTheme.secondaryColor }}
-              >
-                <span>{currentTeamTheme.logoIcon}</span>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-display font-black text-sm sm:text-lg tracking-wider text-white uppercase group-hover:text-amber-400 transition-colors">
-                    {currentTeamTheme.name}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold text-orange-400 bg-orange-950/70 border border-orange-500/30 px-1.5 py-0.2 rounded-full hidden sm:inline">
-                    {currentTeamTheme.league} {currentTeamTheme.division}
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400 hidden xs:inline">
-                  {currentTeamTheme.ballpark} · Change Team ⟲
-                </span>
-              </div>
-            </button>
-          </div>
+              <span>{currentTeamTheme.logoIcon}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display font-black text-xs sm:text-sm tracking-wider text-white uppercase group-hover:text-amber-400 transition-colors truncate max-w-[120px] sm:max-w-none">
+                {currentTeamTheme.name}
+              </span>
+            </div>
+          </button>
 
-          {/* Quick Hub Launchers */}
+          {/* Center: iOS / Android Style Control Center Pull-Down Pill */}
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              setIsControlCenterOpen(!isControlCenterOpen);
+            }}
+            className="px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-amber-300 font-mono text-[11px] sm:text-xs font-bold shadow-[0_0_15px_rgba(251,191,36,0.18)] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            title="Pull down iOS/Android Control Center"
+          >
+            <span className="text-xs sm:text-sm">🎛️</span>
+            <span className="hidden xs:inline">Control Center</span>
+            <span className="text-amber-400 text-[10px]">⌄</span>
+          </button>
+
+          {/* Right: Balance, Social Share & Profile */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <LofiPlayerToggle />
-
-            {/* Chop Vault Banking Button */}
+            {/* Tokens Balance Pill */}
             <button
               type="button"
               onClick={() => {
                 soundManager.playButtonClick();
-                setIsBankModalOpen(true);
+                setIsWalletOpen(true);
               }}
-              className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-mono font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 rounded-xl transition-all whitespace-nowrap shrink-0 shadow flex items-center gap-1.5 cursor-pointer"
-              title="Open Double-Entry Bank Vault & Ledger"
+              className="px-2 py-1 sm:px-2.5 sm:py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm cursor-pointer"
+              title="Open Chop Wallet (Tokens & Deposits)"
             >
               <span>🪙</span>
               <span className="font-mono font-black">{bankAccount.vendingTokenBalance.toLocaleString()}</span>
-              <span className="hidden sm:inline text-[10px] text-slate-400">TOKENS</span>
+              <span className="hidden md:inline text-[9px] text-slate-400">TOKENS</span>
             </button>
 
+            {/* Social Share Reward Pill */}
             <button
               type="button"
               onClick={() => {
                 soundManager.playButtonClick();
-                setIsPortalOpen(true);
+                setIsSocialShareOpen(true);
               }}
-              className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-display font-black uppercase tracking-wider text-slate-950 bg-gradient-to-r from-amber-400 to-yellow-400 hover:brightness-110 rounded-xl transition-all whitespace-nowrap shrink-0 shadow flex items-center gap-1"
-              title="30 Franchises Top 25 WAR Vault & Knowledge Base"
+              className="px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-white/10 text-xs font-bold transition-all hidden sm:flex items-center gap-1 cursor-pointer"
+              title="Share site on social media for +250 free tokens"
             >
-              <span>🏛️</span> <span className="hidden md:inline">Franchise</span> Vault
-            </button>
-
-            {/* Beta Feedback Dispatch Button */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsBetaFeedbackOpen(true);
-              }}
-              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap cursor-pointer"
-              title="Dispatch Beta Scouting & Balance Feedback"
-            >
-              <span>📋</span>
-              <span className="hidden sm:inline">Scout Report</span>
-              <span className="text-[9px] px-1 py-0.2 rounded bg-amber-400 text-slate-950 font-black">BETA</span>
+              <span>📣</span>
+              <span className="text-[10px] text-amber-400">+250</span>
             </button>
 
             {/* User Profile */}
@@ -735,8 +791,8 @@ export default function App() {
                 soundManager.playButtonClick();
                 setIsAccountModalOpen(true);
               }}
-              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/10 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm whitespace-nowrap"
-              title="User Account Handle"
+              className="px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/10 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer"
+              title="User Account Profile"
             >
               <JerseyAvatar
                 teamId="BAL"
@@ -745,140 +801,14 @@ export default function App() {
                 size="sm"
                 className="w-5 h-5"
               />
-              <span className="text-[11px] truncate max-w-[65px] sm:max-w-[100px]">
-                @{userProfile?.username || 'Player'}
+              <span className="text-[11px] truncate max-w-[65px] sm:max-w-[90px]">
+                @{userProfile?.username || 'GM'}
               </span>
             </button>
           </div>
 
         </div>
       </header>
-
-      {/* ================= 2. DEDICATED 6-TAB SUB-NAVIGATION BAR ================= */}
-      <nav className="w-full bg-[#0c1320] border-b border-white/10 px-3 sm:px-6 py-2 flex items-center justify-between gap-3 overflow-x-auto scrollbar-none z-30">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2">
-          
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-            {/* 1. ARENA */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('ARENA');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'ARENA' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>🏟️</span> Arena
-            </button>
-
-            {/* 2. DEPTH_CHART */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('DEPTH_CHART');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'DEPTH_CHART' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>📋</span> 26-Man Depth Chart
-            </button>
-
-            {/* 3. REFRAC_FORGE */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('REFRAC_FORGE');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'REFRAC_FORGE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>✨</span> Refractor Forge
-            </button>
-
-            {/* 4. MARKETPLACE */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('MARKETPLACE');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'MARKETPLACE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>🛍️</span> Marketplace & Sets
-            </button>
-
-            {/* 5. CHOP_HOUSE */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('CHOP_HOUSE');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'CHOP_HOUSE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>🥩</span> The Chop House
-            </button>
-
-            {/* 6. GM_CONSOLE */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('GM_CONSOLE');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'GM_CONSOLE' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>💼</span> GM Console & Vault
-            </button>
-
-            {/* 7. HOBBY_OUTPOST */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setMainTab('HOBBY_OUTPOST');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 ${
-                mainTab === 'HOBBY_OUTPOST' ? 'glass-pill-active' : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span>📦</span> Hobby Outpost
-            </button>
-
-            <span className="w-px h-4 bg-white/10 mx-1 shrink-0" />
-
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsChopExtremeOpen(true);
-              }}
-              className="px-3 py-1.5 rounded-xl text-xs font-display font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 text-red-400 hover:text-white hover:bg-red-950/40 border border-red-500/30"
-            >
-              <span>🔥</span> The 4 Pillars
-            </button>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-400 shrink-0">
-            <span>Points: <strong className="text-amber-400">{franchisePoints.toLocaleString()}</strong></span>
-            <span>·</span>
-            <span>Tokens: <strong className="text-emerald-400">{vendingTokens}</strong></span>
-          </div>
-
-        </div>
-      </nav>
 
       {/* ================= 3. MAIN DASHBOARD CONTENT ================= */}
       <main className="w-full max-w-7xl mx-auto p-3 sm:p-6 space-y-6 pt-4">
@@ -1840,6 +1770,7 @@ export default function App() {
         isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
         onBroadcastLog={addLog}
+        onAwardShareTokens={handleAwardShareTokens}
       />
 
       {/* Master Teams & Cards Almanac Checklist */}
@@ -1905,6 +1836,38 @@ export default function App() {
           />
         </div>
       )}
+
+      {/* iOS / Android Style Drop-Down Control Center */}
+      <ChopControlCenter
+        isOpen={isControlCenterOpen}
+        onClose={() => setIsControlCenterOpen(false)}
+        teamTheme={currentTeamTheme}
+        bankAccount={bankAccount}
+        userProfile={userProfile}
+        onOpenWallet={() => setIsWalletOpen(true)}
+        onOpenSwitchTeam={() => setIsSplashOpen(true)}
+        onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
+        onOpenSocialShare={() => setIsSocialShareOpen(true)}
+        onSelectMode={(mode) => {
+          if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(mode)) {
+            setMainTab(mode as ActiveTab);
+          }
+        }}
+      />
+
+      {/* First-Time Splash Screen & Skippable Onboarding Flow */}
+      <OnboardingSplashModal
+        isOpen={isOnboardingOpen}
+        onComplete={handleOnboardingComplete}
+      />
+
+      {/* Social Media Sharing & Viral Token Rewards Modal */}
+      <SocialShareModal
+        isOpen={isSocialShareOpen}
+        onClose={() => setIsSocialShareOpen(false)}
+        userHandle={userProfile?.username || 'BaltimoreGM'}
+        onAwardShareTokens={handleAwardShareTokens}
+      />
 
       {/* Scout CRM Copilot Floating Chatbot */}
       <SupportChatbot

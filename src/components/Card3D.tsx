@@ -440,42 +440,72 @@ export const Card3D: React.FC<Card3DProps> = ({
                 </div>
               </div>
 
-              {/* CENTER: PLAYER AVATAR, POSITION THEMED EMBLEM & BASEBALL REFERENCE NICKNAME */}
-              <div className="my-auto relative flex flex-col items-center justify-center p-2 z-10">
-                <div className="relative flex items-center justify-center">
-                  {/* Position Aura Glow */}
-                  <div className="absolute inset-0 rounded-full blur-xl bg-amber-500/20 pointer-events-none" />
+              {/* CENTER: PLAYER AVATAR, POSITION FIELD VIGNETTE & BASEBALL REFERENCE NICKNAME */}
+              <div className="my-auto relative flex flex-col items-center justify-center p-2 z-10 w-full">
+                
+                {/* Position-Specific Field Backdrop Frame */}
+                <div className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl p-1 bg-gradient-to-b ${posConfig.bgGradient} border-2 border-[${posConfig.accentColor}]/50 shadow-2xl flex flex-col items-center justify-center overflow-hidden group/portrait`}>
+                  
+                  {/* Field Watermark Silhouette */}
+                  <div className="absolute inset-0 opacity-25 pointer-events-none flex items-center justify-center">
+                    {posConfig.fieldSvgType === 'PITCHER_MOUND' && (
+                      <div className="w-24 h-24 rounded-full border-4 border-dashed border-amber-400/30 flex items-center justify-center">
+                        <div className="w-10 h-2 bg-white/40 rounded-sm" />
+                      </div>
+                    )}
+                    {posConfig.fieldSvgType === 'CATCHER_GEAR' && (
+                      <div className="w-16 h-16 border-2 border-amber-400/40 rotate-45 flex items-center justify-center">
+                        <div className="w-8 h-8 border border-white/30" />
+                      </div>
+                    )}
+                    {(posConfig.fieldSvgType === 'INFIELD_CORNER' || posConfig.fieldSvgType === 'MIDDLE_INFIELD') && (
+                      <div className="w-20 h-20 border-2 border-white/20 rotate-45" />
+                    )}
+                    {posConfig.fieldSvgType === 'OUTFIELD_WALL' && (
+                      <div className="w-full h-8 border-t-2 border-dashed border-emerald-400/40 mt-12 bg-emerald-950/40" />
+                    )}
+                    {posConfig.fieldSvgType === 'BATTER_BOX' && (
+                      <div className="w-12 h-20 border-2 border-red-500/30 flex items-center justify-center" />
+                    )}
+                  </div>
 
-                  {/* Primary Avatar + Position Icon Overlay */}
-                  <div className="relative">
-                    <span className="text-6xl sm:text-7xl filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] select-none transform hover:scale-110 transition-transform duration-300 block">
+                  {/* Dual Position & Nickname Icon Art */}
+                  <div className="relative z-10 flex items-center justify-center">
+                    <span className="text-5xl sm:text-6xl filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.95)] select-none transform group-hover/portrait:scale-110 transition-transform duration-300 block">
                       {bRefData.icon || card.avatarIcon}
                     </span>
 
-                    {/* Position Seal Emblem Floating Badge */}
+                    {/* Floating Position Gear Badge */}
                     <span 
                       title={`${card.position}: ${posConfig.roleName}`}
-                      className="absolute -bottom-1 -right-2 text-sm bg-slate-950/90 text-amber-300 border border-amber-400/50 rounded-full w-7 h-7 flex items-center justify-center shadow-lg transform hover:scale-125 transition-transform"
+                      className="absolute -bottom-2 -right-3 text-xs bg-slate-950 text-amber-300 border border-amber-400 rounded-full w-6 h-6 flex items-center justify-center shadow-lg font-black"
                     >
                       {posConfig.symbol}
                     </span>
                   </div>
 
+                  {/* Micro Position Tag */}
+                  <div className="absolute bottom-1 left-0 right-0 text-center pointer-events-none">
+                    <span className="text-[7.5px] font-mono font-bold tracking-wider text-slate-300/80 bg-black/60 px-1.5 py-0.2 rounded-full uppercase">
+                      {posConfig.badge}
+                    </span>
+                  </div>
+
                   {card.refractorTier !== 'BASE' && (
-                    <span className="absolute -top-1 -right-3 text-xs font-mono font-bold px-1.5 py-0.5 rounded-full shadow-lg border border-white/20 bg-orange-600 text-white animate-pulse">
+                    <span className="absolute top-1 right-1 text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full shadow-lg border border-white/20 bg-orange-600 text-white animate-pulse">
                       ✨
                     </span>
                   )}
                 </div>
 
                 {/* OFFICIAL BASEBALL REFERENCE NICKNAME BANNER */}
-                <div className="mt-2 relative z-20 select-none">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20 border border-amber-400/60 shadow-[0_2px_8px_rgba(245,158,11,0.25)]">
+                <div className="mt-2 relative z-20 select-none text-center">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/25 via-amber-400/35 to-amber-500/25 border border-amber-400/80 shadow-[0_2px_10px_rgba(245,158,11,0.35)]">
                     <span className="text-[9px] text-amber-400">⚡</span>
-                    <span className="text-[10px] font-display font-black tracking-wider text-amber-200 uppercase drop-shadow">
+                    <span className="text-[10px] sm:text-[11px] font-display font-black tracking-wider text-amber-200 uppercase drop-shadow">
                       "{bRefData.nickname}"
                     </span>
-                    <span className="text-[8px] font-mono text-amber-400/80 bg-black/40 px-1 rounded">
+                    <span className="text-[7.5px] font-mono font-black text-slate-950 bg-amber-400 px-1 rounded">
                       bRef
                     </span>
                   </div>
