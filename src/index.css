@@ -213,8 +213,9 @@
   box-shadow: inset 0 0 0 1px #a4865e, inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 14px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* Bowman 1st Dark Cyber Carbon Weave */
-.texture-bowman-carbon {
+/* Prospect 1st Dark Cyber Carbon Weave */
+.texture-bowman-carbon,
+.texture-prospect-carbon {
   background: 
     linear-gradient(27deg, #09131d 5px, transparent 5px) 0 5px,
     linear-gradient(207deg, #09131d 5px, transparent 5px) 10px 0px,

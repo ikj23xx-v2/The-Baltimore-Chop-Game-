@@ -76,6 +76,16 @@ class TeamThemeService {
     return this.currentTeam;
   }
 
+  public getActiveTheme(): ActiveTeamTheme {
+    return this.currentTeam;
+  }
+
+  public setActiveTheme(theme: ActiveTeamTheme): ActiveTeamTheme {
+    this.currentTeam = theme;
+    this.notify();
+    return this.currentTeam;
+  }
+
   public setFavoriteTeam(teamName: string): ActiveTeamTheme {
     if (teamName === 'Negro League Legends') {
       this.currentTeam = NEGRO_LEAGUES_TEAM_INFO;

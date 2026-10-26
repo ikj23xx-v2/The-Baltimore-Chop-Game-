@@ -84,7 +84,7 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
   // Trigger Walkout Animation
   const handleStartWalkout = () => {
     soundManager.playCardWhoosh();
-    triggerHapticFeedback('MEDIUM');
+    triggerHapticFeedback('SNAP');
     setCinematicStage('WALKING_FORWARD');
     setWalkProgress(0);
   };

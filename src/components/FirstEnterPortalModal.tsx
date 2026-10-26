@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { ALL_PLAYERS } from '../data/players';
+import { ALL_PLAYERS, BASE_ACTIVE_PLAYERS, TOP_25_WAR_LEGENDS, NEGRO_LEAGUE_LEGENDS } from '../data/players';
 import { CARD_SETS } from '../data/sets';
 import { TWELVE_SEASONS, SeasonInfo } from '../data/seasons';
+import { STADIUM_CARDS, TOTAL_STADIUM_CARDS_COUNT } from '../data/stadiums';
+import { INITIAL_EQUIPMENT_CARDS } from '../data/equipment';
+import { LINEAR_WEIGHT_POINTS, calculateLeverageIndex, EXTREME_100_PATH_MILESTONES } from '../data/chopExtremeAnalytics';
+import { GAUNTLET_BOSSES, MOMENTS_OF_INFAMY } from '../data/chopExtremePillars';
 import { forumService, ForumPost } from '../services/forumService';
 import { authService, UserAccountProfile } from '../services/authService';
 import { soundManager } from '../services/audio';
-import { AnimatedGameLoop } from './AnimatedGameLoop';
 import { Card3D } from './Card3D';
 import { PlayerCard } from '../types/game';
 import { 
@@ -16,55 +19,63 @@ import {
   Layers, 
   Calendar, 
   Lock, 
-  Unlock, 
   CheckCircle2, 
   Search, 
-  Plus, 
-  ThumbsUp, 
-  Send, 
   Sparkles, 
   Trophy, 
   Flame, 
   Eye, 
   X,
-  ExternalLink,
   Shield,
-  HelpCircle
+  HelpCircle,
+  Video,
+  BarChart2,
+  Compass,
+  Zap,
+  Sliders
 } from 'lucide-react';
 
 interface FirstEnterPortalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCardForShowdown?: (card: PlayerCard) => void;
+  onOpenCardDetails?: (card: PlayerCard) => void;
 }
 
 type PortalTab = 
-  | 'GAME_BREAKDOWN'
-  | 'AVAILABLE_CARDS'
+  | 'KNOWLEDGE_BASE_COLLECTION' // Primary Default!
+  | 'NON_PLAYER_CARDS'          // 36 Stadium Cards + 12 Equipment
+  | 'ALL_PLAYERS_ROSTER'        // 855 Cards: 30 Teams + Top 25 WAR Legends + Negro Leagues
+  | 'CHOP_EXTREME_SABERMETRICS' // RE24, WPA, 4 Pillars & 100-Point Path
   | 'SEASONS_CALENDAR'
-  | 'KNOWLEDGE_BASE'
   | 'COMMUNITY_FORUM'
   | 'SIGNUP_LOGIN';
 
 export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
   isOpen,
   onClose,
-  onSelectCardForShowdown
+  onSelectCardForShowdown,
+  onOpenCardDetails
 }) => {
-  const [activeTab, setActiveTab] = useState<PortalTab>('GAME_BREAKDOWN');
+  // Knowledge Base & Card Collection Hub is the front-and-center default!
+  const [activeTab, setActiveTab] = useState<PortalTab>('KNOWLEDGE_BASE_COLLECTION');
 
-  // Available Cards Filter
-  const [cardSearch, setCardSearch] = useState('');
-  const [cardTeam, setCardTeam] = useState('ALL');
-  const [cardPos, setCardPos] = useState('ALL');
+  // Player Cards Browser Filter
+  const [playerSearch, setPlayerSearch] = useState('');
+  const [selectedSection, setSelectedSection] = useState<'ALL' | 'TOP_25_LEGENDS' | 'NEGRO_LEAGUES' | 'AL_EAST' | 'AL_CENTRAL' | 'AL_WEST' | 'NL_EAST' | 'NL_CENTRAL' | 'NL_WEST'>('ALL');
+  const [selectedTeam, setSelectedTeam] = useState<string>('ALL');
   const [inspectedCard, setInspectedCard] = useState<PlayerCard | null>(null);
+
+  // Stadium Filter
+  const [stadiumFilter, setStadiumFilter] = useState<'ALL' | 'AL' | 'NL' | 'HISTORIC'>('ALL');
+  const [stadiumSearch, setStadiumSearch] = useState('');
+
+  // Video Glyphs / Interactive simulation demo state
+  const [activeVideoGlyph, setActiveVideoGlyph] = useState<'CHOP_PHYSICS' | 'RE24_LEVERAGE' | 'ROTATION_360' | 'COUNTER_PREDICTION'>('CHOP_PHYSICS');
+  const [glyphPlaying, setGlyphPlaying] = useState(true);
 
   // Seasons Calendar Inspection
   const [selectedSeasonNum, setSelectedSeasonNum] = useState<number>(1);
-
-  // Knowledge Base Search
-  const [kbSearch, setKbSearch] = useState('');
-  const [kbCategory, setKbCategory] = useState<'ALL' | 'CHOP_PHYSICS' | 'COUNTER_RULES' | 'REFRACTORS' | 'ROSTER' | 'STREAK'>('ALL');
 
   // Forum State
   const [forumCategory, setForumCategory] = useState('ALL');
@@ -79,11 +90,6 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
   const [usernameInput, setUsernameInput] = useState(userProfile?.username || '');
   const [authMsg, setAuthMsg] = useState('');
 
-  // Unique Teams List (All 30 MLB Franchises)
-  const seasonTeams = React.useMemo(() => {
-    return Array.from(new Set(ALL_PLAYERS.map((p) => p.team))).sort();
-  }, []);
-
   // Subscribe to auth updates
   React.useEffect(() => {
     return authService.subscribe((p) => {
@@ -92,20 +98,46 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
     });
   }, []);
 
+  // Team list for dropdown
+  const allTeamNames = useMemo(() => {
+    const set = new Set<string>();
+    BASE_ACTIVE_PLAYERS.forEach(p => set.add(p.team));
+    return Array.from(set).sort();
+  }, []);
+
   if (!isOpen) return null;
 
-  const currentSeason = TWELVE_SEASONS.find((s) => s.seasonNumber === selectedSeasonNum) || TWELVE_SEASONS[0];
+  // Filtered Players Logic
+  const filteredPlayers = ALL_PLAYERS.filter(p => {
+    const matchesSearch = playerSearch === '' || 
+      p.name.toLowerCase().includes(playerSearch.toLowerCase()) || 
+      p.team.toLowerCase().includes(playerSearch.toLowerCase()) ||
+      p.position.toLowerCase().includes(playerSearch.toLowerCase());
 
-  // Filtered Cards for Season 1 (780 Total Cards Across 30 Teams)
-  const filteredSeasonCards = ALL_PLAYERS.filter((c) => {
-    const matchSearch =
-      cardSearch === '' ||
-      c.name.toLowerCase().includes(cardSearch.toLowerCase()) ||
-      c.team.toLowerCase().includes(cardSearch.toLowerCase()) ||
-      c.position.toLowerCase().includes(cardSearch.toLowerCase());
-    const matchTeam = cardTeam === 'ALL' || c.team === cardTeam;
-    const matchPos = cardPos === 'ALL' || c.position === cardPos;
-    return matchSearch && matchTeam && matchPos;
+    if (!matchesSearch) return false;
+
+    if (selectedSection === 'TOP_25_LEGENDS') return TOP_25_WAR_LEGENDS.some(l => l.id === p.id);
+    if (selectedSection === 'NEGRO_LEAGUES') return NEGRO_LEAGUE_LEGENDS.some(n => n.id === p.id);
+    if (selectedSection === 'AL_EAST') return ['Baltimore Orioles', 'Boston Red Sox', 'New York Yankees', 'Tampa Bay Rays', 'Toronto Blue Jays'].includes(p.team);
+    if (selectedSection === 'AL_CENTRAL') return ['Chicago White Sox', 'Cleveland Guardians', 'Detroit Tigers', 'Kansas City Royals', 'Minnesota Twins'].includes(p.team);
+    if (selectedSection === 'AL_WEST') return ['Houston Astros', 'Los Angeles Angels', 'Oakland Athletics', 'Seattle Mariners', 'Texas Rangers'].includes(p.team);
+    if (selectedSection === 'NL_EAST') return ['Atlanta Braves', 'Miami Marlins', 'New York Mets', 'Philadelphia Phillies', 'Washington Nationals'].includes(p.team);
+    if (selectedSection === 'NL_CENTRAL') return ['Chicago Cubs', 'Cincinnati Reds', 'Milwaukee Brewers', 'Pittsburgh Pirates', 'St. Louis Cardinals'].includes(p.team);
+    if (selectedSection === 'NL_WEST') return ['Arizona Diamondbacks', 'Colorado Rockies', 'Los Angeles Dodgers', 'San Diego Padres', 'San Francisco Giants'].includes(p.team);
+
+    if (selectedTeam !== 'ALL' && p.team !== selectedTeam) return false;
+
+    return true;
+  });
+
+  // Filtered Stadiums
+  const filteredStadiums = STADIUM_CARDS.filter(s => {
+    const matchesLeague = stadiumFilter === 'ALL' || s.league === stadiumFilter;
+    const matchesSearch = stadiumSearch === '' ||
+      s.name.toLowerCase().includes(stadiumSearch.toLowerCase()) ||
+      s.team.toLowerCase().includes(stadiumSearch.toLowerCase()) ||
+      s.city.toLowerCase().includes(stadiumSearch.toLowerCase());
+    return matchesLeague && matchesSearch;
   });
 
   // Handle Forum Upvote
@@ -124,14 +156,10 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
       category: newPostCategory,
       title: newPostTitle.trim(),
       content: newPostContent.trim(),
-      author: userProfile?.username || 'BirdlandFan',
-      authorBadge: userProfile?.isAnonymous ? 'ROOKIE' : 'VERIFIED FAN',
-      avatarIcon: userProfile?.linkedProviders?.includes('google.com')
-        ? '🌐'
-        : userProfile?.linkedProviders?.includes('apple.com')
-        ? '🍎'
-        : '⚾',
-      tags: ['Season1', 'Community']
+      author: userProfile?.username || 'DiamondCollector',
+      authorBadge: userProfile?.isAnonymous ? 'ROOKIE' : 'VERIFIED STATISTICIAN',
+      avatarIcon: '⚾',
+      tags: ['Season1', 'KnowledgeBase', 'Analytics']
     });
 
     setNewPostTitle('');
@@ -141,68 +169,39 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
     soundManager.playJackpotChime();
   };
 
-  // Handle Social Login
-  const handleGoogleLogin = async () => {
-    const res = await authService.linkGoogleAccount();
-    if (res.success) {
-      setAuthMsg('Linked with Google Account successfully!');
-      soundManager.playJackpotChime();
-    } else {
-      setAuthMsg(res.error || 'Google linking cancelled.');
-    }
-    setTimeout(() => setAuthMsg(''), 4000);
-  };
-
-  const handleAppleLogin = async () => {
-    const res = await authService.linkAppleAccount();
-    if (res.success) {
-      setAuthMsg('Linked with Apple Account successfully!');
-      soundManager.playJackpotChime();
-    } else {
-      setAuthMsg(res.error || 'Apple ID linking cancelled.');
-    }
-    setTimeout(() => setAuthMsg(''), 4000);
-  };
-
-  const handleUpdateUsername = async () => {
-    const res = await authService.changeUsername(usernameInput);
-    if (res.success) {
-      setAuthMsg('Username handle saved successfully!');
-      soundManager.playJackpotChime();
-    } else {
-      setAuthMsg(res.error || 'Failed to update username.');
-      soundManager.playUmpireCall(true);
-    }
-    setTimeout(() => setAuthMsg(''), 4000);
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/92 backdrop-blur-2xl animate-fade-in select-none">
-      <div className="liquid-glass-panel rounded-3xl w-full max-w-6xl p-4 sm:p-6 shadow-[0_25px_60px_-15px_rgba(234,88,12,0.4)] relative overflow-hidden flex flex-col max-h-[95vh] border-2 border-orange-500/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl animate-fade-in select-none">
+      <div className="liquid-glass-panel rounded-3xl w-full max-w-6xl shadow-[0_25px_60px_-15px_rgba(234,88,12,0.4)] relative overflow-hidden flex flex-col max-h-[96vh] border-2 border-orange-500/50">
         
         {/* Top Metallic Orange/Cyan Accent Bar */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-600 via-amber-400 to-cyan-400" />
 
         {/* Modal Top Bar: Game Logo + Title + Play Now CTA + Close */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4 mb-3 shrink-0">
+        <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between gap-3 shrink-0 bg-slate-950/90">
           <div className="flex items-center gap-3">
-            {/* Field Logo Icon (chopchop_085f9a0d.jpeg) */}
-            <img
-              src="/assets/aistudio/chopchop_085f9a0d.jpeg"
-              alt="The Baltimore Chop Logo"
-              className="w-12 h-12 rounded-2xl object-cover border-2 border-orange-500 shadow-[0_0_20px_rgba(234,88,12,0.5)] shrink-0"
-            />
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-600 to-amber-500 border-2 border-orange-400 flex items-center justify-center text-xl shadow-[0_0_16px_rgba(234,88,12,0.5)] shrink-0 overflow-hidden">
+              <img
+                src="/chop-logo.jpeg"
+                alt="The Baltimore Chop"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback if image path has issue
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                }}
+              />
+              <span className="font-display font-black text-slate-950">⚾</span>
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg sm:text-2xl font-display font-black text-white tracking-wide uppercase">
                   THE BALTIMORE CHOP
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded font-extrabold uppercase bg-orange-600 text-white shadow">
-                  SEASON 1 (11/1)
+                  SEASON 1 VAULT
                 </span>
               </div>
               <p className="text-xs text-slate-300 font-mono">
-                Official Baseball Card Battler · 3D Diamond Card Showdowns & 12-Month Release Calendar
+                Knowledge Base & Official Card Collection · 855 Players · 36 Stadiums · RE24 Analytics
               </p>
             </div>
           </div>
@@ -214,9 +213,9 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 soundManager.playBatCrack(true);
                 onClose();
               }}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 hover:brightness-110 active:scale-95 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-all"
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 hover:brightness-110 active:scale-95 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-all"
             >
-              <Play className="w-4 h-4 fill-slate-950" /> Play Ball (Enter Game)
+              <Play className="w-4 h-4 fill-slate-950" /> Enter Game
             </button>
             <button
               type="button"
@@ -229,946 +228,902 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
           </div>
         </div>
 
-        {/* Segmented Navigation Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-white/10 mb-4 shrink-0 scrollbar-none">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-1 px-4 sm:px-6 py-2 border-b border-white/10 bg-slate-900/70 overflow-x-auto scrollbar-none shrink-0">
           <button
             type="button"
-            onClick={() => setActiveTab('GAME_BREAKDOWN')}
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('KNOWLEDGE_BASE_COLLECTION');
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'GAME_BREAKDOWN'
+              activeTab === 'KNOWLEDGE_BASE_COLLECTION'
                 ? 'bg-orange-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-amber-300" /> Game Breakdown & Arena Loop
+            <BookOpen className="w-3.5 h-3.5 text-amber-300" /> Season Knowledge Base
           </button>
 
           <button
             type="button"
-            onClick={() => setActiveTab('AVAILABLE_CARDS')}
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('NON_PLAYER_CARDS');
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'AVAILABLE_CARDS'
-                ? 'bg-cyan-600 text-white shadow-md'
+              activeTab === 'NON_PLAYER_CARDS'
+                ? 'bg-orange-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-cyan-300" /> Season 1 Cards (29)
+            <span>🏟️</span> Non-Player Cards ({TOTAL_STADIUM_CARDS_COUNT} Stadiums + 12 Equip)
           </button>
 
           <button
             type="button"
-            onClick={() => setActiveTab('SEASONS_CALENDAR')}
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('ALL_PLAYERS_ROSTER');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
+              activeTab === 'ALL_PLAYERS_ROSTER'
+                ? 'bg-orange-600 text-white shadow-md'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5 text-cyan-300" /> All 855 Players by Franchise
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('CHOP_EXTREME_SABERMETRICS');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
+              activeTab === 'CHOP_EXTREME_SABERMETRICS'
+                ? 'bg-orange-600 text-white shadow-md'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-red-400" /> Chop Extreme & RE24 Rules
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('SEASONS_CALENDAR');
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
               activeTab === 'SEASONS_CALENDAR'
-                ? 'bg-amber-500 text-slate-950 shadow-md'
+                ? 'bg-orange-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 text-slate-950" /> 12-Season Calendar (Starts 11/1)
+            <Calendar className="w-3.5 h-3.5 text-slate-300" /> 12-Season Drop Calendar
           </button>
 
           <button
             type="button"
-            onClick={() => setActiveTab('KNOWLEDGE_BASE')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'KNOWLEDGE_BASE'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-emerald-300" /> Knowledge Base
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('COMMUNITY_FORUM')}
+            onClick={() => {
+              soundManager.playButtonClick();
+              setActiveTab('COMMUNITY_FORUM');
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
               activeTab === 'COMMUNITY_FORUM'
-                ? 'bg-purple-600 text-white shadow-md'
+                ? 'bg-orange-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5 text-purple-300" /> Community Forum
           </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('SIGNUP_LOGIN')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'SIGNUP_LOGIN'
-                ? 'bg-slate-700 text-white shadow-md'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5 text-slate-300" /> Sign Up / Log In
-          </button>
         </div>
 
-        {/* ================= TAB CONTENT PANELS ================= */}
-        <div className="flex-1 overflow-y-auto pr-1">
-
-          {/* ================= 1. GAME BREAKDOWN & LOOP ANIMATION ================= */}
-          {activeTab === 'GAME_BREAKDOWN' && (
-            <div className="space-y-6 animate-fade-in pb-4">
-              {/* Loop Animation Box */}
-              <AnimatedGameLoop />
-
-              {/* 4 Pillars of The Baltimore Chop */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-orange-500/30 space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/40 flex items-center justify-center text-xl">
-                    ⚾
-                  </div>
-                  <h4 className="font-display font-black text-white text-sm uppercase">
-                    1. The 1890s Chop Physics
-                  </h4>
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Swing downward on Camden Yards hard-packed dirt. A steep -18° downward launch angle produces a +35 ft vertical bounce over infielders, guaranteeing an infield single.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-cyan-500/30 space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-xl">
-                    🎯
-                  </div>
-                  <h4 className="font-display font-black text-white text-sm uppercase">
-                    2. 3-Pitch Counter-Duel
-                  </h4>
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Read the opposing ace's pitch arsenal (4-Seam, Slider, Sinker, Curveball) and anticipate the strike zone quadrant to unleash clutch exit velocity.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-amber-500/30 space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-xl">
-                    🎰
-                  </div>
-                  <h4 className="font-display font-black text-white text-sm uppercase">
-                    3. 26-Man Big Board Draft
-                  </h4>
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Inspired by Sleeper-style board grids. Manage your 26-man Baltimore depth chart, swap pinch-hitters, and simulate 162-game pennant races.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-purple-500/30 space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-xl">
-                    💎
-                  </div>
-                  <h4 className="font-display font-black text-white text-sm uppercase">
-                    4. 5-Tier Refractor Parallels
-                  </h4>
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Rip authentic physical-style packs to pull Rainbow Foils, Sapphires, Gold Waves (/50), Atomic Mojos (/10), and the ultimate 1/1 Superfractor with real gyroscope tilt.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 2. AVAILABLE CARDS FOR SEASON 1 ================= */}
-          {activeTab === 'AVAILABLE_CARDS' && (
-            <div className="space-y-4 animate-fade-in pb-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/80 border border-cyan-500/30 p-4 rounded-2xl">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-sm sm:text-base font-display font-black text-white uppercase flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-cyan-400" />
-                      Season 1 Unlocked Cards (Kickoff: 11/1)
-                    </h4>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded font-extrabold bg-cyan-950 text-cyan-300 border border-cyan-500/40">
-                      ACTIVE LAUNCH SET
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    All 30 MLB franchises and 780 active 26-man roster cards available to draft, rip, and battle in Season 1.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-cyan-300 font-bold bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
-                    {filteredSeasonCards.length} Available Cards
-                  </span>
-                </div>
-              </div>
-
-              {/* Search, Team & Position Filters */}
-              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 flex flex-wrap items-center gap-2">
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={cardSearch}
-                    onChange={(e) => setCardSearch(e.target.value)}
-                    placeholder="Search player, team, #..."
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white font-mono placeholder:text-slate-500 outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                <select
-                  value={cardTeam}
-                  onChange={(e) => setCardTeam(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-cyan-500"
+        {/* Tab Contents */}
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
+          
+          {/* =========================================================================
+              TAB 1: PRIMARY KNOWLEDGE BASE & CARD COLLECTION HUB
+              ========================================================================= */}
+          {activeTab === 'KNOWLEDGE_BASE_COLLECTION' && (
+            <div className="space-y-6">
+              
+              {/* Comprehensive Cards Collection Count Showcase Banner */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                
+                {/* Total Player Cards */}
+                <div 
+                  onClick={() => setActiveTab('ALL_PLAYERS_ROSTER')}
+                  className="p-4 rounded-2xl bg-gradient-to-br from-orange-950/60 to-slate-900 border border-orange-500/40 cursor-pointer hover:border-orange-400 transition-all shadow-md group"
                 >
-                  <option value="ALL">All 30 MLB Teams ({seasonTeams.length})</option>
-                  {seasonTeams.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-
-                <select
-                  value={cardPos}
-                  onChange={(e) => setCardPos(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-cyan-500"
-                >
-                  <option value="ALL">All Positions</option>
-                  <option value="SS">Shortstop (SS)</option>
-                  <option value="3B">Third Base (3B)</option>
-                  <option value="1B">First Base (1B)</option>
-                  <option value="2B">Second Base (2B)</option>
-                  <option value="C">Catcher (C)</option>
-                  <option value="CF">Center Field (CF)</option>
-                  <option value="LF">Left Field (LF)</option>
-                  <option value="RF">Right Field (RF)</option>
-                  <option value="DH">Designated Hitter (DH)</option>
-                  <option value="SP">Starting Pitcher (SP)</option>
-                  <option value="RP">Relief Pitcher (RP)</option>
-                </select>
-              </div>
-
-              {/* Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filteredSeasonCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="p-3 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between group"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-slate-900 border border-amber-400/60 flex items-center justify-center text-sm shadow">
-                            {card.avatarIcon}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-mono font-bold text-amber-400">
-                                #{card.cardNo || '00'}
-                              </span>
-                              <h4 className="text-xs font-display font-black text-white truncate max-w-[110px]">
-                                {card.name}
-                              </h4>
-                            </div>
-                            <span className="text-[9.5px] font-mono text-slate-400 block">
-                              {card.team} · <strong className="text-orange-400">{card.position}</strong>
-                            </span>
-                          </div>
-                        </div>
-
-                        {card.isHistorical ? (
-                          <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-black">
-                            Legend
-                          </span>
-                        ) : (
-                          <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase font-black">
-                            Active
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-4 gap-1 p-1.5 rounded-lg bg-black/40 border border-white/5 text-center text-[9px] font-mono mb-2">
-                        <div>
-                          <span className="text-slate-500 block">WAR</span>
-                          <span className="text-amber-300 font-bold">{card.bRefWar.toFixed(1)}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 block">CON</span>
-                          <span className="text-white font-bold">{card.stats.contact}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 block">POW</span>
-                          <span className="text-orange-400 font-bold">{card.stats.power}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 block">FLD</span>
-                          <span className="text-emerald-400 font-bold">{card.stats.fielding}</span>
-                        </div>
-                      </div>
-
-                      <p className="text-[10px] text-slate-400 line-clamp-2 italic font-sans leading-relaxed">
-                        "{card.bio}"
-                      </p>
-                    </div>
-
-                    <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setInspectedCard(card);
-                          soundManager.playButtonClick();
-                        }}
-                        className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-mono flex items-center gap-1 transition-colors"
-                      >
-                        <Eye className="w-3 h-3 text-cyan-400" /> 3D Inspect
-                      </button>
-
-                      {onSelectCardForShowdown && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onSelectCardForShowdown(card);
-                            onClose();
-                            soundManager.playBatCrack(true);
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-orange-600/30 hover:bg-orange-600/50 text-orange-300 border border-orange-500/30 text-[10px] font-mono transition-colors"
-                        >
-                          Pick Batter
-                        </button>
-                      )}
-                    </div>
+                  <div className="flex items-center justify-between text-slate-400 text-xs font-mono mb-1">
+                    <span>PLAYER CARDS</span>
+                    <span className="text-orange-400 text-base group-hover:scale-110 transition-transform">⚾</span>
                   </div>
-                ))}
+                  <div className="text-2xl sm:text-3xl font-display font-black text-white">855 Cards</div>
+                  <div className="text-[10.5px] font-mono text-slate-300 mt-1 space-y-0.5">
+                    <div>• 780 Active MLB (30 Teams × 26)</div>
+                    <div>• 25 Top bRef WAR Legends</div>
+                    <div>• 50 Negro League Legends</div>
+                  </div>
+                </div>
+
+                {/* Total Stadium Cards */}
+                <div 
+                  onClick={() => setActiveTab('NON_PLAYER_CARDS')}
+                  className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-500/40 cursor-pointer hover:border-emerald-400 transition-all shadow-md group"
+                >
+                  <div className="flex items-center justify-between text-slate-400 text-xs font-mono mb-1">
+                    <span>STADIUM CARDS</span>
+                    <span className="text-emerald-400 text-base group-hover:scale-110 transition-transform">🏟️</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-display font-black text-white">36 Ballparks</div>
+                  <div className="text-[10.5px] font-mono text-slate-300 mt-1 space-y-0.5">
+                    <div>• 30 Active MLB Stadiums</div>
+                    <div>• 6 Historic Ballparks</div>
+                    <div>• Quirks, Walls & Bounce Factors</div>
+                  </div>
+                </div>
+
+                {/* Equipment & Relics */}
+                <div 
+                  onClick={() => setActiveTab('NON_PLAYER_CARDS')}
+                  className="p-4 rounded-2xl bg-gradient-to-br from-cyan-950/60 to-slate-900 border border-cyan-500/40 cursor-pointer hover:border-cyan-400 transition-all shadow-md group"
+                >
+                  <div className="flex items-center justify-between text-slate-400 text-xs font-mono mb-1">
+                    <span>EQUIPMENT & RELICS</span>
+                    <span className="text-cyan-400 text-base group-hover:scale-110 transition-transform">🛡️</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-display font-black text-white">12 Relics</div>
+                  <div className="text-[10.5px] font-mono text-slate-300 mt-1 space-y-0.5">
+                    <div>• 1970 Memorial Dirt Jar</div>
+                    <div>• Cupped Bats & Gold Gloves</div>
+                    <div>• Rituals & Coaching Cards</div>
+                  </div>
+                </div>
+
+                {/* Seasonal Drop Sets */}
+                <div 
+                  onClick={() => setActiveTab('SEASONS_CALENDAR')}
+                  className="p-4 rounded-2xl bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-500/40 cursor-pointer hover:border-purple-400 transition-all shadow-md group"
+                >
+                  <div className="flex items-center justify-between text-slate-400 text-xs font-mono mb-1">
+                    <span>TOTAL COLLECTIBLES</span>
+                    <span className="text-purple-400 text-base group-hover:scale-110 transition-transform">🎴</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-display font-black text-white">903 Total</div>
+                  <div className="text-[10.5px] font-mono text-slate-300 mt-1 space-y-0.5">
+                    <div>• 8 Flagship Drop Series</div>
+                    <div>• 6 Refractor Tiers (to 1/1)</div>
+                    <div>• 12-Month Calendar</div>
+                  </div>
+                </div>
+
               </div>
 
-              {/* 3D Inspect Modal */}
-              {inspectedCard && (
-                <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-                  <div className="bg-slate-950 border-2 border-cyan-500/60 rounded-3xl p-5 max-w-xl w-full shadow-2xl relative">
+              {/* Video Glyphs & Interactive Analytical Visualizations */}
+              <div className="p-5 rounded-3xl bg-slate-950/90 border border-white/10 space-y-4 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div>
+                    <h3 className="text-sm font-display font-black uppercase text-white tracking-wider flex items-center gap-2">
+                      <Video className="w-4 h-4 text-orange-400" />
+                      Visual Demonstration Glyphs & In-Game Mechanics
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono">
+                      Interactive tactical references explaining how modern baseball analytics and 3D card physics operate.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
                     <button
                       type="button"
-                      onClick={() => setInspectedCard(null)}
-                      className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                    <div className="flex flex-col sm:flex-row items-center gap-5">
-                      <div className="w-[190px] h-[270px] shrink-0">
-                        <Card3D card={inspectedCard} interactive size="normal" />
-                      </div>
-                      <div className="flex-1 space-y-2 text-left">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono font-black text-amber-400">
-                            CARD #{inspectedCard.cardNo || '00'}
-                          </span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-cyan-950 text-cyan-300 border border-cyan-500/40">
-                            {inspectedCard.position}
-                          </span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-slate-900 text-slate-300">
-                            {inspectedCard.team}
-                          </span>
-                        </div>
-                        <h3 className="text-xl font-display font-black text-white">
-                          {inspectedCard.name}
-                        </h3>
-                        <p className="text-xs text-slate-300 italic font-sans leading-relaxed">
-                          "{inspectedCard.bio}"
-                        </p>
-                        <div className="grid grid-cols-4 gap-1.5 pt-2 text-center font-mono text-xs">
-                          <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                            <span className="text-[9px] text-slate-400 block">WAR</span>
-                            <span className="font-bold text-amber-300">{inspectedCard.bRefWar.toFixed(1)}</span>
-                          </div>
-                          <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                            <span className="text-[9px] text-slate-400 block">PWR</span>
-                            <span className="font-bold text-orange-400">{inspectedCard.stats.power}</span>
-                          </div>
-                          <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                            <span className="text-[9px] text-slate-400 block">CON</span>
-                            <span className="font-bold text-cyan-300">{inspectedCard.stats.contact}</span>
-                          </div>
-                          <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                            <span className="text-[9px] text-slate-400 block">FLD</span>
-                            <span className="font-bold text-emerald-400">{inspectedCard.stats.fielding}</span>
-                          </div>
-                        </div>
-                        <div className="pt-2">
-                          <button
-                            type="button"
-                            onClick={() => setInspectedCard(null)}
-                            className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs"
-                          >
-                            Close Inspector
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ================= 3. 12-SEASON MASTER CALENDAR & HOBBY COLLECTOR RELEASES ================= */}
-          {activeTab === 'SEASONS_CALENDAR' && (
-            <div className="space-y-5 animate-fade-in pb-4">
-              {/* Header explaining 11/1 start and locked status */}
-              <div className="bg-gradient-to-r from-amber-950/80 to-slate-950/90 border border-amber-500/40 p-4 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-amber-400" />
-                    <h3 className="text-base sm:text-lg font-display font-black text-white uppercase">
-                      Official 12-Season Hobby Calendar (Kicks Off 11/1)
-                    </h3>
-                  </div>
-                  <p className="text-xs text-slate-300 font-mono mt-1">
-                    Season 1 begins November 1 (11/1). Each upcoming monthly season unlocks progressively by actual hobby release date. Upcoming season cards and sets remain strictly locked until said season starts!
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-1.5">
-                    <Unlock className="w-3.5 h-3.5" /> S1 Active Now
-                  </span>
-                  <span className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 border border-slate-700 text-xs font-mono font-bold flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5" /> S2-S12 Locked
-                  </span>
-                </div>
-              </div>
-
-              {/* Master 12-Season Medallions Graphic Banner (watermarked_img_1431752454010944403_ad0e9d0c.jpg) */}
-              <div className="rounded-3xl overflow-hidden border border-white/10 bg-slate-950 relative shadow-2xl">
-                <div className="p-3 bg-black/80 border-b border-white/10 flex items-center justify-between text-xs font-mono text-slate-400">
-                  <span className="flex items-center gap-1.5 text-amber-400 font-bold">
-                    <Sparkles className="w-4 h-4" /> 12 Seasonal Stadium Club Medallions (Official Asset)
-                  </span>
-                  <span>Click any season below to review its release schedule</span>
-                </div>
-                <img
-                  src="/assets/aistudio/watermarked_img_1431752454010944403_ad0e9d0c.jpg"
-                  alt="12 Seasonal Medallions"
-                  className="w-full object-cover max-h-[260px] opacity-90 hover:opacity-100 transition-opacity"
-                />
-              </div>
-
-              {/* 12-Season Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {TWELVE_SEASONS.map((season) => {
-                  const isSelected = selectedSeasonNum === season.seasonNumber;
-                  return (
-                    <div
-                      key={season.seasonNumber}
-                      onClick={() => {
-                        setSelectedSeasonNum(season.seasonNumber);
-                        soundManager.playButtonClick();
-                      }}
-                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'bg-amber-950/40 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)] scale-[1.02]'
-                          : season.isUnlocked
-                          ? 'bg-slate-950/80 border-emerald-500/40'
-                          : 'bg-slate-950/60 border-slate-800 opacity-75 hover:opacity-100'
+                      onClick={() => setActiveVideoGlyph('CHOP_PHYSICS')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                        activeVideoGlyph === 'CHOP_PHYSICS' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
                       }`}
                     >
-                      <div>
-                        {/* Top Season & Status Badge */}
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-display font-black text-amber-400">
-                              SEASON {season.seasonNumber}
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-400">
-                              ({season.monthName})
-                            </span>
-                          </div>
-
-                          {season.isUnlocked ? (
-                            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
-                              <Unlock className="w-2.5 h-2.5" /> UNLOCKED
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-black uppercase bg-slate-900 text-slate-400 border border-slate-700 flex items-center gap-1">
-                              <Lock className="w-2.5 h-2.5 text-amber-400" /> LOCKED
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Start Date */}
-                        <div className="flex items-baseline gap-2 mb-1.5">
-                          <span className="text-base font-display font-black text-white">
-                            Starts {season.startDate}
-                          </span>
-                          <span className="text-[10px] font-mono text-slate-400">
-                            ({season.fullMonth})
-                          </span>
-                        </div>
-
-                        {/* Aligned Hobby Likeness Set */}
-                        <div className="p-2 rounded-xl bg-black/50 border border-white/5 mb-2">
-                          <span className="text-[9px] font-mono text-slate-400 block uppercase">
-                            Hobby Likeness Set:
-                          </span>
-                          <span className="text-xs font-display font-bold text-amber-300 block leading-tight">
-                            {season.hobbyLikenessSet}
-                          </span>
-                          <span className="text-[9.5px] font-mono text-cyan-400 block mt-0.5">
-                            Hobby Drop: {season.actualHobbyReleaseDate}
-                          </span>
-                        </div>
-
-                        {/* Theme & Lore */}
-                        <p className="text-[10px] text-slate-400 font-sans leading-relaxed line-clamp-2">
-                          {season.theme}
-                        </p>
-                      </div>
-
-                      {/* Locked Notice / Featured Stars */}
-                      <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono">
-                        {season.isUnlocked ? (
-                          <span className="text-emerald-400 font-bold flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" /> Cards Available Now
-                          </span>
-                        ) : (
-                          <span className="text-slate-500 flex items-center gap-1">
-                            <Lock className="w-3 h-3 text-amber-500" /> Locked until {season.startDate}
-                          </span>
-                        )}
-                        <span className={`text-[10px] ${isSelected ? 'text-amber-400 font-bold' : 'text-slate-600'}`}>
-                          {isSelected ? 'Selected' : 'View'}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Selected Season Detailed Inspection Box */}
-              <div className="p-5 rounded-3xl bg-slate-950/90 border border-amber-500/50 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-base sm:text-xl font-display font-black text-white uppercase">
-                        SEASON {currentSeason.seasonNumber}: {currentSeason.hobbyLikenessSet}
-                      </span>
-                      {currentSeason.isUnlocked ? (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-emerald-950 text-emerald-400 border border-emerald-500/40">
-                          ACTIVE IN PLAY
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-red-950 text-red-400 border border-red-500/40 flex items-center gap-1">
-                          <Lock className="w-3 h-3" /> LOCKED UNTIL {currentSeason.startDate}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-xs font-mono text-amber-400">
-                      Actual Hobby Release Window: {currentSeason.actualHobbyReleaseDate}
-                    </span>
-                  </div>
-
-                  <div className="text-right font-mono text-xs text-slate-400">
-                    <div>Official Calendar Kickoff: <strong className="text-white">{currentSeason.startDate}</strong></div>
-                    <div>Assigned Set ID: <strong className="text-cyan-400">{currentSeason.setId}</strong></div>
-                  </div>
-                </div>
-
-                <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
-                  {currentSeason.lore}
-                </p>
-
-                <div className="p-3 rounded-2xl bg-black/40 border border-white/10 flex flex-wrap items-center gap-3">
-                  <span className="text-xs font-mono font-bold text-slate-400 uppercase">
-                    Featured Roster Headliners:
-                  </span>
-                  {currentSeason.featuredPlayers.map((player) => (
-                    <span
-                      key={player}
-                      className="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-white font-bold"
+                      ▶ Baltimore Chop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveVideoGlyph('RE24_LEVERAGE')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                        activeVideoGlyph === 'RE24_LEVERAGE' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
                     >
-                      ⭐ {player}
-                    </span>
-                  ))}
+                      ▶ RE24 Leverage
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveVideoGlyph('ROTATION_360')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                        activeVideoGlyph === 'ROTATION_360' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      ▶ 360° Card Spin
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveVideoGlyph('COUNTER_PREDICTION')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                        activeVideoGlyph === 'COUNTER_PREDICTION' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      ▶ 3-Pitch Matrix
+                    </button>
+                  </div>
                 </div>
 
-                {!currentSeason.isUnlocked && (
-                  <div className="p-3 rounded-2xl bg-amber-950/20 border border-amber-500/30 text-xs font-mono text-amber-300 flex items-center gap-2">
-                    <Lock className="w-4 h-4 shrink-0" />
-                    <span>
-                      Notice: Cards and foil packs for Season {currentSeason.seasonNumber} remain cryptographically locked and will unlock automatically on {currentSeason.startDate}.
-                    </span>
-                  </div>
-                )}
+                {/* Animated Simulation Canvas / Video Glyph Player */}
+                <div className="relative rounded-2xl bg-black/80 border border-white/10 p-5 overflow-hidden flex flex-col justify-between min-h-[220px]">
+                  
+                  {activeVideoGlyph === 'CHOP_PHYSICS' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-amber-400 font-bold border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping" />
+                          GLYPH #1: THE BALTIMORE CHOP TRAJECTORY DYNAMICS
+                        </span>
+                        <span className="text-[10px] text-slate-400">Launch Angle: -12° · Apex: 24.5 ft</span>
+                      </div>
+                      
+                      {/* Diagram */}
+                      <div className="h-28 relative rounded-xl bg-gradient-to-b from-slate-900 via-emerald-950/30 to-amber-950/60 border border-white/5 flex items-center justify-center p-3">
+                        <div className="absolute left-6 bottom-4 text-xs">🏏 Batter Contact</div>
+                        <div className="absolute left-24 bottom-2 text-[10px] text-amber-400 font-bold">Hard-Packed Clay (Memorial Stadium / Camden Yards)</div>
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-orange-600 text-white font-bold text-xs shadow-lg animate-bounce">
+                          ⚾ Ball Rebounds 24ft into Air!
+                        </div>
+                        <div className="absolute right-6 bottom-4 text-xs text-slate-400">Infielders Left Helpless 🏃💨</div>
+                      </div>
+
+                      <p className="text-slate-300 text-[11px] leading-relaxed">
+                        Pioneered by John McGraw's 1890s Baltimore Orioles. When the ball hits hard infield dirt with negative downward bat velocity, it rebounds skyward, giving speedy hitters time to sprint down the line before the shortstop or third baseman can field it.
+                      </p>
+                    </div>
+                  )}
+
+                  {activeVideoGlyph === 'RE24_LEVERAGE' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-cyan-400 font-bold border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
+                          GLYPH #2: RUN EXPECTANCY (RE24) & LEVERAGE MULTIPLIERS
+                        </span>
+                        <span className="text-[10px] text-slate-400">High Leverage: 2.5x Multiplier</span>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                        <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10">
+                          <span className="text-slate-400 text-[10px] block">Low Leverage (LI &lt; 0.85)</span>
+                          <span className="text-sm font-bold text-white">1.0x Points</span>
+                          <span className="text-[9px] text-slate-500 block mt-1">Blowouts or early innings</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10">
+                          <span className="text-slate-400 text-[10px] block">Medium Leverage (0.85 - 2.0)</span>
+                          <span className="text-sm font-bold text-amber-400">1.5x Points</span>
+                          <span className="text-[9px] text-slate-500 block mt-1">Tied games or mid-innings</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-orange-950/60 border border-orange-500">
+                          <span className="text-amber-300 text-[10px] block font-bold">Extreme Leverage (LI ≥ 2.0)</span>
+                          <span className="text-sm font-black text-orange-400">2.5x Points</span>
+                          <span className="text-[9px] text-slate-300 block mt-1">Late innings, runners on</span>
+                        </div>
+                      </div>
+
+                      <p className="text-slate-300 text-[11px] leading-relaxed">
+                        Points are anchored around actual run values: Singles (+89 pts), Doubles (+127 pts), Home Runs (+210 pts), Strikeouts (-30 pts), Walks (+69 pts), multiplied dynamically by the game's Leverage Index!
+                      </p>
+                    </div>
+                  )}
+
+                  {activeVideoGlyph === 'ROTATION_360' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-amber-400 font-bold border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                          GLYPH #3: TRUE 360-DEGREE 3D CARD TURNING
+                        </span>
+                        <span className="text-[10px] text-slate-400">Front, Edges, Serial Stamp & Back</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex items-center justify-around">
+                        <div className="text-center">
+                          <span className="text-2xl block">🎴</span>
+                          <span className="text-[10px] text-slate-400">Front (0° to 90°)</span>
+                          <span className="text-[9px] text-amber-400 block">Specular Sheen & Foils</span>
+                        </div>
+                        <div className="text-amber-500 text-lg">──▶</div>
+                        <div className="text-center">
+                          <span className="text-2xl block">🔄</span>
+                          <span className="text-[10px] text-slate-400">Edge Spin (90° - 270°)</span>
+                          <span className="text-[9px] text-cyan-400 block">Die-Cut Metallic Serial</span>
+                        </div>
+                        <div className="text-amber-500 text-lg">──▶</div>
+                        <div className="text-center">
+                          <span className="text-2xl block">📋</span>
+                          <span className="text-[10px] text-slate-400">Back (180° to 360°)</span>
+                          <span className="text-[9px] text-emerald-400 block">Major League Record</span>
+                        </div>
+                      </div>
+
+                      <p className="text-slate-300 text-[11px] leading-relaxed">
+                        Cards now rotate smoothly all the way around 360 degrees via horizontal mouse drag, touch drag, or the continuous 360° auto-orbit button, revealing authentic cardstock depth and realistic debossed serial stamps!
+                      </p>
+                    </div>
+                  )}
+
+                  {activeVideoGlyph === 'COUNTER_PREDICTION' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-purple-400 font-bold border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping" />
+                          GLYPH #4: 3-PITCH COUNTER PREDICTION ENGINE
+                        </span>
+                        <span className="text-[10px] text-slate-400">9-Zone Strike Matrix</span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 text-slate-300 leading-relaxed text-[11px]">
+                        Pitchers deliver from 6 distinct pitch classifications (4-Seam, Slider, Curveball, Changeup, Sinker, Cutter). Correctly guessing the pitch type and zone unlocks exit velocities exceeding 105 mph and triggers the explosive barrel contact bonus (+50 pts)!
+                      </div>
+                    </div>
+                  )}
+
+                </div>
               </div>
+
             </div>
           )}
 
-          {/* ================= 4. KNOWLEDGE BASE ================= */}
-          {activeTab === 'KNOWLEDGE_BASE' && (
-            <div className="space-y-4 animate-fade-in pb-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/80 border border-emerald-500/30 p-4 rounded-2xl">
-                <div>
-                  <h4 className="text-sm sm:text-base font-display font-black text-white uppercase flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-emerald-400" />
-                    Baltimore Chop Master Knowledge Base
-                  </h4>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    Everything you need to master small ball, refractor odds, strike zone predictions, and roster depth.
-                  </p>
+          {/* =========================================================================
+              TAB 2: NON-PLAYER CARDS (36 STADIUMS + 12 EQUIPMENT CARDS)
+              ========================================================================= */}
+          {activeTab === 'NON_PLAYER_CARDS' && (
+            <div className="space-y-6">
+              
+              {/* Stadiums Header & Filter */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 text-xs font-mono space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                      <span>🏟️</span> Stadium Cards Collection ({TOTAL_STADIUM_CARDS_COUNT} Total Ballparks)
+                    </h3>
+                    <p className="text-slate-300 text-[11px] mt-0.5">
+                      All 30 active MLB ballparks + 6 iconic Historic ballparks (Polo Grounds, Memorial Stadium, Forbes Field, Ebbets Field, Tiger Stadium, Astrodome).
+                    </p>
+                  </div>
+
+                  {/* Filter Pills */}
+                  <div className="flex items-center gap-1">
+                    {(['ALL', 'AL', 'NL', 'HISTORIC'] as const).map((l) => (
+                      <button
+                        key={l}
+                        type="button"
+                        onClick={() => setStadiumFilter(l)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                          stadiumFilter === l ? 'bg-emerald-600 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {l} ({l === 'ALL' ? 36 : l === 'HISTORIC' ? 6 : 15})
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-emerald-400 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
-                    6 Interactive Guides
-                  </span>
+                {/* Search */}
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search stadiums by name, city, team, or wall quirk..."
+                    value={stadiumSearch}
+                    onChange={(e) => setStadiumSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  />
                 </div>
               </div>
 
-              {/* Categorized Handbook Slabs */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">⚾</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      The Baltimore Chop Technique
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Originated by the 1890s Baltimore Orioles with Wee Willie Keeler, John McGraw, and Wilbert Robinson. Groundskeeper Tom Murphy baked Georgia clay in front of home plate. Batters chop sharply downward with negative attack angles (-15° to -25°). The ball rebounds 30 to 40 feet high into the air, rendering infielders helpless while the runner reaches first base safely.
-                  </p>
-                  <span className="text-[10px] font-mono text-orange-400 block font-bold">
-                    In-Game Trigger: Target DOWN_IN, DOWN_MID, or DOWN_OUT against Sinker/Splitter pitches.
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">🎯</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      3-Pitch Showdown Counter-Duel
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Each at-bat pits your starting batter against the opposing pitcher in a 3-pitch showdown. Select your targeted strike zone quadrant (9 zones) and anticipated pitch type (4-Seam, Slider, Curveball, Sinker, Changeup, Cutter). Matching both zone and pitch type triggers a critical hit or homerun!
-                  </p>
-                  <span className="text-[10px] font-mono text-cyan-400 block font-bold">
-                    Zone Match = +30% Exit Velo · Pitch Type Match = Contact Boost
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">💎</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      Diamond Refractor Tiers & Rarity
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Cards feature 5 authentic parallel treatments:
-                    <br />• <strong>Base</strong>: Classic standard cardstock.
-                    <br />• <strong>Rainbow Foil</strong>: Spectrum holographic sheen.
-                    <br />• <strong>Sapphire Edition</strong>: Deep royal blue chromium (/25).
-                    <br />• <strong>Gold Wave</strong>: Golden ripple foil parallel (/50).
-                    <br />• <strong>Atomic Mojo</strong>: Geometric diamond fractured refractor (/10).
-                    <br />• <strong>Superfractor</strong>: True 1-of-1 liquid gold circular swirl foil!
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">🔥</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      5-in-7 Days Login Streak Tracker
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Log in at least 5 days out of every rolling 7-day window to earn milestone rewards: +1,500 Franchise Points, +5 Vending Tokens, and guaranteed Foil Pack Rip keys. Missing up to 2 days maintains your streak!
-                  </p>
-                  <span className="text-[10px] font-mono text-amber-400 block font-bold">
-                    Check your streak icon in the top header anytime.
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">📋</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      26-Man Big Board & Depth Chart
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Modeled after Sleeper draft grids. Every card represents a position on your 26-man roster (C, 1B, 2B, 3B, SS, OF, DH, SP, RP). Swap starters, promote hot bench players, and balance your batting order between high-contact speedsters and power sluggers.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">🏛️</span>
-                    <h5 className="font-display font-black text-white text-sm uppercase">
-                      162-Game Franchise Season Simulator
-                    </h5>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Take your squad through a complete 162-game MLB season campaign. Play key clutch at-bats in real time, simulate series against classic rivals (Yankees, Dodgers, Giants, A's), and capture the World Series championship ring!
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 5. COMMUNITY FORUM ================= */}
-          {activeTab === 'COMMUNITY_FORUM' && (
-            <div className="space-y-4 animate-fade-in pb-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/80 border border-purple-500/30 p-4 rounded-2xl">
-                <div>
-                  <h4 className="text-sm sm:text-base font-display font-black text-white uppercase flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-purple-400" />
-                    Camden Yards Community Forum & Trade Block
-                  </h4>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    Connect with fellow collectors, share 1/1 Superfractor pulls, discuss small-ball strategies, and celebrate Orioles history.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPostForm(!showNewPostForm)}
-                    className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-display font-black text-xs uppercase flex items-center gap-1.5 transition-colors shadow"
+              {/* Stadium Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {filteredStadiums.map((s) => (
+                  <div
+                    key={s.id}
+                    className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-emerald-500/50 transition-all shadow-md space-y-2 flex flex-col justify-between"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Start Discussion
-                  </button>
-                </div>
-              </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl">{s.icon}</span>
+                        <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded ${
+                          s.league === 'HISTORIC' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' : 'bg-slate-800 text-emerald-400'
+                        }`}>
+                          {s.league === 'HISTORIC' ? 'HISTORIC LEGEND' : `${s.league} ${s.division || ''}`}
+                        </span>
+                      </div>
 
-              {/* Forum Channels Filter */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-mono">
-                {[
-                  { id: 'ALL', label: 'All Channels' },
-                  { id: 'CAMDEN_CLUBHOUSE', label: '🏟️ Camden Clubhouse' },
-                  { id: 'CARD_SHOW_TRADES', label: '🎴 Card Show & Trades' },
-                  { id: 'CHOP_STRATEGY', label: '⚡ Chop Strategy' },
-                  { id: 'ORIOLES_LORE', label: '📜 Orioles Lore' }
-                ].map((ch) => (
-                  <button
-                    key={ch.id}
-                    type="button"
-                    onClick={() => {
-                      setForumCategory(ch.id);
-                      setForumPosts(forumService.getPosts(ch.id));
-                    }}
-                    className={`px-3 py-1 rounded-xl whitespace-nowrap transition-all ${
-                      forumCategory === ch.id
-                        ? 'bg-purple-600 text-white font-bold'
-                        : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-                    }`}
-                  >
-                    {ch.label}
-                  </button>
+                      <h4 className="text-xs font-display font-black text-white uppercase mt-1 leading-tight">{s.name}</h4>
+                      <span className="text-[10px] font-mono text-slate-400 block">{s.team} · {s.city}</span>
+
+                      {/* Dimensions & Bounce Factor */}
+                      <div className="mt-2 grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                        <div className="p-1 rounded bg-black/40">
+                          <span className="text-slate-500 block text-[8px]">LF / CF / RF</span>
+                          <span className="font-bold text-white">{s.dimensions.leftField}/{s.dimensions.centerField}/{s.dimensions.rightField}</span>
+                        </div>
+                        <div className="p-1 rounded bg-black/40">
+                          <span className="text-slate-500 block text-[8px]">Chop Bounce</span>
+                          <span className="font-bold text-orange-400">+{Math.round((s.chopBounceFactor - 1) * 100)}%</span>
+                        </div>
+                        <div className="p-1 rounded bg-black/40">
+                          <span className="text-slate-500 block text-[8px]">Park Factor</span>
+                          <span className="font-bold text-cyan-300">{s.hitterParkFactor}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 p-1.5 rounded-lg bg-black/40 border border-white/5 text-[9.5px] font-mono text-amber-300">
+                        <strong>Quirk:</strong> {s.signatureQuirk}
+                      </div>
+
+                      <p className="text-[9.5px] font-mono text-slate-400 mt-1 italic leading-tight line-clamp-2">
+                        "{s.lore}"
+                      </p>
+                    </div>
+                  </div>
                 ))}
               </div>
 
-              {/* New Post Modal/Form */}
-              {showNewPostForm && (
-                <form onSubmit={handleCreatePost} className="p-4 rounded-2xl bg-slate-950 border border-purple-500/50 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h5 className="font-display font-black text-white text-xs uppercase">
-                      New Community Discussion
-                    </h5>
+              {/* Equipment Cards Section */}
+              <div className="pt-4 border-t border-white/10 space-y-3">
+                <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                  <span>🛡️</span> Equipment & Relic Cards (12 Vault Items)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {INITIAL_EQUIPMENT_CARDS.map((eq) => (
+                    <div
+                      key={eq.id}
+                      className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-cyan-500/40 transition-all space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl">{eq.icon}</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
+                          {eq.rarity} · {eq.type}
+                        </span>
+                      </div>
+                      <h4 className="text-xs font-display font-black text-white uppercase">{eq.name}</h4>
+                      <p className="text-[10.5px] font-mono text-slate-300 leading-tight">{eq.description}</p>
+                      <p className="text-[9.5px] font-mono text-slate-500 italic leading-tight">{eq.lore}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 3: ALL 855 PLAYERS BROKEN UP BY TEAM & TOP 25 WAR LEGENDS
+              ========================================================================= */}
+          {activeTab === 'ALL_PLAYERS_ROSTER' && (
+            <div className="space-y-4">
+              
+              {/* Header & Controls */}
+              <div className="p-4 rounded-2xl bg-slate-950/90 border border-white/10 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                      <Users className="w-4 h-4 text-cyan-400" />
+                      All 855 Player Cards: 30 MLB Franchises + Top 25 WAR Legends
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono">
+                      Showing {filteredPlayers.length} of 855 Total Cards
+                    </p>
+                  </div>
+
+                  {/* Section Selector */}
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
                     <button
                       type="button"
-                      onClick={() => setShowNewPostForm(false)}
-                      className="text-slate-500 hover:text-white text-xs font-mono"
+                      onClick={() => {
+                        setSelectedSection('ALL');
+                        setSelectedTeam('ALL');
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'ALL' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
                     >
-                      Cancel
+                      All (855)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('TOP_25_LEGENDS')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'TOP_25_LEGENDS' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-amber-300 hover:text-white'
+                      }`}
+                    >
+                      👑 Top 25 WAR Legends (25)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('NEGRO_LEAGUES')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'NEGRO_LEAGUES' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-purple-300 hover:text-white'
+                      }`}
+                    >
+                      🌟 Negro Leagues (50)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('AL_EAST')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'AL_EAST' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      AL East
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('AL_CENTRAL')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'AL_CENTRAL' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      AL Central
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('AL_WEST')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'AL_WEST' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      AL West
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('NL_EAST')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'NL_EAST' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      NL East
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('NL_CENTRAL')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'NL_CENTRAL' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      NL Central
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSection('NL_WEST')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                        selectedSection === 'NL_WEST' ? 'bg-cyan-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      NL West
                     </button>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Search Bar + Team Filter */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                     <input
                       type="text"
-                      value={newPostTitle}
-                      onChange={(e) => setNewPostTitle(e.target.value)}
-                      placeholder="Topic Title..."
-                      required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-mono placeholder:text-slate-500 outline-none focus:border-purple-500"
+                      placeholder="Search by player name, team or position..."
+                      value={playerSearch}
+                      onChange={(e) => setPlayerSearch(e.target.value)}
+                      className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
                     />
-
-                    <select
-                      value={newPostCategory}
-                      onChange={(e) => setNewPostCategory(e.target.value as any)}
-                      className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-purple-500"
-                    >
-                      <option value="CAMDEN_CLUBHOUSE">🏟️ Camden Clubhouse</option>
-                      <option value="CARD_SHOW_TRADES">🎴 Card Show & Trades</option>
-                      <option value="CHOP_STRATEGY">⚡ Chop Strategy</option>
-                      <option value="ORIOLES_LORE">📜 Orioles Lore</option>
-                    </select>
                   </div>
 
+                  <select
+                    value={selectedTeam}
+                    onChange={(e) => setSelectedTeam(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-orange-500"
+                  >
+                    <option value="ALL">Filter by All 30 MLB Franchises (All Teams)</option>
+                    {allTeamNames.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Special Top 25 WAR Legends Spotlight Banner (when selected or on overview) */}
+              {selectedSection === 'TOP_25_LEGENDS' && (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-950/70 to-slate-900 border border-amber-500/50 text-xs font-mono text-amber-200">
+                  <span className="font-bold text-amber-300 block mb-1">
+                    👑 BASEBALL REFERENCE OFFICIAL TOP 25 CAREER / PEAK WAR IMMORTALS
+                  </span>
+                  These 25 immortal cards represent the highest Baseball Reference WAR totals in baseball history. Click any legend to inspect accumulated in-game stats, game-mode dominance, and decide on tactical deployment (Starter, Pinch Hitter, Ace Starter, Bullpen Closer, Franchise Anchor)!
+                </div>
+              )}
+
+              {/* Player Cards Compact List with Inspect / Showdown CTAs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                {filteredPlayers.slice(0, 75).map((card) => (
+                  <div
+                    key={card.id}
+                    onClick={() => {
+                      if (onOpenCardDetails) onOpenCardDetails(card);
+                    }}
+                    className="p-3 rounded-2xl bg-slate-950/85 border border-white/10 hover:border-orange-500/60 transition-all flex items-center justify-between gap-2.5 cursor-pointer group shadow-sm"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform">
+                        {card.avatarIcon}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-display font-bold text-xs uppercase text-white truncate group-hover:text-amber-300">
+                            {card.name}
+                          </span>
+                          <span className="text-[9px] font-mono font-bold text-amber-400 bg-black/60 px-1 py-0.2 rounded shrink-0">
+                            {card.position}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-slate-400 truncate block">
+                          {card.team} · <strong className="text-emerald-400">{card.bRefWar} WAR</strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-[9px] font-mono text-slate-500 group-hover:text-slate-300">
+                        Inspect 360° ▶
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filteredPlayers.length > 75 && (
+                <div className="p-3 text-center text-xs font-mono text-slate-400 border border-white/5 rounded-xl bg-black/40">
+                  Showing first 75 of {filteredPlayers.length} matching cards. Use the search bar or franchise dropdown above to narrow down to any specific player.
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 4: CHOP EXTREME SABERMETRICS & RE24 EXPLANATION
+              ========================================================================= */}
+          {activeTab === 'CHOP_EXTREME_SABERMETRICS' && (
+            <div className="space-y-4 font-mono text-xs">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950/60 to-slate-900 border border-red-500/40 space-y-2">
+                <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-orange-400" />
+                  Modern Baseball Analytical Architecture (RE24 & WPA)
+                </h3>
+                <p className="text-slate-300 text-[11.5px] leading-relaxed">
+                  To satisfy baseball stat purists, points in The Baltimore Chop are not arbitrary arcade scores like "+10 for a single". They are grounded in real sabermetric infrastructure: <strong>Run Expectancy 24 Base-Out States (RE24)</strong>, <strong>Win Probability Added (WPA)</strong>, and <strong>Linear Weights (wOBA)</strong>.
+                </p>
+              </div>
+
+              {/* Linear Weights Table */}
+              <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/80">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] border-b border-white/10">
+                    <tr>
+                      <th className="p-2.5">Event</th>
+                      <th className="p-2.5">Real MLB Run Value</th>
+                      <th className="p-2.5">Base In-Game Points</th>
+                      <th className="p-2.5">Low Leverage (1.0x)</th>
+                      <th className="p-2.5 text-amber-400">High Leverage (2.5x)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-slate-300">
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Out Recorded (Batter)</td>
+                      <td className="p-2.5 text-red-400">-0.27</td>
+                      <td className="p-2.5 font-bold text-red-400">-27 pts</td>
+                      <td className="p-2.5">-27 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">-68 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Strikeout (Batter / Pitcher)</td>
+                      <td className="p-2.5 text-red-400">-0.30 / +0.30</td>
+                      <td className="p-2.5 font-bold text-red-400">-30 / +30 pts</td>
+                      <td className="p-2.5">-30 / +30 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">-75 / +75 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Walk (uBB) / HBP</td>
+                      <td className="p-2.5 text-emerald-400">+0.69</td>
+                      <td className="p-2.5 font-bold text-emerald-400">+69 pts</td>
+                      <td className="p-2.5">+69 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">+173 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Single (1B)</td>
+                      <td className="p-2.5 text-emerald-400">+0.89</td>
+                      <td className="p-2.5 font-bold text-emerald-400">+89 pts</td>
+                      <td className="p-2.5">+89 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">+223 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Double (2B)</td>
+                      <td className="p-2.5 text-emerald-400">+1.27</td>
+                      <td className="p-2.5 font-bold text-emerald-400">+127 pts</td>
+                      <td className="p-2.5">+127 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">+318 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Triple (3B)</td>
+                      <td className="p-2.5 text-emerald-400">+1.62</td>
+                      <td className="p-2.5 font-bold text-emerald-400">+162 pts</td>
+                      <td className="p-2.5">+162 pts</td>
+                      <td className="p-2.5 text-amber-400 font-bold">+405 pts</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-amber-300">Home Run (HR)</td>
+                      <td className="p-2.5 text-amber-300 font-bold">+2.10</td>
+                      <td className="p-2.5 font-black text-amber-300">+210 pts</td>
+                      <td className="p-2.5 font-bold text-amber-300">+210 pts</td>
+                      <td className="p-2.5 text-amber-400 font-black">+525 pts</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Dynamic Penalties & Statcast */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                  <span className="font-bold text-amber-400 block text-xs">Statcast Precision Modifiers</span>
+                  <div>• Chased Out-of-Zone: <strong>-15 pts</strong> (Discipline penalty)</div>
+                  <div>• Elevated Fastball Whiff: <strong>-20 pts</strong></div>
+                  <div>• Statcast Barrel Contact (EV ≥98mph, LA 26°-30°): <strong className="text-emerald-400">+50 pts</strong></div>
+                  <div>• Perfect 0-2 Pitch Sequence: <strong className="text-cyan-300">+40 pts</strong></div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                  <span className="font-bold text-red-400 block text-xs">Dynamic Extreme Penalties</span>
+                  <div>• <strong>BABIP Karma Tax:</strong> Swings on &lt;.100 xBA bloops yield only 20% points.</div>
+                  <div>• <strong>Platoon Blunder:</strong> RHP vs .950 OPS LHB with bullpen ready = <strong>-50 Momentum</strong>.</div>
+                  <div>• <strong>Out Burn Rate:</strong> Out in Gauntlet permanently burns stamina & next hand draw.</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 5: 12-SEASON DROP CALENDAR
+              ========================================================================= */}
+          {activeTab === 'SEASONS_CALENDAR' && (
+            <div className="space-y-4 font-mono text-xs">
+              <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2">
+                <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-amber-400" />
+                  12-Month Live Seasonal Release Calendar (Starts Nov 1)
+                </h3>
+                <p className="text-slate-300 text-[11px]">
+                  Each month drops a brand-new collector theme with unique 3D card borders, historical moments, and refractor parallels.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {TWELVE_SEASONS.map((s) => (
+                  <div
+                    key={s.seasonNumber}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      s.status === 'ACTIVE'
+                        ? 'bg-orange-950/40 border-orange-500 shadow-md'
+                        : 'bg-slate-950/80 border-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold text-amber-400">SEASON {s.seasonNumber}</span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${
+                        s.status === 'ACTIVE' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {s.status === 'ACTIVE' ? '● CURRENT' : 'DROPS SOON'}
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-display font-black text-white uppercase">{s.hobbyLikenessSet}</h4>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">{s.actualHobbyReleaseDate}</span>
+                    <p className="text-[10px] text-slate-300 mt-2 leading-tight">{s.theme}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 6: COMMUNITY FORUM
+              ========================================================================= */}
+          {activeTab === 'COMMUNITY_FORUM' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-purple-400" />
+                    Community Card Collector Forum
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Discuss pulls, refractor trades, Baltimore Chop strategies, and sabermetrics.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowNewPostForm(!showNewPostForm)}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-display font-bold text-xs uppercase tracking-wider transition-all shadow"
+                >
+                  {showNewPostForm ? 'Cancel' : '+ New Post'}
+                </button>
+              </div>
+
+              {/* New Post Form */}
+              {showNewPostForm && (
+                <form onSubmit={handleCreatePost} className="p-4 rounded-2xl bg-slate-950/90 border border-purple-500/50 space-y-3 font-mono text-xs">
+                  <input
+                    type="text"
+                    placeholder="Post title (e.g. Pulled a 1/1 Superfractor Babe Ruth!)..."
+                    value={newPostTitle}
+                    onChange={(e) => setNewPostTitle(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                  />
                   <textarea
+                    rows={3}
+                    placeholder="Write your analysis, trade request, or questions..."
                     value={newPostContent}
                     onChange={(e) => setNewPostContent(e.target.value)}
-                    placeholder="Share your thoughts, pull stories, or small-ball tips..."
-                    rows={3}
-                    required
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white font-mono placeholder:text-slate-500 outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white focus:outline-none focus:border-purple-500"
                   />
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 font-mono">
-                      Posting as <strong className="text-purple-400">@{userProfile?.username || 'Player'}</strong>
-                    </span>
-                    <button
-                      type="submit"
-                      className="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-display font-black text-xs uppercase flex items-center gap-1.5"
-                    >
-                      <Send className="w-3.5 h-3.5" /> Post Thread
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    className="py-1.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-display font-bold uppercase"
+                  >
+                    Publish Post
+                  </button>
                 </form>
               )}
 
-              {/* Forum Posts List */}
+              {/* Posts List */}
               <div className="space-y-3">
-                {forumPosts.map((post) => (
+                {forumPosts.map((p) => (
                   <div
-                    key={post.id}
-                    className="p-4 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-purple-500/40 transition-all flex flex-col justify-between"
+                    key={p.id}
+                    className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2 font-mono text-xs"
                   >
-                    <div>
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-slate-900 border border-purple-500/40 flex items-center justify-center text-sm shadow">
-                            {post.avatarIcon}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-white font-mono">
-                                {post.author}
-                              </span>
-                              {post.authorBadge && (
-                                <span className="text-[8px] font-mono px-1.5 py-0.2 rounded font-black bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase">
-                                  {post.authorBadge}
-                                </span>
-                              )}
-                              {post.isPinned && (
-                                <span className="text-[8px] font-mono px-1.5 py-0.2 rounded font-black bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
-                                  📌 PINNED
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-[9.5px] font-mono text-slate-500">
-                              {new Date(post.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => handleUpvote(post.id)}
-                          className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-purple-300 border border-slate-800 flex items-center gap-1 text-xs font-mono transition-colors"
-                        >
-                          <ThumbsUp className="w-3.5 h-3.5 text-purple-400" />
-                          <span className="font-bold">{post.upvotes}</span>
-                        </button>
+                    <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{p.avatarIcon}</span>
+                        <span className="font-bold text-white">{p.author}</span>
+                        <span className="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">{p.authorBadge}</span>
                       </div>
-
-                      <h4 className="text-sm font-display font-bold text-white mb-1.5">
-                        {post.title}
-                      </h4>
-                      <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                        {post.content}
-                      </p>
+                      <span className="text-[9px] text-slate-500">{new Date(p.timestamp).toLocaleDateString()}</span>
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                      <div className="flex items-center gap-1.5">
-                        {post.tags.map((tag) => (
-                          <span key={tag} className="text-purple-400">#{tag}</span>
+                    <h4 className="font-display font-bold text-white text-sm uppercase">{p.title}</h4>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">{p.content}</p>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-white/5 text-[10px]">
+                      <div className="flex gap-1.5">
+                        {p.tags.map(t => (
+                          <span key={t} className="text-purple-300 bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-500/20">
+                            #{t}
+                          </span>
                         ))}
                       </div>
-                      <span>{post.repliesCount} replies</span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleUpvote(p.id)}
+                        className="flex items-center gap-1 text-slate-300 hover:text-amber-400 transition-colors"
+                      >
+                        <span>👍</span> {p.upvotes}
+                      </button>
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* ================= 6. SIGN UP / LOG IN ================= */}
-          {activeTab === 'SIGNUP_LOGIN' && (
-            <div className="space-y-4 animate-fade-in max-w-xl mx-auto py-2">
-              <div className="text-center space-y-1 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-orange-600/20 border border-orange-500/50 flex items-center justify-center text-2xl mx-auto shadow-[0_0_20px_rgba(234,88,12,0.4)]">
-                  👤
-                </div>
-                <h3 className="text-xl font-display font-black text-white uppercase">
-                  Player Account & Authentication
-                </h3>
-                <p className="text-xs text-slate-400 font-mono">
-                  Link your account via Google or Apple to synchronize cards, 5-in-7 streaks, and custom handles.
-                </p>
-              </div>
-
-              {/* Status Message */}
-              {authMsg && (
-                <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500 text-emerald-300 text-xs font-mono text-center animate-fade-in">
-                  {authMsg}
-                </div>
-              )}
-
-              {/* Social Login Buttons */}
-              <div className="space-y-2.5">
-                <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-3 transition-all shadow-md"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>Continue with Google</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAppleLogin}
-                  className="w-full py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-3 transition-all border border-white/20 shadow-md"
-                >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 170 170">
-                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12-14.43-6-9.14-10.74-19.58-14.22-31.33-3.48-11.75-5.22-23.01-5.22-33.78 0-14.14 3.59-26.06 10.77-35.77 7.18-9.71 16.5-14.67 27.97-14.88 5.43 0 11.24 1.34 17.43 4.02 6.19 2.68 10.02 4.08 11.49 4.2 1.63-.12 5.74-1.63 12.33-4.53 6.59-2.9 12.35-4.14 17.28-3.73 12.83.65 23.36 5.56 31.6 14.73-11.31 6.85-16.85 16.22-16.63 28.12.22 9.35 3.73 17.27 10.53 23.77 6.8 6.5 14.84 10.22 24.12 11.16-2.07 6.31-4.78 12.42-8.13 18.32zM119.22 33.15c0-7.18 2.61-13.92 7.83-20.22 5.22-6.3 11.75-10.33 19.59-12.1-1.09 7.4-4.02 14.14-8.79 20.22-4.77 6.08-10.99 10.12-18.63 12.1z" />
-                  </svg>
-                  <span>Continue with Apple</span>
-                </button>
-              </div>
-
-              {/* Username Handle Customizer */}
-              <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3 mt-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-white uppercase">
-                    Custom Player Handle
-                  </span>
-                  <span className="text-[10px] font-mono text-amber-400">
-                    Policy: Once monthly · Max 5/yr
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-xs">
-                      @
-                    </span>
-                    <input
-                      type="text"
-                      value={usernameInput}
-                      onChange={(e) => setUsernameInput(e.target.value)}
-                      placeholder="YourHandle"
-                      maxLength={18}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-7 pr-3 py-2 text-xs font-mono text-white outline-none focus:border-orange-500"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleUpdateUsername}
-                    className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-slate-950 font-display font-black text-xs uppercase"
-                  >
-                    Save Handle
-                  </button>
-                </div>
-
-                <div className="text-[10px] text-slate-500 font-mono leading-relaxed">
-                  Active account: <strong className="text-slate-300">@{userProfile?.username}</strong> · Linked Provider: <strong className="text-cyan-400 uppercase">{userProfile?.linkedProviders?.length ? userProfile.linkedProviders.join(', ') : 'Guest'}</strong>
-                </div>
               </div>
             </div>
           )}

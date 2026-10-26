@@ -15,7 +15,7 @@ export const CARD_SETS: CardSet[] = [
   },
   {
     id: 'HERITAGE',
-    name: 'CHOP Heritage 1975',
+    name: 'CHOP Vintage Throwback 1975',
     seasonName: 'Vintage Nostalgia Throwback',
     dropWindow: 'Active Season (March - May)',
     status: 'ACTIVE',
@@ -27,7 +27,7 @@ export const CARD_SETS: CardSet[] = [
   },
   {
     id: 'BOWMAN',
-    name: 'CHOP Bowman 1st Edition',
+    name: 'CHOP Prospect 1st Edition',
     seasonName: 'Top Prospects & Rookies',
     dropWindow: 'Active Season (April - June)',
     status: 'ACTIVE',
@@ -51,19 +51,19 @@ export const CARD_SETS: CardSet[] = [
   },
   {
     id: 'CHROME',
-    name: 'CHOP Chrome Flagship',
+    name: 'CHOP Chromium Specular',
     seasonName: 'High-End Prismatic Parallels',
     dropWindow: 'Drops in Midsummer (July - Sept)',
     status: 'UPCOMING',
     daysRemaining: 62,
     totalCards: 24,
-    borderTheme: 'Platinum Chrome Beveled Plate Mirror',
+    borderTheme: 'Platinum Chromium Beveled Plate Mirror',
     colorAccents: 'Polished Mirror Silver & Spectrum Iridescence',
     lore: 'Ultra-luxurious metallic chromium cardstock with diamond-beveled mirror borders and intense light-diffracting specular reflections.'
   },
   {
     id: 'STADIUM_CLUB',
-    name: 'CHOP Stadium Club',
+    name: 'CHOP Ballpark Club',
     seasonName: 'Cinematic Full-Bleed Photography',
     dropWindow: 'Drops in Late Summer (August - Oct)',
     status: 'UPCOMING',
@@ -75,7 +75,7 @@ export const CARD_SETS: CardSet[] = [
   },
   {
     id: 'ALLEN_GINTER',
-    name: 'CHOP Ginter & Co. 1887',
+    name: 'CHOP Tobacco Era 1887',
     seasonName: 'Victorian Antiquities & Tobacco Era',
     dropWindow: 'Drops in Autumn (Sept - Nov)',
     status: 'UPCOMING',
