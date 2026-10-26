@@ -60,7 +60,7 @@ export const SplashScreenModal: React.FC<SplashScreenModalProps> = ({ isOpen, on
         </span>
 
         <p className="text-xs sm:text-sm text-slate-300 font-body max-w-md mb-6 leading-relaxed">
-          Step into the bottom of the 9th. Rip authentic Topps-style foil packs, manage your 26-man roster on the draft matrix, and tilt 3D refractor cards with real device gyroscope motion.
+          Step into the bottom of the 9th. Rip authentic foil packs, manage your 26-man roster on the draft matrix, and tilt 3D refractor cards with real device gyroscope motion.
         </p>
 
         {/* Feature Badges Grid */}
@@ -69,7 +69,7 @@ export const SplashScreenModal: React.FC<SplashScreenModalProps> = ({ isOpen, on
             <span className="text-xl">🎴</span>
             <div>
               <span className="text-[11px] font-display font-black text-white uppercase block leading-none">
-                Topps Collect Foil Rips
+                Diamond Foil Pack Rips
               </span>
               <span className="text-[9.5px] font-mono text-slate-400">
                 Tear strip swipe & refractor hits

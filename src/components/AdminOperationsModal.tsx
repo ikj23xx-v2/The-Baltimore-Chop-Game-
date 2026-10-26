@@ -428,7 +428,7 @@ export const AdminOperationsModal: React.FC<AdminOperationsModalProps> = ({
                         </span>
                       </div>
                       <p className="text-xs text-slate-400 font-mono mt-0.5">
-                        Authoritative game catalog: 7 franchises, 29 licensed players, and 8 Topps-style physical sets.
+                        Authoritative game catalog: All 30 MLB franchises, official 26-man active rosters (780 total cards), and authentic collectible sets.
                       </p>
                     </div>
 
@@ -448,13 +448,13 @@ export const AdminOperationsModal: React.FC<AdminOperationsModalProps> = ({
                     <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
                       <span className="text-[10px] font-mono text-slate-400 uppercase block">Total Players</span>
                       <span className="text-lg font-mono font-black text-white">{ALL_PLAYERS.length} Cards</span>
-                      <span className="text-[10px] text-emerald-400 font-mono block">14 Legends • 15 Stars</span>
+                      <span className="text-[10px] text-emerald-400 font-mono block">26 Players / Team</span>
                     </div>
 
                     <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
                       <span className="text-[10px] font-mono text-slate-400 uppercase block">MLB Franchises</span>
                       <span className="text-lg font-mono font-black text-orange-400">{registryTeams.length} Teams</span>
-                      <span className="text-[10px] text-slate-400 font-mono block">Orioles & Classic Rivals</span>
+                      <span className="text-[10px] text-slate-400 font-mono block">AL & NL 6 Divisions</span>
                     </div>
 
                     <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">

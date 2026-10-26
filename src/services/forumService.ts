@@ -33,7 +33,7 @@ const INITIAL_POSTS: ForumPost[] = [
   {
     id: 'post-2',
     category: 'CARD_SHOW_TRADES',
-    title: '🔥 Just ripped a 1/1 Superfractor Cal Ripken Jr. from the Topps Collect Pack!',
+    title: '🔥 Just ripped a 1/1 Superfractor Cal Ripken Jr. from the Diamond Foil Pack!',
     author: 'IronManFan8',
     authorBadge: 'VIP COLLECTOR',
     avatarIcon: '💎',
@@ -41,7 +41,7 @@ const INITIAL_POSTS: ForumPost[] = [
     timestamp: Date.now() - 1000 * 60 * 60 * 5,
     upvotes: 38,
     repliesCount: 9,
-    tags: ['Superfractor', 'Ripken', 'ToppsCollect']
+    tags: ['Superfractor', 'Ripken', 'DiamondCollect']
   },
   {
     id: 'post-3',

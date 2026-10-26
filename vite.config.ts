@@ -16,7 +16,7 @@ export default defineConfig(() => {
           id: '/',
           name: 'The Baltimore Chop - Baseball Card Battler',
           short_name: 'Chop Battler',
-          description: 'Cross-platform baseball card battler featuring 3-pitch counter-card showdowns, Topps Collect pack ripping, 26-man casino jackpot draft, and 3D refractor economy.',
+          description: 'Cross-platform baseball card battler featuring 3-pitch counter-card showdowns, Hobby Collect pack ripping, 26-man casino jackpot draft, and 3D refractor economy.',
           theme_color: '#070b12',
           background_color: '#070b12',
           display: 'standalone',

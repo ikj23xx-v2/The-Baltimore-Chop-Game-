@@ -316,7 +316,7 @@ class SoundEngine {
     osc.stop(t + 0.13);
   }
 
-  // Authentic Topps-style foil wrapper rip sound
+  // Authentic foil wrapper rip sound
   public playPackRip(): void {
     const ctx = this.getContext();
     if (!ctx) return;

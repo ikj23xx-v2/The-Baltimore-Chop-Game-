@@ -35,6 +35,23 @@ export const Card3D: React.FC<Card3DProps> = ({
   const cardNo = card.cardNo ?? (card.id ? parseInt(card.id.replace(/\D/g, '') || '8', 10) : 8);
   const isHistoricalOrLegend = card.isHistorical || card.bRefWar >= 50 || cardNo % 2 === 0;
 
+  // Only cards with authentic autographs, 1/1 Superfractors, or historic Hall of Fame immortals have on-card signatures
+  const hasAutograph = Boolean(
+    card.hasAutograph ||
+    card.refractorTier === 'SUPERFRACTOR_1_OF_1' ||
+    (card.isHistorical && card.bRefWar >= 65)
+  );
+
+  // Compute realistic metallic hot-foil die-stamped serial number that pops like real trading cards
+  const effectiveSerialStamp = card.serialStamp || (
+    card.refractorTier === 'SUPERFRACTOR_1_OF_1' ? '1/1' :
+    card.refractorTier === 'GOLD_WAVE' ? '#04/25' :
+    card.refractorTier === 'SAPPHIRE' ? '#18/50' :
+    card.refractorTier === 'ATOMIC_MOJO' ? '#42/99' :
+    card.refractorTier === 'RAINBOW' ? '#125/199' :
+    undefined
+  );
+
   // Desktop Mouse Tilt
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!interactive || !cardRef.current || isFlipped) return;
@@ -171,9 +188,6 @@ export const Card3D: React.FC<Card3DProps> = ({
 
   const refStyle = getRefractorStyles();
 
-  // =========================================================================
-  // SET-SPECIFIC BORDER & ARCHITECTURE ENGINE (MIMICS THIS YEAR'S TOPPS SETS)
-  // =========================================================================
   // =========================================================================
   // SET-SPECIFIC BORDER & ARCHITECTURE ENGINE (AUTHENTIC 3D TEXTURED PRINT)
   // Slim authentic margins, 3D cardstock depth, no bulky white slabs
@@ -462,34 +476,49 @@ export const Card3D: React.FC<Card3DProps> = ({
                   )}
                 </div>
 
-                {/* Real Blue Ballpoint Pen Signature (#183cba) with Certified Autograph Stamp */}
-                <div className="mt-1 w-full flex flex-col items-center text-center">
-                  <span
-                    className="font-signature text-2xl font-bold text-[#183cba] inline-block transform -rotate-2 tracking-wide select-none filter transition-transform hover:scale-105"
-                    style={{
-                      textShadow: '0 0.5px 1px rgba(24, 60, 186, 0.65), 0.5px 0.5px 0px #0e2782',
-                      filter: 'drop-shadow(0 1px 1px rgba(24, 60, 186, 0.45))'
-                    }}
-                  >
-                    {card.name}
-                  </span>
+                {/* Signature Section: Only certified autographs, 1/1 Superfractors, or historic immortals */}
+                {hasAutograph ? (
+                  <div className="mt-1 w-full flex flex-col items-center text-center">
+                    <span
+                      className="font-signature text-2xl font-bold text-[#183cba] inline-block transform -rotate-2 tracking-wide select-none filter transition-transform hover:scale-105"
+                      style={{
+                        textShadow: '0 0.5px 1px rgba(24, 60, 186, 0.65), 0.5px 0.5px 0px #0e2782',
+                        filter: 'drop-shadow(0 1px 1px rgba(24, 60, 186, 0.45))'
+                      }}
+                    >
+                      {card.name}
+                    </span>
 
-                  {/* Autograph Authentication Badge: On-Card vs. Chop Certified Issue */}
-                  {isHistoricalOrLegend ? (
-                    <div className="flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded bg-black/65 border border-amber-400/50 shadow-sm">
-                      <span className="text-[7px] font-mono font-black tracking-wider uppercase text-amber-300 drop-shadow">
-                        ★ CHOP™ CERTIFIED ON-CARD AUTOGRAPH ★
+                    {/* Autograph Authentication Badge: On-Card vs. Certified Issue */}
+                    {isHistoricalOrLegend ? (
+                      <div className="flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded bg-black/65 border border-amber-400/50 shadow-sm">
+                        <span className="text-[7px] font-mono font-black tracking-wider uppercase text-amber-300 drop-shadow">
+                          ★ CERTIFIED ON-CARD AUTOGRAPH ★
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded bg-gradient-to-r from-slate-200 via-white to-slate-200 text-slate-950 border border-slate-400 shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                        <span className="text-[6.5px] font-mono font-black tracking-widest text-slate-800 uppercase">
+                          CHOP™ CERTIFIED ISSUE AUTOGRAPH
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Standard / Base Card Presentation: Clean Modern Collector Layout (No Forced Cursive) */
+                  <div className="mt-1 w-full flex flex-col items-center text-center">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm shadow-sm">
+                      <span className="text-[9px] font-display font-black tracking-wider uppercase text-slate-200">
+                        {card.era ? `${card.era} Season` : 'Collector Series'}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-amber-400/80" />
+                      <span className="text-[8.5px] font-mono font-bold text-amber-300">
+                        #{String(cardNo).padStart(3, '0')}
                       </span>
                     </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded bg-gradient-to-r from-slate-200 via-white to-slate-200 text-slate-950 border border-slate-400 shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
-                      <span className="text-[6.5px] font-mono font-black tracking-widest text-slate-800 uppercase">
-                        CHOP™ CERTIFIED ISSUE AUTOGRAPH
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Apple Music Lossless-Style Clickable bRef WAR Metric Pill */}
                 <div className="mt-1.5">
@@ -537,12 +566,50 @@ export const Card3D: React.FC<Card3DProps> = ({
             </div>
           </div>
 
-          {/* Numbered Parallel Serial Stamp */}
-          {card.serialStamp && (
-            <div className="absolute bottom-2.5 left-3 z-30">
-              <span className="text-[9px] font-mono font-black bg-black/90 px-1.5 py-0.5 rounded text-amber-400 border border-amber-500/60 shadow">
-                {card.serialStamp}
-              </span>
+          {/* High-Fidelity 3D Metallic Foil Die-Stamped Serial Number */}
+          {effectiveSerialStamp && (
+            <div className="absolute bottom-2.5 left-3 z-30 transition-transform duration-300 hover:scale-110 select-none">
+              <div
+                className={`px-2 py-0.5 rounded flex items-center gap-1.5 border shadow-[0_2px_10px_rgba(0,0,0,0.85)] ${
+                  effectiveSerialStamp.includes('1/1') || card.refractorTier === 'SUPERFRACTOR_1_OF_1'
+                    ? 'bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-500 text-slate-950 border-amber-200 ring-2 ring-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.9)]'
+                    : card.refractorTier === 'GOLD_WAVE'
+                    ? 'bg-gradient-to-r from-yellow-500 via-amber-200 to-yellow-600 text-slate-950 border-amber-300 ring-1 ring-yellow-400/80 shadow-[0_0_10px_rgba(245,158,11,0.7)]'
+                    : card.refractorTier === 'SAPPHIRE'
+                    ? 'bg-gradient-to-r from-cyan-400 via-sky-100 to-blue-600 text-slate-950 border-cyan-200 ring-1 ring-cyan-400/80 shadow-[0_0_10px_rgba(6,182,212,0.7)]'
+                    : card.refractorTier === 'ATOMIC_MOJO'
+                    ? 'bg-gradient-to-r from-fuchsia-400 via-pink-200 to-cyan-400 text-slate-950 border-pink-200 ring-1 ring-purple-400/80 shadow-[0_0_10px_rgba(217,70,239,0.7)]'
+                    : 'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-300 text-slate-950 border-white ring-1 ring-white/60 shadow-[0_0_8px_rgba(255,255,255,0.5)]'
+                }`}
+                style={{
+                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -1px 2px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.9)',
+                }}
+              >
+                {/* Stamp Icon */}
+                {effectiveSerialStamp.includes('1/1') ? (
+                  <span className="text-[10px] leading-none filter drop-shadow">💎</span>
+                ) : (
+                  <span className="text-[9px] font-mono font-black text-slate-800 leading-none">№</span>
+                )}
+
+                {/* Stamped Foil Number with Realistic Debossed Shadow */}
+                <span
+                  className="text-[10px] sm:text-[11px] font-mono font-black tracking-widest uppercase leading-none"
+                  style={{
+                    textShadow: '0 0.5px 0 rgba(255, 255, 255, 0.9), 0 -0.5px 0.5px rgba(0, 0, 0, 0.6)',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {effectiveSerialStamp}
+                </span>
+
+                {/* 1 OF 1 Authentic Collector Badge */}
+                {effectiveSerialStamp.includes('1/1') && (
+                  <span className="text-[7px] font-mono font-black bg-black text-amber-300 px-1 py-0.5 rounded leading-none">
+                    1 OF 1
+                  </span>
+                )}
+              </div>
             </div>
           )}
 

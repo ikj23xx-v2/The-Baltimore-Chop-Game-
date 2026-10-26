@@ -144,7 +144,7 @@ export const DraftBoardGrid: React.FC<DraftBoardGridProps> = ({
             BALTIMORE ORIOLES BIG BOARD & DEPTH CHART
           </h2>
           <p className="text-xs text-slate-400 font-mono mt-0.5">
-            Sleeper-style player card metrics · Authentic Topps sets · 1-Click 3D card inspect & active lineup toggle
+            Sleeper-style player card metrics · Authentic collectible sets · 1-Click 3D card inspect & active lineup toggle
           </p>
         </div>
 

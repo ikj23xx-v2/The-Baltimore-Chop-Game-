@@ -55,6 +55,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
 
   // Available Cards Filter
   const [cardSearch, setCardSearch] = useState('');
+  const [cardTeam, setCardTeam] = useState('ALL');
   const [cardPos, setCardPos] = useState('ALL');
   const [inspectedCard, setInspectedCard] = useState<PlayerCard | null>(null);
 
@@ -78,6 +79,11 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
   const [usernameInput, setUsernameInput] = useState(userProfile?.username || '');
   const [authMsg, setAuthMsg] = useState('');
 
+  // Unique Teams List (All 30 MLB Franchises)
+  const seasonTeams = React.useMemo(() => {
+    return Array.from(new Set(ALL_PLAYERS.map((p) => p.team))).sort();
+  }, []);
+
   // Subscribe to auth updates
   React.useEffect(() => {
     return authService.subscribe((p) => {
@@ -90,15 +96,16 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
 
   const currentSeason = TWELVE_SEASONS.find((s) => s.seasonNumber === selectedSeasonNum) || TWELVE_SEASONS[0];
 
-  // Filtered Cards for Season 1
+  // Filtered Cards for Season 1 (780 Total Cards Across 30 Teams)
   const filteredSeasonCards = ALL_PLAYERS.filter((c) => {
     const matchSearch =
       cardSearch === '' ||
       c.name.toLowerCase().includes(cardSearch.toLowerCase()) ||
       c.team.toLowerCase().includes(cardSearch.toLowerCase()) ||
       c.position.toLowerCase().includes(cardSearch.toLowerCase());
+    const matchTeam = cardTeam === 'ALL' || c.team === cardTeam;
     const matchPos = cardPos === 'ALL' || c.position === cardPos;
-    return matchSearch && matchPos;
+    return matchSearch && matchTeam && matchPos;
   });
 
   // Handle Forum Upvote
@@ -195,7 +202,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-300 font-mono">
-                Official Baseball Card Battler · 3D Topps Collect Showdowns & 12-Month Release Calendar
+                Official Baseball Card Battler · 3D Diamond Card Showdowns & 12-Month Release Calendar
               </p>
             </div>
           </div>
@@ -349,7 +356,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     💎
                   </div>
                   <h4 className="font-display font-black text-white text-sm uppercase">
-                    4. 5-Tier Topps Refractors
+                    4. 5-Tier Refractor Parallels
                   </h4>
                   <p className="text-xs text-slate-300 font-sans leading-relaxed">
                     Rip authentic physical-style packs to pull Rainbow Foils, Sapphires, Gold Waves (/50), Atomic Mojos (/10), and the ultimate 1/1 Superfractor with real gyroscope tilt.
@@ -374,7 +381,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    All 29 licensed MLB players and legends available to draft, rip, and battler in Season 1.
+                    All 30 MLB franchises and 780 active 26-man roster cards available to draft, rip, and battle in Season 1.
                   </p>
                 </div>
 
@@ -385,9 +392,9 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 </div>
               </div>
 
-              {/* Search & Position Filters */}
+              {/* Search, Team & Position Filters */}
               <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 flex flex-wrap items-center gap-2">
-                <div className="relative flex-1 min-w-[220px]">
+                <div className="relative flex-1 min-w-[200px]">
                   <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
@@ -397,6 +404,17 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white font-mono placeholder:text-slate-500 outline-none focus:border-cyan-500"
                   />
                 </div>
+
+                <select
+                  value={cardTeam}
+                  onChange={(e) => setCardTeam(e.target.value)}
+                  className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-cyan-500"
+                >
+                  <option value="ALL">All 30 MLB Teams ({seasonTeams.length})</option>
+                  {seasonTeams.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
 
                 <select
                   value={cardPos}
@@ -579,7 +597,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
             </div>
           )}
 
-          {/* ================= 3. 12-SEASON MASTER CALENDAR & TOPPS RELEASES ================= */}
+          {/* ================= 3. 12-SEASON MASTER CALENDAR & HOBBY COLLECTOR RELEASES ================= */}
           {activeTab === 'SEASONS_CALENDAR' && (
             <div className="space-y-5 animate-fade-in pb-4">
               {/* Header explaining 11/1 start and locked status */}
@@ -592,7 +610,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     </h3>
                   </div>
                   <p className="text-xs text-slate-300 font-mono mt-1">
-                    Season 1 begins November 1 (11/1). Each upcoming monthly season unlocks progressively by actual Topps hobby release date. Upcoming season cards and sets remain strictly locked until said season starts!
+                    Season 1 begins November 1 (11/1). Each upcoming monthly season unlocks progressively by actual hobby release date. Upcoming season cards and sets remain strictly locked until said season starts!
                   </p>
                 </div>
 
@@ -612,7 +630,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                   <span className="flex items-center gap-1.5 text-amber-400 font-bold">
                     <Sparkles className="w-4 h-4" /> 12 Seasonal Stadium Club Medallions (Official Asset)
                   </span>
-                  <span>Click any season below to review its Topps release schedule</span>
+                  <span>Click any season below to review its release schedule</span>
                 </div>
                 <img
                   src="/assets/aistudio/watermarked_img_1431752454010944403_ad0e9d0c.jpg"
@@ -673,13 +691,13 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                           </span>
                         </div>
 
-                        {/* Aligned Topps Likeness Set */}
+                        {/* Aligned Hobby Likeness Set */}
                         <div className="p-2 rounded-xl bg-black/50 border border-white/5 mb-2">
                           <span className="text-[9px] font-mono text-slate-400 block uppercase">
-                            Topps Likeness Set:
+                            Hobby Likeness Set:
                           </span>
                           <span className="text-xs font-display font-bold text-amber-300 block leading-tight">
-                            {season.toppsLikenessSet}
+                            {season.hobbyLikenessSet}
                           </span>
                           <span className="text-[9.5px] font-mono text-cyan-400 block mt-0.5">
                             Hobby Drop: {season.actualHobbyReleaseDate}
@@ -718,7 +736,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-base sm:text-xl font-display font-black text-white uppercase">
-                        SEASON {currentSeason.seasonNumber}: {currentSeason.toppsLikenessSet}
+                        SEASON {currentSeason.seasonNumber}: {currentSeason.hobbyLikenessSet}
                       </span>
                       {currentSeason.isUnlocked ? (
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-emerald-950 text-emerald-400 border border-emerald-500/40">
@@ -828,11 +846,11 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                   <div className="flex items-center gap-2">
                     <span className="text-lg">💎</span>
                     <h5 className="font-display font-black text-white text-sm uppercase">
-                      Topps Refractor Tiers & Rarity
+                      Diamond Refractor Tiers & Rarity
                     </h5>
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                    Cards feature 5 authentic Topps-licensed parallel treatments:
+                    Cards feature 5 authentic parallel treatments:
                     <br />• <strong>Base</strong>: Classic standard cardstock.
                     <br />• <strong>Rainbow Foil</strong>: Spectrum holographic sheen.
                     <br />• <strong>Sapphire Edition</strong>: Deep royal blue chromium (/25).

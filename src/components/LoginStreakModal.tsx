@@ -156,7 +156,7 @@ export const LoginStreakModal: React.FC<LoginStreakModalProps> = ({
             </div>
             <div className="rounded-xl bg-black/40 p-2 border border-white/10">
               <span className="text-xs text-amber-300 font-display font-black block">1x Foil Pack</span>
-              <span className="text-[9px] font-mono text-slate-400">Topps Collect</span>
+              <span className="text-[9px] font-mono text-slate-400">Diamond Pack</span>
             </div>
           </div>
         </div>

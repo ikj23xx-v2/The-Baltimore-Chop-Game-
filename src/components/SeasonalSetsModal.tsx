@@ -69,7 +69,7 @@ export const SeasonalSetsModal: React.FC<SeasonalSetsModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-display font-black text-white tracking-wide uppercase">
-                  12-SEASON CARD RELEASES & TOPPS LIKENESS CALENDAR
+                  12-SEASON CARD RELEASES & HOBBY LIKENESS CALENDAR
                 </h2>
                 <span className="text-[10px] bg-orange-600 text-white px-2 py-0.5 rounded font-mono font-bold">
                   STARTS 11/1
@@ -134,7 +134,7 @@ export const SeasonalSetsModal: React.FC<SeasonalSetsModalProps> = ({
                           SEASON {season.seasonNumber} ({season.monthName})
                         </span>
                         <h4 className="text-xs sm:text-sm font-display font-black text-white uppercase">
-                          {season.toppsLikenessSet}
+                          {season.hobbyLikenessSet}
                         </h4>
                       </div>
                       <span className="text-[11px] text-cyan-400 font-mono block">
@@ -195,7 +195,7 @@ export const SeasonalSetsModal: React.FC<SeasonalSetsModalProps> = ({
                 {currentSeason.isUnlocked ? '★ UNLOCKED LAUNCH SET' : '🔒 LOCKED UPCOMING SEASON'}
               </span>
               <h3 className="text-sm sm:text-base font-display font-black text-white uppercase">
-                {currentSeason.toppsLikenessSet}
+                {currentSeason.hobbyLikenessSet}
               </h3>
               <p className="text-[11px] text-slate-400 font-mono">
                 Starts {currentSeason.startDate} · {currentSeason.actualHobbyReleaseDate}
@@ -242,7 +242,7 @@ export const SeasonalSetsModal: React.FC<SeasonalSetsModalProps> = ({
                 </h4>
 
                 <p className="text-xs text-slate-400 font-mono leading-relaxed">
-                  Cards for Season {currentSeason.seasonNumber} ({currentSeason.toppsLikenessSet}) will automatically unlock for all collectors on <strong>{currentSeason.startDate}</strong>!
+                  Cards for Season {currentSeason.seasonNumber} ({currentSeason.hobbyLikenessSet}) will automatically unlock for all collectors on <strong>{currentSeason.startDate}</strong>!
                 </p>
 
                 <div className="p-2.5 rounded-xl bg-black/60 border border-white/5 w-full text-left font-mono text-[10px] space-y-1">

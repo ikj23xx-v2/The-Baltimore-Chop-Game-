@@ -50,7 +50,7 @@ export const PackRippingModal: React.FC<PackRippingModalProps> = ({
     }
   }, [isOpen, activeSetId]);
 
-  // Generate 5 authentic cards with refractor odds matching Topps Collect
+  // Generate 5 authentic cards with refractor odds matching hobby collectibles
   const generatePackCards = () => {
     // 1. Filter set players or full pool fallback
     const setPlayers = ALL_PLAYERS.filter((p) => (p.cardSetId || 'SERIES_1') === activeSetId);
@@ -192,7 +192,7 @@ export const PackRippingModal: React.FC<PackRippingModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-display font-black text-white uppercase tracking-wider flex items-center gap-2">
-                  TOPPS COLLECT FOIL RIP
+                  DIAMOND FOIL PACK RIP
                 </h2>
                 <span className="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded bg-orange-600 text-white shadow-sm">
                   5 CARDS / PACK
@@ -236,45 +236,24 @@ export const PackRippingModal: React.FC<PackRippingModalProps> = ({
                   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.9), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -4px 8px rgba(0, 0, 0, 0.9)'
                 }}
               >
-                {/* Metallic Serrated Top Foil Crimp */}
+                {/* Metallic Serrated Top Foil Crimp with Integrated Perforated Rip Header */}
                 <div 
-                  className="h-6 w-full flex items-center justify-between px-2 bg-gradient-to-r from-slate-400 via-slate-100 to-slate-400 border-b border-black/40"
+                  className="w-full bg-gradient-to-r from-slate-400 via-slate-100 to-slate-400 border-b border-black/40"
                   style={{
                     backgroundImage: 'repeating-linear-gradient(90deg, #94a3b8 0px, #94a3b8 3px, #cbd5e1 3px, #cbd5e1 6px)'
                   }}
                 >
-                  <span className="text-[8px] font-mono font-black text-slate-800 tracking-widest">
-                    SEALED FOIL
-                  </span>
-                  <span className="text-[7.5px] font-mono font-bold text-slate-700">
-                    5 CARDS
-                  </span>
-                </div>
-
-                {/* Foil Sheen Diagonal Light Sweep */}
-                <div 
-                  className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay"
-                  style={{
-                    background: 'linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.8) 50%, transparent 80%)'
-                  }}
-                />
-
-                {/* Pack Art & Set Badges */}
-                <div className="p-4 flex flex-col items-center justify-between h-[360px] relative z-10">
-                  <div className="w-full text-center mt-2">
-                    <span className="text-[9px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
-                      OFFICIAL MLBPA LICENSED
+                  <div className="h-5 w-full flex items-center justify-between px-2.5">
+                    <span className="text-[7.5px] font-mono font-black text-slate-800 tracking-widest uppercase">
+                      ★ TOP CRIMP SEAL ★
                     </span>
-                    <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
-                      {activeSet.name}
-                    </h3>
-                    <span className="text-xs font-mono text-orange-400 font-bold">
-                      2026 EDITION
+                    <span className="text-[7.5px] font-mono font-bold text-slate-700">
+                      5 CARDS / PACK
                     </span>
                   </div>
 
-                  {/* INTERACTIVE TEAR STRIP WITH PULL TAB */}
-                  <div className="w-full my-auto px-2">
+                  {/* PROPER TOP FOIL RIP STRIP (WHERE TRADING CARD PACKS ARE ACTUALLY RIPPED) */}
+                  <div className="w-full px-1.5 pb-1.5 pt-0.5">
                     <div 
                       ref={tearStripRef}
                       onMouseDown={(e) => handleTearStart(e.clientX)}
@@ -287,29 +266,59 @@ export const PackRippingModal: React.FC<PackRippingModalProps> = ({
                         if (e.touches[0]) handleTearMove(e.touches[0].clientX);
                       }}
                       onTouchEnd={handleTearEnd}
-                      className="relative h-12 rounded-xl bg-gradient-to-r from-amber-600 via-orange-500 to-yellow-500 p-1 cursor-grab active:cursor-grabbing border-2 border-yellow-300 shadow-[0_4px_15px_rgba(245,158,11,0.5)] flex items-center overflow-hidden"
+                      className="relative h-10 rounded-lg bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-400 p-0.5 cursor-grab active:cursor-grabbing border-2 border-yellow-200 shadow-[0_2px_12px_rgba(245,158,11,0.6)] flex items-center overflow-hidden"
                     >
-                      {/* Perforated lines */}
-                      <div className="absolute inset-x-0 top-1 border-t-2 border-dashed border-black/40" />
-                      <div className="absolute inset-x-0 bottom-1 border-b-2 border-dashed border-black/40" />
+                      {/* Perforated tear notch lines */}
+                      <div className="absolute inset-x-0 top-0.5 border-t border-dashed border-black/60" />
+                      <div className="absolute inset-x-0 bottom-0.5 border-b border-dashed border-black/60" />
 
                       {/* Pull tab handle */}
                       <div 
-                        className="h-10 px-3 rounded-lg bg-black text-amber-300 font-display font-black text-xs flex items-center gap-1 shadow-lg border border-yellow-400 transition-transform duration-75"
+                        className="h-8 px-2.5 rounded bg-black text-amber-300 font-display font-black text-[11px] flex items-center gap-1 shadow-md border border-yellow-300 transition-transform duration-75 select-none"
                         style={{
-                          transform: `translateX(${tearProgress * 1.8}px)`
+                          transform: `translateX(${tearProgress * 1.85}px)`
                         }}
                       >
                         <span>PULL</span>
-                        <ChevronRight className="w-4 h-4 animate-pulse" />
+                        <ChevronRight className="w-3.5 h-3.5 animate-pulse" />
                       </div>
 
-                      <span className="ml-auto pr-3 text-[10px] font-mono font-black text-slate-950 uppercase tracking-widest pointer-events-none">
-                        RIP FOIL ➡️
+                      <span className="ml-auto pr-2 text-[9px] font-mono font-black text-slate-950 uppercase tracking-widest pointer-events-none flex items-center gap-1">
+                        TEAR TOP SEAL ✂️ ➡️
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono text-slate-400 mt-1 block">
-                      Swipe handle across to rip open
+                  </div>
+                </div>
+
+                {/* Foil Sheen Diagonal Light Sweep */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay"
+                  style={{
+                    background: 'linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.8) 50%, transparent 80%)'
+                  }}
+                />
+
+                {/* Pack Art & Set Badges */}
+                <div className="p-4 flex flex-col items-center justify-between h-[310px] relative z-10">
+                  <div className="w-full text-center mt-3">
+                    <span className="text-[9px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                      OFFICIAL MLBPA LICENSED
+                    </span>
+                    <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+                      {activeSet.name}
+                    </h3>
+                    <span className="text-xs font-mono text-orange-400 font-bold">
+                      2026 EDITION
+                    </span>
+                  </div>
+
+                  {/* Pack Central Medallion Art */}
+                  <div className="my-auto flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-2xl bg-black/50 border-2 border-amber-400/60 flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(245,158,11,0.4)]">
+                      ⚾
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-300 mt-2">
+                      Swipe top tab across to rip foil
                     </span>
                   </div>
 

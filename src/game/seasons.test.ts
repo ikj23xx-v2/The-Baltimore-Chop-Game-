@@ -11,7 +11,7 @@ test('12 seasons are configured with Season 1 starting 11/1', () => {
   assert.equal(season1.startDate, '11/1');
   assert.equal(season1.status, 'ACTIVE');
   assert.equal(season1.isUnlocked, true);
-  assert.equal(season1.toppsLikenessSet, 'Topps Update Series Flagship');
+  assert.equal(season1.hobbyLikenessSet, 'Update Series Flagship');
 });
 
 test('Seasons 2 through 12 are strictly locked until their start date', () => {
@@ -21,7 +21,7 @@ test('Seasons 2 through 12 are strictly locked until their start date', () => {
     assert.equal(s.status, 'UPCOMING');
     assert.ok(s.startDate.length > 0);
     assert.ok(s.actualHobbyReleaseDate.length > 0);
-    assert.ok(s.toppsLikenessSet.length > 0);
+    assert.ok(s.hobbyLikenessSet.length > 0);
     assert.equal(isSeasonUnlocked(s.seasonNumber), false);
   }
 });

@@ -37,7 +37,9 @@ import { DraftBoardGrid } from './components/DraftBoardGrid';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { PackRippingModal } from './components/PackRippingModal';
 import { AdminOperationsModal } from './components/AdminOperationsModal';
-import { SplashScreenModal } from './components/SplashScreenModal';
+import { StadiumTunnelEntrance } from './components/StadiumTunnelEntrance';
+import { teamThemeService, ActiveTeamTheme } from './services/teamThemeService';
+import { getRosterForTeam } from './data/players';
 import { LoginStreakModal } from './components/LoginStreakModal';
 import { AccountProfileModal } from './components/AccountProfileModal';
 import { CardAlmanacModal } from './components/CardAlmanacModal';
@@ -111,6 +113,7 @@ export default function App() {
   const [isPackRipOpen, setIsPackRipOpen] = useState(false);
   const [isOperationsOpen, setIsOperationsOpen] = useState(false);
   const [isSplashOpen, setIsSplashOpen] = useState(false);
+  const [currentTeamTheme, setCurrentTeamTheme] = useState<ActiveTeamTheme>(() => teamThemeService.getActiveTeam());
   const [isStreakOpen, setIsStreakOpen] = useState(false);
   const [streakStatus, setStreakStatus] = useState(() => getSevenDayStreakStatus());
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -119,10 +122,30 @@ export default function App() {
   const [isAlmanacOpen, setIsAlmanacOpen] = useState(false);
   const [isPortalOpen, setIsPortalOpen] = useState(true);
 
-  // Subscribe to user auth & profile
+  // Subscribe to user auth & active team theme updates
   React.useEffect(() => {
-    return authService.subscribe((p) => setUserProfile(p));
+    const unsubAuth = authService.subscribe((p) => setUserProfile(p));
+    const unsubTheme = teamThemeService.subscribe((theme) => {
+      setCurrentTeamTheme(theme);
+    });
+    return () => {
+      unsubAuth();
+      unsubTheme();
+    };
   }, []);
+
+  const handleTeamSelected = (selectedTeam: ActiveTeamTheme) => {
+    teamThemeService.setActiveTeam(selectedTeam.name);
+    setCurrentTeamTheme(selectedTeam);
+    const teamRoster = getRosterForTeam(selectedTeam.name);
+    if (teamRoster && teamRoster.length > 0) {
+      setRoster(teamRoster);
+      setActiveBatterIndex(0);
+    }
+    setTeamArchetype(`${selectedTeam.name} · ${selectedTeam.ballpark}`);
+    setIsSplashOpen(false);
+    addLog(`🏟️ Welcome to ${selectedTeam.ballpark}! Now managing the ${selectedTeam.name}.`, 'chop');
+  };
 
   // Record daily login on launch
   React.useEffect(() => {
@@ -399,6 +422,39 @@ export default function App() {
             </div>
           </div>
 
+          {/* Active Favorite Franchise & Stadium Tunnel Walkout Selector */}
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              setIsSplashOpen(true);
+            }}
+            className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all shadow-md hover:scale-105 active:scale-95 group shrink-0"
+            style={{
+              backgroundColor: `${currentTeamTheme.primaryColor}25`,
+              borderColor: `${currentTeamTheme.primaryColor}80`
+            }}
+            title="Click to Walk Out of the Stadium Tunnel & Change Your Favorite Team"
+          >
+            <div
+              className="w-4 h-4 rounded-full border border-white/80 shrink-0 shadow flex items-center justify-center text-[8px]"
+              style={{ backgroundColor: currentTeamTheme.primaryColor }}
+            >
+              ⚾
+            </div>
+            <div className="text-left">
+              <div className="flex items-center gap-1">
+                <span className="text-[8px] font-mono font-black text-amber-400 uppercase tracking-widest leading-none">
+                  {currentTeamTheme.league === 'NEGRO_LEAGUES' ? 'NEGRO LEAGUES' : `${currentTeamTheme.league} · ${currentTeamTheme.division || 'MLB'}`}
+                </span>
+                <span className="text-[7px] text-slate-400 group-hover:text-amber-300">▼ TUNNEL</span>
+              </div>
+              <span className="text-xs font-display font-black text-white uppercase tracking-wider block leading-tight group-hover:text-amber-300">
+                {currentTeamTheme.name}
+              </span>
+            </div>
+          </button>
+
           {/* Center: iOS Segmented Glass Pill Switcher (Stick-to-the-board / Arena / Sets) */}
           <div className="hidden md:flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-2xl border border-white/10 shadow-inner">
             <button
@@ -460,7 +516,7 @@ export default function App() {
                 setIsPackRipOpen(true);
               }}
               className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1"
-              title="Topps Collect Foil Pack Rip"
+              title="Hobby Collect Foil Pack Rip"
             >
               <span>⚡</span> <span className="hidden sm:inline">Rip</span> Pack
             </button>
@@ -473,7 +529,7 @@ export default function App() {
                 setIsAlmanacOpen(true);
               }}
               className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 hover:text-white border border-cyan-500/40 text-xs font-display font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
-              title="Confirm & Inspect All 7 Teams, 29 Players & 8 Topps Sets"
+              title="Confirm & Inspect All 30 MLB Teams, Players & 8 Seasonal Sets"
             >
               <span>🗂️</span> <span className="hidden sm:inline">Cards</span> Checklist
             </button>
@@ -593,10 +649,10 @@ export default function App() {
           onToggleMute={handleToggleMute}
           gameModeLabel={
             mainTab === 'ARENA'
-              ? 'At-Bat Showdown · Bottom 9th Clutch Matchup'
+              ? `At-Bat Showdown · ${currentTeamTheme.ballpark}`
               : mainTab === 'DRAFT_BOARD'
-              ? 'Stick-To-The-Board Matrix · 26-Man Baltimore Depth Chart'
-              : 'Seasonal Sets Vault · 8 Mimicked Topps Baseball Sets'
+              ? `Stick-To-The-Board Matrix · 26-Man ${currentTeamTheme.name} Depth Chart`
+              : 'Seasonal Sets Vault · 8 Authentic Collector Series Sets'
           }
         />
 
@@ -753,7 +809,7 @@ export default function App() {
                   2024–2025 RELEASE ROADMAP
                 </span>
                 <h2 className="text-2xl font-display font-black tracking-wide text-white uppercase mt-1">
-                  8 OFFICIAL TOPPS-MIMICKED SEASONAL SETS
+                  8 OFFICIAL COLLECTOR-SERIES SEASONAL SETS
                 </h2>
                 <p className="text-xs text-slate-400 font-mono mt-0.5">
                   Unique physical 3D card textures, authentic print borders, and timed drop windows.
@@ -864,7 +920,7 @@ export default function App() {
 
       {/* Discreet Platform Footer with Hidden Ops Backdoor */}
       <footer className="w-full py-4 text-center text-slate-500 text-[11px] font-mono select-none flex items-center justify-center gap-2 pb-24">
-        <span>BALTIMORE CHOP™ · OFFICIAL SHOWDOWN & TOPPS CARDS</span>
+        <span>DIAMOND SHOWDOWN™ · OFFICIAL BASEBALL COLLECTOR EDITION</span>
         <button
           type="button"
           onClick={() => {
@@ -909,7 +965,7 @@ export default function App() {
 
         <span className="w-px h-4 bg-white/20 mx-0.5" />
 
-        {/* Topps Collect Foil Rip Quick Action */}
+        {/* Foil Rip Quick Action */}
         <button
           type="button"
           onClick={() => {
@@ -1047,7 +1103,7 @@ export default function App() {
         onClose={() => setIsGuideOpen(false)}
       />
 
-      {/* ================= 4. NEW TOPPS COLLECT, OPERATIONS (892308) & SPLASH MODALS ================= */}
+      {/* ================= 4. HOBBY COLLECT, OPERATIONS (892308) & STADIUM TUNNEL MODAL ================= */}
       {/* Interactive Foil Pack Ripping Ceremony */}
       <PackRippingModal
         isOpen={isPackRipOpen}
@@ -1087,10 +1143,11 @@ export default function App() {
         onBroadcastLog={addLog}
       />
 
-      {/* Opening Stadium Splash Screen */}
-      <SplashScreenModal
+      {/* MLB Stadium Tunnel Walk-Out Entrance & Franchise Selector (Rips by Triumph Style) */}
+      <StadiumTunnelEntrance
         isOpen={isSplashOpen}
-        onEnterGame={() => setIsSplashOpen(false)}
+        onComplete={handleTeamSelected}
+        onClose={() => setIsSplashOpen(false)}
       />
 
       {/* 5-in-7 Days Login Streak Modal */}

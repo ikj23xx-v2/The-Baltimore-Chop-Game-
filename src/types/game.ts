@@ -81,6 +81,7 @@ export interface PlayerCard {
   };
   refractorTier: RefractorTier;
   serialStamp?: string; // e.g. "1/1", "042/500", "007/1000", "3/10", "1/5"
+  hasAutograph?: boolean; // Certified on-card or sticker autograph
   signatureSkill?: SpecialSkill;
   bio: string;
   avatarIcon: string;

@@ -6,7 +6,7 @@ export interface SeasonInfo {
   fullMonth: string;
   startDate: string; // "11/1", "12/1", etc.
   releaseYear: number;
-  toppsLikenessSet: string;
+  hobbyLikenessSet: string;
   actualHobbyReleaseDate: string;
   setId: CardSetId;
   status: 'ACTIVE' | 'UPCOMING';
@@ -25,7 +25,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'November',
     startDate: '11/1',
     releaseYear: 2026,
-    toppsLikenessSet: 'Topps Update Series Flagship',
+    hobbyLikenessSet: 'Update Series Flagship',
     actualHobbyReleaseDate: 'November 1 (Late Autumn Drop)',
     setId: 'UPDATE_SERIES',
     status: 'ACTIVE',
@@ -33,7 +33,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     theme: 'Autumn Postseason Gold, Navy Piping & Rookie Debuts',
     lore: 'The official inaugural season of The Baltimore Chop! Honors playoff clutch drama, traded star acquisitions, and the coveted rookie debuts from October pennant races.',
     colorTheme: 'from-blue-900 to-indigo-950 border-cyan-400',
-    medallionCoords: { col: 0, row: 0 }, // JAN-S1 icon position
+    medallionCoords: { col: 0, row: 0 },
     featuredPlayers: ['Cal Ripken Jr.', 'Gunnar Henderson', 'Adley Rutschman', 'Jackie Robinson']
   },
   {
@@ -42,7 +42,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'December',
     startDate: '12/1',
     releaseYear: 2026,
-    toppsLikenessSet: 'Topps Heritage High Number / Winter Special',
+    hobbyLikenessSet: 'Heritage High Number / Winter Special',
     actualHobbyReleaseDate: 'December 6 (Winter Warm-Up Drop)',
     setId: 'HERITAGE',
     status: 'UPCOMING',
@@ -59,7 +59,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'January',
     startDate: '1/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Stadium Club Action Photography',
+    hobbyLikenessSet: 'Stadium Club Action Photography',
     actualHobbyReleaseDate: 'January 15 (Mid-Winter Showcase)',
     setId: 'STADIUM_CLUB',
     status: 'UPCOMING',
@@ -76,7 +76,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'February',
     startDate: '2/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Series 1 Flagship',
+    hobbyLikenessSet: 'Series 1 Flagship',
     actualHobbyReleaseDate: 'February 14 (Spring Training Flagship)',
     setId: 'SERIES_1',
     status: 'UPCOMING',
@@ -93,7 +93,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'March',
     startDate: '3/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Heritage Flagship',
+    hobbyLikenessSet: 'Heritage Flagship',
     actualHobbyReleaseDate: 'March 20 (Opening Day Retro)',
     setId: 'HERITAGE',
     status: 'UPCOMING',
@@ -110,7 +110,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'April',
     startDate: '4/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Bowman Baseball (1st Bowman Prospect Crest)',
+    hobbyLikenessSet: 'Bowman Baseball (1st Prospect Crest)',
     actualHobbyReleaseDate: 'April 24 (Prospect Premier)',
     setId: 'BOWMAN',
     status: 'UPCOMING',
@@ -127,7 +127,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'May',
     startDate: '5/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Series 2 Flagship',
+    hobbyLikenessSet: 'Series 2 Flagship',
     actualHobbyReleaseDate: 'June 5 (Summer Pennant Race Drop)',
     setId: 'SERIES_2',
     status: 'UPCOMING',
@@ -144,7 +144,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'June',
     startDate: '6/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Chrome Flagship',
+    hobbyLikenessSet: 'Chrome Flagship',
     actualHobbyReleaseDate: 'July 24 (Midsummer Chromium Drop)',
     setId: 'CHROME',
     status: 'UPCOMING',
@@ -161,13 +161,13 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'July',
     startDate: '7/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Finest Midsummer Classic',
+    hobbyLikenessSet: 'Finest Midsummer Classic',
     actualHobbyReleaseDate: 'August 7 (All-Star Classic Showcase)',
     setId: 'CHROME',
     status: 'UPCOMING',
     isUnlocked: false,
     theme: 'Futuristic 1990s Prismatic High-Tech Die-Cuts',
-    lore: 'Inspired by the game-changing 1993 Topps Finest launch: protective peel coating, hyper-gloss finish, and geometric refractor surfaces.',
+    lore: 'Inspired by the game-changing 1993 premier chromium launch: protective peel coating, hyper-gloss finish, and geometric refractor surfaces.',
     colorTheme: 'from-fuchsia-950 to-purple-950 border-pink-500',
     medallionCoords: { col: 0, row: 2 },
     featuredPlayers: ['Babe Ruth', 'Johnny Bench', 'Sandy Koufax']
@@ -178,7 +178,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'August',
     startDate: '8/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Allen & Ginter (1887 Victorian Tobacco)',
+    hobbyLikenessSet: 'Allen & Ginter (1887 Victorian Tobacco)',
     actualHobbyReleaseDate: 'September 15 (Victorian Antiquities Drop)',
     setId: 'ALLEN_GINTER',
     status: 'UPCOMING',
@@ -195,7 +195,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'September',
     startDate: '9/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Cosmic Chrome / Gold Label',
+    hobbyLikenessSet: 'Cosmic Chrome / Gold Label',
     actualHobbyReleaseDate: 'October 2 (Galaxy Chromium Premier)',
     setId: 'CHROME',
     status: 'UPCOMING',
@@ -212,7 +212,7 @@ export const TWELVE_SEASONS: SeasonInfo[] = [
     fullMonth: 'October',
     startDate: '10/1',
     releaseYear: 2027,
-    toppsLikenessSet: 'Topps Dynasty Postseason Championship',
+    hobbyLikenessSet: 'Dynasty Postseason Championship',
     actualHobbyReleaseDate: 'Late October / World Series Drop',
     setId: 'UPDATE_SERIES',
     status: 'UPCOMING',

@@ -1,5 +1,5 @@
 # The Baltimore Chop™ ⚾
-### Cross-Platform Baseball Card Battler, 26-Man Franchise GM Engine & Topps Collect Slab Vault
+### Cross-Platform Baseball Card Battler, 26-Man Franchise GM Engine & Hobby Collect Slab Vault
 
 [![React 19](https://img.shields.io/badge/React-19.0-61dafb?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -12,7 +12,7 @@
 
 ## 🌟 Game & Platform Overview
 
-**The Baltimore Chop™** is a fast-paced, tactile baseball card battler and franchise management simulation. Built with a high-end **iOS liquid glass** design system, authentic **Topps foil refractors**, **MLB Statcast game-tracker graphics**, and procedural **Web Audio API** ballpark synthesizers, it delivers a nostalgic yet modern baseball experience.
+**The Baltimore Chop™** is a fast-paced, tactile baseball card battler and franchise management simulation. Built with a high-end **iOS liquid glass** design system, authentic **metallic foil refractors**, **MLB Statcast game-tracker graphics**, and procedural **Web Audio API** ballpark synthesizers, it delivers a nostalgic yet modern baseball experience.
 
 ---
 
@@ -31,7 +31,7 @@
   * **Hover to Freeze**: Hovering or touching freezes the ticker text for easy reading.
   * **Announcement Feeds**: Official Rules, Strategy Tips, Orioles Legends, or **Custom Text** where you type your own live stadium cheers.
 
-### 3. 🎴 3D Liquid Glass Card Slabs (Topps Collect Engine)
+### 3. 🎴 3D Liquid Glass Card Slabs (Hobby Collect Engine)
 * **3D Tactile Gyro & Mouse Tilt**: Cards dynamically rotate in 3D space with specular liquid glass reflections and an **ambient orange gradient backlighting aura**.
 * **Mini Baseball Field Game Tracker**: Replaces standard avatar icons with an authentic MLB Statcast infield diamond featuring an **illuminated radar position pin** (`SS 6`, `P 1`, `1B 3`, `CF 8`, etc.).
 * **Authentic Blue Ballpoint Pen Signature**: High-fidelity `#183cba` royal blue ink with ink-bleed shadow, certified as either a **`Chop™ Certified On-Card Autograph`** or a holographic **`Chop™ Certified Issue Autograph`** sticker.
@@ -51,7 +51,7 @@
 * Logging in 5 days within any 7-day window unlocks the **Milestone Bundle**:
   * **+1,500 Franchise Points**
   * **+5 Vending Machine Tokens**
-  * **Free Topps Foil Pack Rip**
+  * **Free Foil Pack Rip**
 
 ### 7. 👤 Google & Apple Cloud Auth & Username Quotas
 * **Identity Linking**: One-click sign-in and account linking with **Google** or **Apple ID** via Firebase Authentication.
