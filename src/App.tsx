@@ -92,7 +92,10 @@ import { SeasonalBinderGallery } from './components/SeasonalBinderGallery';
 import { ChopWalletModal } from './components/ChopWalletModal';
 import { ChopControlCenter } from './components/ChopControlCenter';
 import { OnboardingSplashModal } from './components/OnboardingSplashModal';
+import { SplashLoginGate } from './components/SplashLoginGate';
 import { SocialShareModal } from './components/SocialShareModal';
+import { DigitalCardShop3D, StoreItem } from './components/DigitalCardShop3D';
+import { CardRipWorkbench } from './components/CardRipWorkbench';
 import { REWARD_CONFIG } from './config/rewardsConfig';
 import { ChopSlabCase } from './components/ChopSlabCase';
 import { getInitialBankAccount, recordTransaction } from './engine/bankingLedger';
@@ -197,6 +200,8 @@ export default function App() {
   });
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
   const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
+  const [is3DShopOpen, setIs3DShopOpen] = useState(false);
+  const [isRipBenchOpen, setIsRipBenchOpen] = useState(false);
 
   // --- REFRACTOR FORGE INLINE STATE ---
   const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
@@ -1538,6 +1543,8 @@ export default function App() {
             <HobbyShopCatalogue
               userTokenBalance={bankAccount.vendingTokenBalance}
               onPurchaseBox={handlePurchaseBox}
+              onOpen3DShop={() => setIs3DShopOpen(true)}
+              onOpenRipBench={() => setIsRipBenchOpen(true)}
             />
           </div>
         )}
@@ -1855,11 +1862,29 @@ export default function App() {
         }}
       />
 
-      {/* First-Time Splash Screen & Skippable Onboarding Flow */}
-      <OnboardingSplashModal
-        isOpen={isOnboardingOpen}
-        onComplete={handleOnboardingComplete}
-      />
+      {/* First-Time Splash Login Gate & Cinematic Retro Tunnel Walkout */}
+      {isOnboardingOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <SplashLoginGate
+            onLoginSuccess={(profile, bonusTokens) => {
+              const finalProfile = profile || {
+                uid: `gm_${Date.now()}`,
+                email: 'manager@thebaltimorechop.app',
+                displayName: 'Baltimore GM',
+                username: 'ChopMaster',
+                photoURL: null,
+                isAnonymous: false,
+                linkedProviders: ['google.com'],
+                createdAt: Date.now(),
+                lastUsernameChangeAt: null,
+                usernameHistory: []
+              };
+              const bonus = bonusTokens ?? REWARD_CONFIG.GOOGLE_SIGNUP_BONUS_TOKENS;
+              handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'ARENA');
+            }}
+          />
+        </div>
+      )}
 
       {/* Social Media Sharing & Viral Token Rewards Modal */}
       <SocialShareModal
@@ -1876,6 +1901,37 @@ export default function App() {
         currentScreen={mainTab}
         activeSeason={1}
       />
+
+      {/* 3D Walk-In Card Shop & RPG Vendor Trading Floor */}
+      {is3DShopOpen && (
+        <DigitalCardShop3D
+          userTokens={bankAccount.vendingTokenBalance}
+          onCheckout={(cart: StoreItem[]) => {
+            const total = cart.reduce((sum, item) => sum + item.priceTokens, 0);
+            if (bankAccount.vendingTokenBalance >= total) {
+              const { updatedAccount } = recordTransaction(bankAccount, {
+                type: 'DEBIT',
+                currency: 'VENDING_TOKENS',
+                amount: total,
+                category: 'BOX_PURCHASE',
+                description: `3D Card Shop Checkout (${cart.length} items)`,
+              });
+              setBankAccount(updatedAccount);
+              setVendingTokens(updatedAccount.vendingTokenBalance);
+              addLog(`🛒 CARD SHOP: Checked out ${cart.length} item(s) for ${total} tokens!`, 'chop');
+              setIs3DShopOpen(false);
+            }
+          }}
+          onExit={() => setIs3DShopOpen(false)}
+        />
+      )}
+
+      {/* Hobby Shop Card Rip Workbench with Tactile Audio */}
+      {isRipBenchOpen && (
+        <CardRipWorkbench
+          onClose={() => setIsRipBenchOpen(false)}
+        />
+      )}
 
     </div>
   );

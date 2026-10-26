@@ -3,18 +3,28 @@ import React, { useState } from 'react';
 import { PRODUCT_CATALOG, ProductSKU } from '../types/boxProducts';
 import { generateProductChecklistPDF } from '../services/checklistPdfGenerator';
 import { Package, Download, Sparkles, CheckCircle2 } from 'lucide-react';
+import { hobbyAudio } from '../utils/hobbySoundEngine';
 
 interface HobbyShopCatalogueProps {
   userTokenBalance: number;
   onPurchaseBox: (sku: ProductSKU) => void;
+  onOpen3DShop?: () => void;
+  onOpenRipBench?: () => void;
 }
 
 export const HobbyShopCatalogue: React.FC<HobbyShopCatalogueProps> = ({
   userTokenBalance,
   onPurchaseBox,
+  onOpen3DShop,
+  onOpenRipBench,
 }) => {
   const [activeSku, setActiveSku] = useState<ProductSKU>('HOBBY_BOX');
   const selectedProduct = PRODUCT_CATALOG[activeSku];
+
+  const handleBoxPurchaseWithAudio = (sku: ProductSKU) => {
+    hobbyAudio.playBoxOpen();
+    onPurchaseBox(sku);
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 space-y-6 text-slate-100 font-sans select-none">
@@ -33,14 +43,44 @@ export const HobbyShopCatalogue: React.FC<HobbyShopCatalogueProps> = ({
           </p>
         </div>
 
-        {/* User Token Balance Display */}
-        <div className="px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 shrink-0">
-          <span className="text-lg">🪙</span>
-          <div>
-            <span className="text-[10px] font-mono text-slate-400 block uppercase">Token Vault</span>
-            <span className="text-base font-black text-amber-400 font-mono">
-              {userTokenBalance.toLocaleString()} Vending Tokens
-            </span>
+        {/* User Token Balance & Experience Shortcuts */}
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          {onOpen3DShop && (
+            <button
+              type="button"
+              onClick={() => {
+                hobbyAudio.playCardShuffleFlick();
+                onOpen3DShop();
+              }}
+              className="px-3.5 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/50 text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow active:scale-95"
+            >
+              <span>🏪</span>
+              <span>3D Walk-In Shop</span>
+            </button>
+          )}
+
+          {onOpenRipBench && (
+            <button
+              type="button"
+              onClick={() => {
+                hobbyAudio.playFoilPackRip();
+                onOpenRipBench();
+              }}
+              className="px-3.5 py-2 rounded-2xl bg-slate-800 hover:bg-slate-750 border border-slate-750 text-slate-200 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow active:scale-95"
+            >
+              <span>✂️</span>
+              <span>Rip Bench</span>
+            </button>
+          )}
+
+          <div className="px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2">
+            <span className="text-lg">🪙</span>
+            <div>
+              <span className="text-[10px] font-mono text-slate-400 block uppercase">Token Vault</span>
+              <span className="text-base font-black text-amber-400 font-mono">
+                {userTokenBalance.toLocaleString()} Vending Tokens
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +148,7 @@ export const HobbyShopCatalogue: React.FC<HobbyShopCatalogueProps> = ({
 
           <button
             type="button"
-            onClick={() => onPurchaseBox(activeSku)}
+            onClick={() => handleBoxPurchaseWithAudio(activeSku)}
             disabled={userTokenBalance < selectedProduct.tokenCost}
             className={`w-full py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg ${
               userTokenBalance >= selectedProduct.tokenCost

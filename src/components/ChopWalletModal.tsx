@@ -1,5 +1,6 @@
 // src/components/ChopWalletModal.tsx
 import React, { useState } from 'react';
+import { TOKEN_PURCHASE_BUNDLES, REWARD_CONFIG, TokenBundle } from '../config/rewardsConfig';
 
 export interface ChopWalletModalProps {
   isOpen: boolean;
@@ -10,12 +11,6 @@ export interface ChopWalletModalProps {
   onInitiatePayment: (tierId: string, amount: number, tokens: number) => void;
 }
 
-const TOKEN_BUNDLES = [
-  { id: 'single_rip', name: 'Single Pack Pass', price: 2.99, tokens: 300, desc: 'Enough for 1 Foil Pack rip' },
-  { id: 'blaster_bundle', name: 'Value Blaster Bundle', price: 9.99, tokens: 1250, desc: 'Enough for 1 Value Blaster' },
-  { id: 'hobby_case_pass', name: 'Hobby Breaker Pass', price: 24.99, tokens: 3500, desc: 'Full box rip allowance (Daily Max)' },
-];
-
 export const ChopWalletModal: React.FC<ChopWalletModalProps> = ({
   isOpen,
   onClose,
@@ -24,9 +19,9 @@ export const ChopWalletModal: React.FC<ChopWalletModalProps> = ({
   dailySpent,
   onInitiatePayment,
 }) => {
-  const [selectedBundle, setSelectedBundle] = useState(TOKEN_BUNDLES[0]);
-  const DAILY_LIMIT = 25.00;
-  const MONTHLY_LIMIT = 100.00;
+  const [selectedBundle, setSelectedBundle] = useState<TokenBundle>(TOKEN_PURCHASE_BUNDLES[0]);
+  const DAILY_LIMIT = REWARD_CONFIG.DAILY_SPEND_CAP_USD;
+  const MONTHLY_LIMIT = REWARD_CONFIG.MONTHLY_SPEND_CAP_USD;
 
   if (!isOpen) return null;
 
@@ -73,7 +68,7 @@ export const ChopWalletModal: React.FC<ChopWalletModalProps> = ({
           {/* Token Tier Selections */}
           <div className="space-y-2 mb-4">
             <label className="text-[10px] font-bold text-amber-300/80">SELECT REPLENISHMENT BUNDLE</label>
-            {TOKEN_BUNDLES.map(bundle => (
+            {TOKEN_PURCHASE_BUNDLES.map(bundle => (
               <div
                 key={bundle.id}
                 onClick={() => setSelectedBundle(bundle)}
