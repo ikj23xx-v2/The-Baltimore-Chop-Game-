@@ -36,11 +36,13 @@ export const SplashScreenModal: React.FC<SplashScreenModalProps> = ({ isOpen, on
         {/* Top Gold Trim */}
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-orange-600 via-amber-400 to-yellow-400" />
 
-        {/* Vintage Baseball Seam Lines */}
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 p-0.5 shadow-[0_0_30px_rgba(245,158,11,0.6)] mb-3 flex items-center justify-center">
-          <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-3xl">
-            ⚾
-          </div>
+        {/* Official Field Logo */}
+        <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-orange-500 shadow-[0_0_30px_rgba(245,158,11,0.6)] mb-3 shrink-0">
+          <img
+            src="/assets/aistudio/chopchop_085f9a0d.jpeg"
+            alt="The Baltimore Chop Logo"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         {/* Title with TM Badge */}

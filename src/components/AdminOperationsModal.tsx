@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PlayerCard, CardSetId, RefractorTier } from '../types/game';
 import { ALL_PLAYERS } from '../data/players';
 import { CARD_SETS } from '../data/sets';
 import { telemetry, CrashReport, UserSessionData } from '../services/telemetry';
 import { soundManager } from '../services/audio';
+import { Card3D } from './Card3D';
 import { 
   Lock, 
   Unlock, 
@@ -21,7 +22,10 @@ import {
   RefreshCw,
   Terminal,
   Activity,
-  Sliders
+  Sliders,
+  Search,
+  Eye,
+  Shield
 } from 'lucide-react';
 
 interface AdminOperationsModalProps {
@@ -68,11 +72,40 @@ export const AdminOperationsModal: React.FC<AdminOperationsModalProps> = ({
   const [authError, setAuthError] = useState(false);
 
   // Active Operations Sub-Tab
-  const [activeTab, setActiveTab] = useState<'CRASH_REPORTS' | 'USER_DATA' | 'CURRENCY' | 'CARD_MINTING' | 'BALLPARK_STATE' | 'DIAGNOSTICS'>('CRASH_REPORTS');
+  const [activeTab, setActiveTab] = useState<'CRASH_REPORTS' | 'USER_DATA' | 'CURRENCY' | 'CARD_MINTING' | 'BALLPARK_STATE' | 'DIAGNOSTICS' | 'CARDS_REGISTRY'>('CARDS_REGISTRY');
 
   // Crash Reports State
   const [crashReports, setCrashReports] = useState<CrashReport[]>(telemetry.getCrashReports());
   const [selectedCrash, setSelectedCrash] = useState<CrashReport | null>(null);
+
+  // Cards & Teams Registry State
+  const [registrySearch, setRegistrySearch] = useState('');
+  const [registryTeam, setRegistryTeam] = useState('ALL');
+  const [registrySet, setRegistrySet] = useState('ALL');
+  const [registryPos, setRegistryPos] = useState('ALL');
+  const [registryInspectedCard, setRegistryInspectedCard] = useState<PlayerCard | null>(null);
+
+  // Registry memoized lists
+  const registryTeams = useMemo(() => {
+    const set = new Set<string>();
+    ALL_PLAYERS.forEach((p) => set.add(p.team));
+    return Array.from(set).sort();
+  }, []);
+
+  const filteredRegistryPlayers = useMemo(() => {
+    return ALL_PLAYERS.filter((card) => {
+      const matchSearch =
+        registrySearch === '' ||
+        card.name.toLowerCase().includes(registrySearch.toLowerCase()) ||
+        card.team.toLowerCase().includes(registrySearch.toLowerCase()) ||
+        card.position.toLowerCase().includes(registrySearch.toLowerCase()) ||
+        (card.cardNo && card.cardNo.toString().includes(registrySearch));
+      const matchTeam = registryTeam === 'ALL' || card.team === registryTeam;
+      const matchSet = registrySet === 'ALL' || (card.cardSetId || 'SERIES_1') === registrySet;
+      const matchPos = registryPos === 'ALL' || card.position === registryPos;
+      return matchSearch && matchTeam && matchSet && matchPos;
+    });
+  }, [registrySearch, registryTeam, registrySet, registryPos]);
 
   // Currency adjustment forms
   const [pointDelta, setPointDelta] = useState<number>(1000);
@@ -293,6 +326,18 @@ export const AdminOperationsModal: React.FC<AdminOperationsModalProps> = ({
             <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-white/10 mb-4 shrink-0">
               <button
                 type="button"
+                onClick={() => setActiveTab('CARDS_REGISTRY')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
+                  activeTab === 'CARDS_REGISTRY'
+                    ? 'bg-emerald-600 text-white shadow-md'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Database className="w-3.5 h-3.5" /> Teams & Cards Registry ({ALL_PLAYERS.length})
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab('CRASH_REPORTS')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
                   activeTab === 'CRASH_REPORTS'
@@ -366,6 +411,388 @@ export const AdminOperationsModal: React.FC<AdminOperationsModalProps> = ({
 
             {/* TAB CONTENT PANELS */}
             <div className="flex-1 overflow-y-auto pr-1">
+
+              {/* ================= TAB 0: TEAMS & CARDS REGISTRY ================= */}
+              {activeTab === 'CARDS_REGISTRY' && (
+                <div className="space-y-4 animate-fade-in pb-4">
+                  {/* Registry Header & Stats Bar */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/80 border border-emerald-500/30 p-4 rounded-2xl">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm sm:text-base font-display font-black text-white uppercase flex items-center gap-2">
+                          <Database className="w-4 h-4 text-emerald-400" />
+                          Master Teams, Players & Cards Registry
+                        </h4>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded font-extrabold bg-emerald-950 text-emerald-400 border border-emerald-500/40">
+                          VERIFIED MLB ROSTER
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 font-mono mt-0.5">
+                        Authoritative game catalog: 7 franchises, 29 licensed players, and 8 Topps-style physical sets.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => exportJSON(ALL_PLAYERS, `the-baltimore-chop-master-players-${Date.now()}.json`)}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5" /> Export Master JSON
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Summary Stat Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase block">Total Players</span>
+                      <span className="text-lg font-mono font-black text-white">{ALL_PLAYERS.length} Cards</span>
+                      <span className="text-[10px] text-emerald-400 font-mono block">14 Legends • 15 Stars</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase block">MLB Franchises</span>
+                      <span className="text-lg font-mono font-black text-orange-400">{registryTeams.length} Teams</span>
+                      <span className="text-[10px] text-slate-400 font-mono block">Orioles & Classic Rivals</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase block">Card Sets</span>
+                      <span className="text-lg font-mono font-black text-cyan-400">{CARD_SETS.length} Sets</span>
+                      <span className="text-[10px] text-slate-400 font-mono block">Series 1 to Ginter</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase block">Highest bRef WAR</span>
+                      <span className="text-lg font-mono font-black text-amber-400">162.2</span>
+                      <span className="text-[10px] text-slate-400 font-mono block">Babe Ruth (DH/P)</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 col-span-2 sm:col-span-1">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase block">Active 26-Man Roster</span>
+                      <span className="text-lg font-mono font-black text-purple-400">{roster.length} / 26</span>
+                      <span className="text-[10px] text-slate-400 font-mono block">{26 - roster.length} Open Slots</span>
+                    </div>
+                  </div>
+
+                  {/* Filters & Search Toolbar */}
+                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-wrap items-center gap-2">
+                    <div className="relative flex-1 min-w-[200px]">
+                      <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={registrySearch}
+                        onChange={(e) => setRegistrySearch(e.target.value)}
+                        placeholder="Search player, team, #, or position..."
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white font-mono placeholder:text-slate-500 outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <select
+                      value={registryTeam}
+                      onChange={(e) => setRegistryTeam(e.target.value)}
+                      className="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500"
+                    >
+                      <option value="ALL">All Franchises ({registryTeams.length})</option>
+                      {registryTeams.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={registryPos}
+                      onChange={(e) => setRegistryPos(e.target.value)}
+                      className="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500"
+                    >
+                      <option value="ALL">All Positions</option>
+                      <option value="C">Catcher (C)</option>
+                      <option value="1B">First Base (1B)</option>
+                      <option value="2B">Second Base (2B)</option>
+                      <option value="3B">Third Base (3B)</option>
+                      <option value="SS">Shortstop (SS)</option>
+                      <option value="LF">Left Field (LF)</option>
+                      <option value="CF">Center Field (CF)</option>
+                      <option value="RF">Right Field (RF)</option>
+                      <option value="DH">Designated Hitter (DH)</option>
+                      <option value="SP">Starting Pitcher (SP)</option>
+                      <option value="RP">Relief Pitcher (RP)</option>
+                    </select>
+
+                    <select
+                      value={registrySet}
+                      onChange={(e) => setRegistrySet(e.target.value)}
+                      className="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-mono outline-none focus:border-emerald-500"
+                    >
+                      <option value="ALL">All Sets ({CARD_SETS.length})</option>
+                      {CARD_SETS.map((s) => (
+                        <option key={s.id} value={s.id}>{s.name}</option>
+                      ))}
+                    </select>
+
+                    {(registrySearch || registryTeam !== 'ALL' || registryPos !== 'ALL' || registrySet !== 'ALL') && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRegistrySearch('');
+                          setRegistryTeam('ALL');
+                          setRegistryPos('ALL');
+                          setRegistrySet('ALL');
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-mono transition-colors"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Master Players Registry Table */}
+                  <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/70">
+                    <div className="overflow-x-auto max-h-[380px]">
+                      <table className="w-full text-left text-xs font-mono">
+                        <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] sticky top-0 z-10 border-b border-slate-800">
+                          <tr>
+                            <th className="py-2.5 px-3">Card #</th>
+                            <th className="py-2.5 px-3">Player</th>
+                            <th className="py-2.5 px-3">Franchise</th>
+                            <th className="py-2.5 px-3">POS</th>
+                            <th className="py-2.5 px-3">bRef WAR</th>
+                            <th className="py-2.5 px-3">Attributes (PWR/CON/DEF/SPD)</th>
+                            <th className="py-2.5 px-3">Set</th>
+                            <th className="py-2.5 px-3">Roster</th>
+                            <th className="py-2.5 px-3 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                          {filteredRegistryPlayers.length === 0 ? (
+                            <tr>
+                              <td colSpan={9} className="py-8 text-center text-slate-500 font-mono text-xs">
+                                No cards matched the specified filters.
+                              </td>
+                            </tr>
+                          ) : (
+                            filteredRegistryPlayers.map((player) => {
+                              const inRoster = roster.some((c) => c.name === player.name);
+                              const rosterCount = roster.filter((c) => c.name === player.name).length;
+                              const matchingSet = CARD_SETS.find((s) => s.id === player.cardSetId);
+
+                              return (
+                                <tr key={player.id} className="hover:bg-slate-900/40 transition-colors">
+                                  <td className="py-2.5 px-3 font-bold text-amber-400">
+                                    #{player.cardNo || '00'}
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-sm shadow shrink-0">
+                                        {player.avatarIcon}
+                                      </div>
+                                      <div>
+                                        <div className="font-bold text-white flex items-center gap-1.5">
+                                          {player.name}
+                                          {player.isHistorical ? (
+                                            <span className="text-[9px] px-1.5 py-0.2 rounded font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+                                              Legend
+                                            </span>
+                                          ) : (
+                                            <span className="text-[9px] px-1.5 py-0.2 rounded font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase">
+                                              Active
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="text-[10px] text-slate-500">
+                                          {player.era || (player.isHistorical ? 'Historical HOF' : '2024 MLB')}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <span className="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 font-medium">
+                                      {player.team}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <span className="font-black px-1.5 py-0.5 rounded bg-orange-600/20 text-orange-400 border border-orange-500/30">
+                                      {player.position}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3 font-black">
+                                    <span className={
+                                      player.bRefWar >= 100
+                                        ? 'text-amber-400 font-extrabold'
+                                        : player.bRefWar >= 60
+                                        ? 'text-emerald-400'
+                                        : player.bRefWar >= 20
+                                        ? 'text-cyan-400'
+                                        : 'text-slate-300'
+                                    }>
+                                      {player.bRefWar > 0 ? `+${player.bRefWar.toFixed(1)}` : player.bRefWar.toFixed(1)}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <div className="flex items-center gap-2">
+                                      <span title="Power" className="text-orange-400 font-bold">{player.stats.power}P</span>
+                                      <span title="Contact" className="text-cyan-400 font-bold">{player.stats.contact}C</span>
+                                      <span title="Fielding" className="text-emerald-400 font-bold">{player.stats.fielding}D</span>
+                                      <span title="Speed" className="text-purple-400 font-bold">{player.stats.speed}S</span>
+                                    </div>
+                                  </td>
+                                  <td className="py-2.5 px-3 text-slate-400">
+                                    {matchingSet?.name || player.cardSetId || 'Series 1'}
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    {inRoster ? (
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 w-fit">
+                                        <CheckCircle2 className="w-3 h-3" /> {rosterCount}x
+                                      </span>
+                                    ) : (
+                                      <span className="text-slate-600 text-[10px]">Bench</span>
+                                    )}
+                                  </td>
+                                  <td className="py-2.5 px-3 text-right">
+                                    <div className="flex items-center justify-end gap-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setRegistryInspectedCard(player);
+                                          soundManager.playButtonClick();
+                                        }}
+                                        className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-mono flex items-center gap-1 transition-colors"
+                                        title="Inspect in 3D"
+                                      >
+                                        <Eye className="w-3 h-3 text-cyan-400" /> 3D
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const cardCopy: PlayerCard = {
+                                            ...player,
+                                            id: `ROSTER-${player.id}-${Date.now().toString().slice(-4)}`
+                                          };
+                                          onAddCardToRoster(cardCopy);
+                                          logAudit(`Added #${player.cardNo} ${player.name} to 26-man roster`);
+                                          onBroadcastLog(`⚾ Operations: Added ${player.name} to active roster!`, 'info');
+                                          soundManager.playJackpotChime();
+                                        }}
+                                        disabled={roster.length >= 26}
+                                        className="px-2 py-1 rounded-lg bg-orange-600/30 hover:bg-orange-600/50 disabled:opacity-40 text-orange-300 border border-orange-500/30 text-[11px] font-mono flex items-center gap-1 transition-colors"
+                                        title="Add card to active roster"
+                                      >
+                                        <Plus className="w-3 h-3" /> Add
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 3D Card Inspector Modal Overlay */}
+                  {registryInspectedCard && (
+                    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+                      <div className="bg-slate-950 border-2 border-emerald-500/60 rounded-3xl p-5 sm:p-6 max-w-2xl w-full shadow-2xl relative">
+                        <button
+                          type="button"
+                          onClick={() => setRegistryInspectedCard(null)}
+                          className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                          <div className="w-[200px] h-[280px] shrink-0">
+                            <Card3D
+                              card={registryInspectedCard}
+                              interactive={true}
+                              size="normal"
+                            />
+                          </div>
+
+                          <div className="flex-1 space-y-3 text-left">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono font-black text-amber-400">
+                                CARD #{registryInspectedCard.cardNo || '00'}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-emerald-950 text-emerald-400 border border-emerald-500/40 uppercase">
+                                {registryInspectedCard.position}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded font-black bg-slate-900 text-slate-300 border border-slate-700">
+                                {registryInspectedCard.team}
+                              </span>
+                            </div>
+
+                            <h3 className="text-xl font-display font-black text-white">
+                              {registryInspectedCard.name}
+                            </h3>
+
+                            <p className="text-xs text-slate-300 font-sans leading-relaxed italic bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                              "{registryInspectedCard.bio}"
+                            </p>
+
+                            <div className="grid grid-cols-4 gap-2 pt-1 font-mono text-center">
+                              <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                <span className="text-[10px] text-slate-400 block">WAR</span>
+                                <span className="text-sm font-bold text-amber-400">
+                                  {registryInspectedCard.bRefWar.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                <span className="text-[10px] text-slate-400 block">PWR</span>
+                                <span className="text-sm font-bold text-orange-400">
+                                  {registryInspectedCard.stats.power}
+                                </span>
+                              </div>
+                              <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                <span className="text-[10px] text-slate-400 block">CON</span>
+                                <span className="text-sm font-bold text-cyan-400">
+                                  {registryInspectedCard.stats.contact}
+                                </span>
+                              </div>
+                              <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                <span className="text-[10px] text-slate-400 block">FLD</span>
+                                <span className="text-sm font-bold text-emerald-400">
+                                  {registryInspectedCard.stats.fielding}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 pt-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const cardCopy: PlayerCard = {
+                                    ...registryInspectedCard,
+                                    id: `ROSTER-${registryInspectedCard.id}-${Date.now().toString().slice(-4)}`
+                                  };
+                                  onAddCardToRoster(cardCopy);
+                                  logAudit(`Added #${registryInspectedCard.cardNo} ${registryInspectedCard.name} to 26-man roster`);
+                                  onBroadcastLog(`⚾ Operations: Added ${registryInspectedCard.name} to active roster!`, 'info');
+                                  soundManager.playJackpotChime();
+                                  setRegistryInspectedCard(null);
+                                }}
+                                disabled={roster.length >= 26}
+                                className="flex-1 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-slate-950 font-display font-black text-xs uppercase transition-colors flex items-center justify-center gap-1.5"
+                              >
+                                <Plus className="w-4 h-4" /> Add Card to Active 26-Man Roster
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setRegistryInspectedCard(null)}
+                                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs transition-colors"
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* ================= TAB 1: CRASH REPORTS & LOGS ================= */}
               {activeTab === 'CRASH_REPORTS' && (

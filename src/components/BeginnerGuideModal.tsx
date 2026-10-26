@@ -21,7 +21,11 @@ export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">⚾</span>
+            <img
+              src="/assets/aistudio/chopchop_085f9a0d.jpeg"
+              alt="The Baltimore Chop"
+              className="w-10 h-10 rounded-xl object-cover border border-orange-500 shadow-md shrink-0"
+            />
             <div>
               <h2 className="text-xl font-display font-black text-white tracking-wide flex items-center gap-2">
                 THE BALTIMORE CHOP: BEGINNER'S PLAYBOOK

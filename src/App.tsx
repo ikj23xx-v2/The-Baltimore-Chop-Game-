@@ -40,6 +40,8 @@ import { AdminOperationsModal } from './components/AdminOperationsModal';
 import { SplashScreenModal } from './components/SplashScreenModal';
 import { LoginStreakModal } from './components/LoginStreakModal';
 import { AccountProfileModal } from './components/AccountProfileModal';
+import { CardAlmanacModal } from './components/CardAlmanacModal';
+import { FirstEnterPortalModal } from './components/FirstEnterPortalModal';
 import { recordDailyLogin, getSevenDayStreakStatus } from './utils/loginStreak';
 import { authService, UserAccountProfile } from './services/authService';
 
@@ -114,6 +116,8 @@ export default function App() {
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<UserAccountProfile | null>(() => authService.getProfile());
   const [activeSetId, setActiveSetId] = useState<CardSetId>('SERIES_1');
+  const [isAlmanacOpen, setIsAlmanacOpen] = useState(false);
+  const [isPortalOpen, setIsPortalOpen] = useState(true);
 
   // Subscribe to user auth & profile
   React.useEffect(() => {
@@ -366,13 +370,20 @@ export default function App() {
       {/* ================= 1. iOS LIQUID GLASS TOP HEADER ================= */}
       <header className="w-full liquid-glass-header sticky top-0 z-40 px-4 sm:px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Orioles Wordmark with authentic TM mark */}
+          {/* Orioles Wordmark with authentic Field Logo */}
           <div 
-            onClick={() => setIsSplashOpen(true)}
+            onClick={() => {
+              soundManager.playButtonClick();
+              setIsPortalOpen(true);
+            }}
             className="flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer group"
-            title="Click to view Baltimore Chop™ Splash Screen"
+            title="Click to view Game Breakdown, Animated Arena, Forum & 12-Season Calendar"
           >
-            <span className="text-2xl drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] group-hover:scale-110 transition-transform">⚾</span>
+            <img
+              src="/assets/aistudio/chopchop_085f9a0d.jpeg"
+              alt="The Baltimore Chop Logo"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border-2 border-orange-500 shadow-[0_0_12px_rgba(234,88,12,0.5)] group-hover:scale-105 transition-transform shrink-0"
+            />
             <div>
               <div className="flex items-center gap-1">
                 <span className="text-lg sm:text-xl font-display font-black tracking-wider text-orange-500 uppercase block leading-none">
@@ -454,6 +465,19 @@ export default function App() {
               <span>⚡</span> <span className="hidden sm:inline">Rip</span> Pack
             </button>
 
+            {/* Master Teams, Players & Cards Almanac / Verification Checklist */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsAlmanacOpen(true);
+              }}
+              className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 hover:text-white border border-cyan-500/40 text-xs font-display font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+              title="Confirm & Inspect All 7 Teams, 29 Players & 8 Topps Sets"
+            >
+              <span>🗂️</span> <span className="hidden sm:inline">Cards</span> Checklist
+            </button>
+
             {/* 5-in-7 Days Login Streak Tracker Button */}
             <button
               type="button"
@@ -499,6 +523,19 @@ export default function App() {
               <span>🎰</span> Draft
             </button>
 
+            {/* First Enter Portal & Breakdown Trigger */}
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsPortalOpen(true);
+              }}
+              className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-display font-black uppercase tracking-wider text-slate-950 bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 hover:brightness-110 rounded-xl transition-all whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(245,158,11,0.35)] flex items-center gap-1"
+              title="Game Breakdown, Live Animation Loop, Knowledge Base, Community Forum & 12-Season Calendar"
+            >
+              <span>🏟️</span> <span className="hidden sm:inline">Game</span> Portal
+            </button>
+
             <button
               type="button"
               onClick={() => setIsGuideOpen(true)}
@@ -534,7 +571,7 @@ export default function App() {
             mainTab === 'SETS' ? 'glass-pill-active' : 'text-slate-400 bg-slate-900/60'
           }`}
         >
-          🎴 Sets (8)
+          🗓️ Seasons (12)
         </button>
       </div>
 
@@ -1068,6 +1105,32 @@ export default function App() {
         isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
         onBroadcastLog={addLog}
+      />
+
+      {/* Master Teams, Players & Cards Verification Almanac */}
+      <CardAlmanacModal
+        isOpen={isAlmanacOpen}
+        onClose={() => setIsAlmanacOpen(false)}
+        onSelectActiveBatter={(card) => {
+          const idx = roster.findIndex((c) => c.name === card.name);
+          if (idx !== -1) {
+            setActiveBatterIndex(idx);
+            addLog(`${card.name} stepped up as the active starting batter.`, 'info');
+          }
+        }}
+      />
+
+      {/* First Enter Portal: Game Breakdown, Looping Animated Arena, Knowledge Base, Community Forum & 12 Seasons */}
+      <FirstEnterPortalModal
+        isOpen={isPortalOpen}
+        onClose={() => setIsPortalOpen(false)}
+        onSelectCardForShowdown={(card) => {
+          const idx = roster.findIndex((c) => c.name === card.name);
+          if (idx !== -1) {
+            setActiveBatterIndex(idx);
+            addLog(`${card.name} selected as active batter from portal!`, 'info');
+          }
+        }}
       />
     </div>
   );
