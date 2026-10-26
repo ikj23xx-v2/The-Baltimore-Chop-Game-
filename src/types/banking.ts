@@ -12,6 +12,7 @@ export type TransactionCategory =
   | 'BINDER_PAGE_EXPANSION'
   | 'STORAGE_BOX_UNLOCK'
   | 'EQUIPMENT_REPAIR'
+  | 'TOKEN_PURCHASE'
   | 'ADMIN_ADJUSTMENT';
 
 export interface BankTransaction {

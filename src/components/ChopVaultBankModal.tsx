@@ -8,12 +8,14 @@ interface ChopVaultBankModalProps {
   isOpen: boolean;
   onClose: () => void;
   bankAccount: BankAccountState;
+  onOpenWallet?: () => void;
 }
 
 export const ChopVaultBankModal: React.FC<ChopVaultBankModalProps> = ({
   isOpen,
   onClose,
   bankAccount,
+  onOpenWallet,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | 'ALL'>('ALL');
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType | 'ALL'>('ALL');
@@ -36,16 +38,28 @@ export const ChopVaultBankModal: React.FC<ChopVaultBankModalProps> = ({
       <div className="space-y-5">
         {/* Balances Banner */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/40 shadow-lg">
-            <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider block">
-              VENDING TOKEN BALANCE
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-black font-mono text-amber-400">
-                {bankAccount.vendingTokenBalance.toLocaleString()}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/40 shadow-lg flex justify-between items-center">
+            <div>
+              <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider block">
+                VENDING TOKEN BALANCE
               </span>
-              <span className="text-xs font-mono text-slate-300">TOKENS</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-3xl font-black font-mono text-amber-400">
+                  {bankAccount.vendingTokenBalance.toLocaleString()}
+                </span>
+                <span className="text-xs font-mono text-slate-300">TOKENS</span>
+              </div>
             </div>
+            {onOpenWallet && (
+              <button
+                type="button"
+                onClick={onOpenWallet}
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl transition-all shadow flex items-center gap-1.5 cursor-pointer active:scale-95"
+              >
+                <span>👝</span>
+                <span>Wallet</span>
+              </button>
+            )}
           </div>
 
           <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-600/10 border border-blue-500/40 shadow-lg">

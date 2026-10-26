@@ -87,6 +87,9 @@ import { SeriesRecapModal } from './components/SeriesRecapModal';
 import { BetaFeedbackModal } from './components/BetaFeedbackModal';
 import { ChopCardDeckNavigator, DeckNavigationTab } from './components/ChopCardDeckNavigator';
 import { ArtOfChopBanner } from './components/ArtOfChopBanner';
+import { ArtOfChopGallery } from './components/ArtOfChopGallery';
+import { SeasonalBinderGallery } from './components/SeasonalBinderGallery';
+import { ChopWalletModal } from './components/ChopWalletModal';
 import { ChopSlabCase } from './components/ChopSlabCase';
 import { getInitialBankAccount, recordTransaction } from './engine/bankingLedger';
 import { BankAccountState } from './types/banking';
@@ -181,6 +184,10 @@ export default function App() {
   const [isSeriesRecapOpen, setIsSeriesRecapOpen] = useState(false);
   const [seriesRecapData, setSeriesRecapData] = useState<SeriesRecapReport | null>(null);
   const [isBetaFeedbackOpen, setIsBetaFeedbackOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isSeasonalBinderOpen, setIsSeasonalBinderOpen] = useState(false);
+  const [isWalletOpen, setIsWalletOpen] = useState(false);
+  const [walletSpent, setWalletSpent] = useState<{ daily: number; monthly: number }>({ daily: 0, monthly: 0 });
 
   // --- REFRACTOR FORGE INLINE STATE ---
   const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
@@ -569,6 +576,31 @@ export default function App() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       addLog(`Transaction Failed: ${msg}`, 'info');
+    }
+  };
+
+  // Deposit real funds for token replenishment via Chop Wallet with responsible caps
+  const handleInitiateWalletPayment = (tierId: string, amount: number, tokens: number) => {
+    setWalletSpent((prev) => ({
+      daily: prev.daily + amount,
+      monthly: prev.monthly + amount,
+    }));
+    try {
+      const { updatedAccount } = recordTransaction(bankAccount, {
+        type: 'CREDIT',
+        currency: 'VENDING_TOKENS',
+        amount: tokens,
+        category: 'TOKEN_PURCHASE',
+        description: `Wallet Replenishment: $${amount.toFixed(2)} deposit (+${tokens} Tokens)`,
+      });
+      setBankAccount(updatedAccount);
+      setVendingTokens(updatedAccount.vendingTokenBalance);
+      soundManager.playRefractorShine();
+      addLog(`🪙 WALLET REPLENISHED: +${tokens} Tokens credited to vault ($${amount.toFixed(2)})!`, 'chop');
+      setIsWalletOpen(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      addLog(`Wallet Credit Failed: ${msg}`, 'info');
     }
   };
 
@@ -1569,7 +1601,10 @@ export default function App() {
         {/* ---------------- VIEW 7: HOBBY & RETAIL BOX OUTPOST ---------------- */}
         {mainTab === 'HOBBY_OUTPOST' && (
           <div className="space-y-6">
-            <ArtOfChopBanner />
+            <ArtOfChopBanner 
+              onOpenGallery={() => setIsGalleryOpen(true)} 
+              onOpenSeasonalBinder={() => setIsSeasonalBinderOpen(true)}
+            />
             <HobbyShopCatalogue
               userTokenBalance={bankAccount.vendingTokenBalance}
               onPurchaseBox={handlePurchaseBox}
@@ -1609,6 +1644,17 @@ export default function App() {
         isOpen={isBankModalOpen}
         onClose={() => setIsBankModalOpen(false)}
         bankAccount={bankAccount}
+        onOpenWallet={() => setIsWalletOpen(true)}
+      />
+
+      {/* Chop Leather Wallet Modal (Responsible Gaming & Refills) */}
+      <ChopWalletModal
+        isOpen={isWalletOpen}
+        onClose={() => setIsWalletOpen(false)}
+        currentBalance={bankAccount.vendingTokenBalance}
+        dailySpent={walletSpent.daily}
+        monthlySpent={walletSpent.monthly}
+        onInitiatePayment={handleInitiateWalletPayment}
       />
 
       {/* 3-Game Series Post-Mortem Diagnostic & Scouting Report Modal */}
@@ -1840,6 +1886,25 @@ export default function App() {
           difficulty: 'VETERAN',
         }}
       />
+
+      {/* Art of Chop: Master 564-Card Catalog Gallery Modal */}
+      {isGalleryOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/95 backdrop-blur-md animate-fadeIn">
+          <ArtOfChopGallery
+            onClose={() => setIsGalleryOpen(false)}
+            activeSeason={seasonProgress.seasonNumber}
+          />
+        </div>
+      )}
+
+      {/* Seasonal & Holiday Refractor Vault Binder Modal */}
+      {isSeasonalBinderOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/95 backdrop-blur-md animate-fadeIn">
+          <SeasonalBinderGallery
+            onClose={() => setIsSeasonalBinderOpen(false)}
+          />
+        </div>
+      )}
 
       {/* Scout CRM Copilot Floating Chatbot */}
       <SupportChatbot

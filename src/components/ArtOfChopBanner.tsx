@@ -2,7 +2,15 @@
 import React from 'react';
 import { generateMasterGameGuidePDF } from '../services/masterMasterGuidePdfGenerator';
 
-export const ArtOfChopBanner: React.FC = () => {
+interface ArtOfChopBannerProps {
+  onOpenGallery?: () => void;
+  onOpenSeasonalBinder?: () => void;
+}
+
+export const ArtOfChopBanner: React.FC<ArtOfChopBannerProps> = ({ 
+  onOpenGallery,
+  onOpenSeasonalBinder,
+}) => {
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl select-none">
       <div className="space-y-1">
@@ -21,13 +29,33 @@ export const ArtOfChopBanner: React.FC = () => {
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={generateMasterGameGuidePDF}
-        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-5 py-3 rounded-2xl transition-transform hover:scale-[1.02] shadow-[0_0_20px_rgba(251,191,36,0.3)] flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95"
-      >
-        <span>📄</span> Download "The Art of Chop" (PDF)
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        {onOpenGallery && (
+          <button
+            type="button"
+            onClick={onOpenGallery}
+            className="bg-slate-800 hover:bg-slate-750 text-amber-300 border border-amber-500/40 font-bold text-xs px-4 py-3 rounded-2xl transition-all shadow-md flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95"
+          >
+            <span>🗂️</span> Master Catalog (564)
+          </button>
+        )}
+        {onOpenSeasonalBinder && (
+          <button
+            type="button"
+            onClick={onOpenSeasonalBinder}
+            className="bg-slate-800 hover:bg-slate-750 text-orange-300 border border-orange-500/40 font-bold text-xs px-4 py-3 rounded-2xl transition-all shadow-md flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95"
+          >
+            <span>🎃❄️</span> Holiday Vault
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={generateMasterGameGuidePDF}
+          className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-5 py-3 rounded-2xl transition-transform hover:scale-[1.02] shadow-[0_0_20px_rgba(251,191,36,0.3)] flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95"
+        >
+          <span>📄</span> Download Guide (PDF)
+        </button>
+      </div>
     </div>
   );
 };
