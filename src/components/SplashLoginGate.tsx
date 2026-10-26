@@ -8,11 +8,61 @@ import {
   OAuthProvider
 } from 'firebase/auth';
 import { auth, googleProvider, appleProvider } from '../firebase';
-import { MLB_TEAMS, MLBTeamInfo } from '../data/mlbTeams';
 import { teamThemeService } from '../services/teamThemeService';
-import { authService, UserAccountProfile } from '../services/authService';
+import { MLB_TEAMS, MLBTeamInfo } from '../data/mlbTeams';
+import { UserAccountProfile } from '../services/authService';
 import { REWARD_CONFIG } from '../config/rewardsConfig';
 import { hobbyAudio } from '../utils/hobbySoundEngine';
+import { HobbyBox } from './HobbyBox';
+import { PACK_BOX_REGISTRY } from '../config/packBoxRegistry';
+
+// Retro 8-bit Crisp Pixel Art Icons
+const GooglePixelIcon: React.FC = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" shapeRendering="crispEdges">
+    {/* Red Arc */}
+    <path fill="#EA4335" d="M7 3h10v2H7zM5 5h3v2H5zM3 7h3v3H3zM14 7h7v2h-7z" />
+    {/* Yellow Arc */}
+    <path fill="#FBBC05" d="M3 10h3v4H3zM3 14h3v3H3zM5 17h3v2H5z" />
+    {/* Green Arc */}
+    <path fill="#34A853" d="M7 19h10v2H7zM14 17h4v2h-4zM18 15h3v2h-3z" />
+    {/* Blue Crossbar & G-Hook */}
+    <path fill="#4285F4" d="M11 11h10v3H11zM18 11h3v6h-3z" />
+  </svg>
+);
+
+const ApplePixelIcon: React.FC = () => (
+  <svg width="24" height="28" viewBox="0 0 20 24" shapeRendering="crispEdges">
+    {/* Leaf */}
+    <rect x="10" y="1" width="3" height="3" fill="#FFFFFF" />
+    <rect x="13" y="3" width="2" height="2" fill="#FFFFFF" />
+    {/* Main Body */}
+    <rect x="4" y="6" width="12" height="2" fill="#FFFFFF" />
+    <rect x="2" y="8" width="15" height="2" fill="#FFFFFF" />
+    <rect x="1" y="10" width="16" height="5" fill="#FFFFFF" />
+    <rect x="1" y="15" width="17" height="3" fill="#FFFFFF" />
+    <rect x="2" y="18" width="15" height="3" fill="#FFFFFF" />
+    <rect x="4" y="21" width="4" height="2" fill="#FFFFFF" />
+    <rect x="11" y="21" width="4" height="2" fill="#FFFFFF" />
+    {/* Bite Cutout (matches background: #060B18) */}
+    <rect x="14" y="9" width="4" height="5" fill="#060B18" />
+    <rect x="13" y="10" width="2" height="3" fill="#060B18" />
+  </svg>
+);
+
+const EmailPixelIcon: React.FC = () => (
+  <svg width="26" height="26" viewBox="0 0 20 20" shapeRendering="crispEdges">
+    <rect x="1" y="3" width="18" height="14" fill="#060B18" stroke="#f59e0b" strokeWidth="1" />
+    <rect x="2" y="4" width="16" height="1" fill="#f59e0b" />
+    <rect x="3" y="5" width="2" height="2" fill="#fcd34d" />
+    <rect x="15" y="5" width="2" height="2" fill="#fcd34d" />
+    <rect x="5" y="7" width="2" height="2" fill="#fcd34d" />
+    <rect x="13" y="7" width="2" height="2" fill="#fcd34d" />
+    <rect x="7" y="9" width="2" height="2" fill="#fcd34d" />
+    <rect x="11" y="9" width="2" height="2" fill="#fcd34d" />
+    <rect x="9" y="11" width="2" height="2" fill="#fcd34d" />
+    <rect x="2" y="15" width="16" height="1" fill="#f59e0b" />
+  </svg>
+);
 
 interface SplashLoginGateProps {
   onLoginSuccess: (profile?: UserAccountProfile, bonusTokens?: number, selectedTeam?: string) => void;
@@ -262,24 +312,32 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({
                 Official Baseball Card Collecting, 26-Man Lineup Strategy & High-Bounce Simulation Engine.
               </p>
 
-              {/* Bonus Vending Machine Incentive Banner */}
-              <div className="mt-5 bg-gradient-to-br from-[#1c1206] to-[#0a0703] border-2 border-amber-500/50 p-4 rounded-2xl relative overflow-hidden shadow-lg">
-                <div className="flex items-center justify-between gap-3 relative z-10">
-                  <div>
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[9.5px] font-black text-amber-400 tracking-wider uppercase">
-                        NEW GM SIGNUP GRANT
-                      </span>
+              {/* CHOP Field Club New GM Signup Grant Card */}
+              <div className="mt-5">
+                <div className="signup-grant-card">
+                  <div className="grant-details">
+                    <div className="grant-header">
+                      <span className="pixel-indicator"></span>
+                      <span className="grant-tag">NEW GM SIGNUP GRANT</span>
                     </div>
-                    <h3 className="text-sm font-black text-white">
-                      1500 Base + 1,000 Bonus = <span className="text-amber-400">2,500 Vending Tokens</span>
+                    
+                    <h3 className="grant-title">
+                      1500 Base + 1,000 Bonus = <span className="highlight-amber">2,500 Vending Tokens</span>
                     </h3>
-                    <p className="text-[10px] text-emerald-400 font-mono mt-1 font-bold">
-                      ✓ Instant grant: Rip a 750-Token Hobby Box right away!
+                    
+                    <p className="grant-subtitle">
+                      <span className="checkmark">✓</span> Instant grant: Rip a 750-Token Hobby Box right away!
                     </p>
                   </div>
-                  <span className="text-4xl filter drop-shadow">📦</span>
+
+                  {/* CHOP FIELD CLUB HOBBY BOX ASSET */}
+                  <div className="hobby-box-slot">
+                    <img 
+                      src="/assets/boxes/chop-field-club-2026-hobby-box.png" 
+                      alt="Chop Field Club 2026 Series 1 Hobby Box" 
+                      className="retro-box-asset"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -322,55 +380,63 @@ export const SplashLoginGate: React.FC<SplashLoginGateProps> = ({
                     </div>
                   )}
 
+                  {/* Google Button */}
                   <button
                     type="button"
+                    className="retro-auth-btn"
+                    id="btn-google-auth"
                     onClick={() => handleOAuth('GOOGLE')}
-                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl group-hover:scale-110 transition-transform">🌐</span>
-                      <div className="text-left">
-                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Google ID</div>
-                        <div className="text-[9px] text-slate-500">1-Tap Fast Link</div>
+                    <div className="retro-btn-content">
+                      <div className="retro-btn-icon">
+                        <GooglePixelIcon />
+                      </div>
+                      <div className="retro-btn-meta">
+                        <span className="retro-btn-title">Google ID</span>
+                        <span className="retro-btn-subtitle">1-Tap Fast Link</span>
                       </div>
                     </div>
-                    <span className="text-[8.5px] font-bold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">
-                      +1,000 TOKENS
-                    </span>
+                    <div className="retro-token-badge">+1,000 TOKENS</div>
                   </button>
 
+                  {/* Apple Button */}
                   <button
                     type="button"
+                    className="retro-auth-btn"
+                    id="btn-apple-auth"
                     onClick={() => handleOAuth('APPLE')}
-                    className="relative w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl group-hover:scale-110 transition-transform">🍎</span>
-                      <div className="text-left">
-                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Apple ID</div>
-                        <div className="text-[9px] text-slate-500">iCloud Secure Sync</div>
+                    <div className="retro-btn-content">
+                      <div className="retro-btn-icon">
+                        <ApplePixelIcon />
+                      </div>
+                      <div className="retro-btn-meta">
+                        <span className="retro-btn-title">Apple ID</span>
+                        <span className="retro-btn-subtitle">iCloud Secure Sync</span>
                       </div>
                     </div>
-                    <span className="text-[8.5px] font-bold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">
-                      +1,000 TOKENS
-                    </span>
+                    <div className="retro-token-badge">+1,000 TOKENS</div>
                   </button>
 
+                  {/* Email / Custom GM Button */}
                   <button
                     type="button"
+                    className="retro-auth-btn"
+                    id="btn-email-auth"
                     onClick={handleEmailInitiation}
-                    className="w-full bg-slate-950 border border-slate-800 hover:border-amber-400 rounded-xl p-3 flex justify-between items-center transition-all cursor-pointer hover:bg-slate-850 active:scale-98 group shadow"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl group-hover:scale-110 transition-transform">✉️</span>
-                      <div className="text-left">
-                        <div className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Email / Custom GM</div>
-                        <div className="text-[9px] text-slate-500">Standard Password Login</div>
+                    <div className="retro-btn-content">
+                      <div className="retro-btn-icon">
+                        <EmailPixelIcon />
+                      </div>
+                      <div className="retro-btn-meta">
+                        <span className="retro-btn-title">Email / GM</span>
+                        <span className="retro-btn-subtitle">Standard Password</span>
                       </div>
                     </div>
-                    <span className="text-[8.5px] font-bold bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
+                    <div className="retro-token-badge" style={{ color: '#93c5fd', borderColor: '#3b82f6', background: '#0b1f3a' }}>
                       +500 TOKENS
-                    </span>
+                    </div>
                   </button>
                 </div>
               ) : (
