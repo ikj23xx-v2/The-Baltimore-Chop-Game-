@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PlayerCard } from '../types/game';
 import { getCardAccumulatedStats, CardCompleteStatsProfile } from '../data/cardAccumulatedStats';
 import { Card3D } from './Card3D';
+import { RainbowChaseTracker } from './RainbowChaseTracker';
 import { soundManager } from '../services/audio';
 import { 
   X, 
@@ -124,6 +125,11 @@ export const CardStatsDetailModal: React.FC<CardStatsDetailModalProps> = ({
                 <span className="text-slate-500">Synergy Trait:</span>
                 <span className="font-bold text-orange-400">{statsProfile.synergyBuffSummary}</span>
               </div>
+            </div>
+
+            {/* Rainbow Chase Collection Carousel (Base -> Superfractor) */}
+            <div className="w-full mt-3">
+              <RainbowChaseTracker card={card} />
             </div>
           </div>
 

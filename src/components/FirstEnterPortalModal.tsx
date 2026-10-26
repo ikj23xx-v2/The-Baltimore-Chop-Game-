@@ -4,13 +4,18 @@ import { CARD_SETS } from '../data/sets';
 import { TWELVE_SEASONS, SeasonInfo } from '../data/seasons';
 import { STADIUM_CARDS, TOTAL_STADIUM_CARDS_COUNT } from '../data/stadiums';
 import { INITIAL_EQUIPMENT_CARDS } from '../data/equipment';
+import { MLB_TEAMS } from '../data/mlbTeams';
+import { getFranchiseTop25War, LegendCardConfig } from '../data/franchiseLegends25';
+import { getTeamTop25WarSeasons, convertWarSeasonToCard, FranchiseWarSeasonEntry } from '../data/teamTopWarLegends';
+import { fetchTeamRoster, getTeamIdByName, MlbApiRosterPlayer } from '../services/mlbRosterService';
 import { LINEAR_WEIGHT_POINTS, calculateLeverageIndex, EXTREME_100_PATH_MILESTONES } from '../data/chopExtremeAnalytics';
 import { GAUNTLET_BOSSES, MOMENTS_OF_INFAMY } from '../data/chopExtremePillars';
 import { forumService, ForumPost } from '../services/forumService';
 import { authService, UserAccountProfile } from '../services/authService';
 import { soundManager } from '../services/audio';
 import { Card3D } from './Card3D';
-import { PlayerCard } from '../types/game';
+import { RainbowChaseTracker } from './RainbowChaseTracker';
+import { PlayerCard, EquipmentType } from '../types/game';
 import { 
   Play, 
   BookOpen, 
@@ -32,7 +37,11 @@ import {
   BarChart2,
   Compass,
   Zap,
-  Sliders
+  Sliders,
+  RefreshCw,
+  Globe,
+  Radio,
+  ExternalLink
 } from 'lucide-react';
 
 interface FirstEnterPortalModalProps {
@@ -44,7 +53,8 @@ interface FirstEnterPortalModalProps {
 
 type PortalTab = 
   | 'KNOWLEDGE_BASE_COLLECTION' // Primary Default!
-  | 'NON_PLAYER_CARDS'          // 36 Stadium Cards + 12 Equipment
+  | 'FRANCHISE_TOP_25_WAR'      // 30 Franchises Top 25 WAR Seasons & Active Rosters
+  | 'NON_PLAYER_CARDS'          // 36 Stadium Cards + 35+ Equipment & Relics
   | 'ALL_PLAYERS_ROSTER'        // 855 Cards: 30 Teams + Top 25 WAR Legends + Negro Leagues
   | 'CHOP_EXTREME_SABERMETRICS' // RE24, WPA, 4 Pillars & 100-Point Path
   | 'SEASONS_CALENDAR'
@@ -59,6 +69,17 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
 }) => {
   // Knowledge Base & Card Collection Hub is the front-and-center default!
   const [activeTab, setActiveTab] = useState<PortalTab>('KNOWLEDGE_BASE_COLLECTION');
+
+  // Franchise Top 25 WAR State
+  const [selectedFranchise, setSelectedFranchise] = useState<string>('Baltimore Orioles');
+  const [franchiseLeagueFilter, setFranchiseLeagueFilter] = useState<'ALL' | 'AL' | 'NL'>('ALL');
+  const [franchiseViewMode, setFranchiseViewMode] = useState<'TOP_25_LEGENDS' | 'ACTIVE_26_MAN'>('TOP_25_LEGENDS');
+  const [liveRoster, setLiveRoster] = useState<MlbApiRosterPlayer[] | null>(null);
+  const [isLoadingLiveRoster, setIsLoadingLiveRoster] = useState(false);
+  const [liveRosterError, setLiveRosterError] = useState<string | null>(null);
+
+  // Equipment & Relics Filter
+  const [equipmentTypeFilter, setEquipmentTypeFilter] = useState<string>('ALL');
 
   // Player Cards Browser Filter
   const [playerSearch, setPlayerSearch] = useState('');
@@ -98,11 +119,35 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
     });
   }, []);
 
+  // Sync Live Active Roster using user's MLB Stats API function
+  const handleFetchLiveRoster = async (teamName: string) => {
+    const teamId = getTeamIdByName(teamName);
+    setIsLoadingLiveRoster(true);
+    setLiveRosterError(null);
+    try {
+      const roster = await fetchTeamRoster(teamId);
+      setLiveRoster(roster);
+      soundManager.playRefractorShine();
+    } catch (err: any) {
+      console.warn('Live MLB roster fetch error:', err);
+      setLiveRosterError('Live API query returned cached roster (Rate-limit or network fallback).');
+      // Fallback to active 26-man roster from our database
+      const fallbackCards = BASE_ACTIVE_PLAYERS.filter(p => p.team === teamName);
+      setLiveRoster(fallbackCards.slice(0, 26).map((p, idx) => ({
+        id: 700000 + idx,
+        fullName: p.name,
+        position: p.position,
+        status: 'Active',
+        jerseyNumber: String((idx % 40) + 1)
+      })));
+    } finally {
+      setIsLoadingLiveRoster(false);
+    }
+  };
+
   // Team list for dropdown
   const allTeamNames = useMemo(() => {
-    const set = new Set<string>();
-    BASE_ACTIVE_PLAYERS.forEach(p => set.add(p.team));
-    return Array.from(set).sort();
+    return MLB_TEAMS.map(t => t.name).sort();
   }, []);
 
   if (!isOpen) return null;
@@ -249,6 +294,21 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
+              setActiveTab('FRANCHISE_TOP_25_WAR');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
+              activeTab === 'FRANCHISE_TOP_25_WAR'
+                ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+                : 'text-amber-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span>👑</span> 30 Franchises Top 25 WAR Vault
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
               setActiveTab('NON_PLAYER_CARDS');
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
@@ -257,7 +317,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
-            <span>🏟️</span> Non-Player Cards ({TOTAL_STADIUM_CARDS_COUNT} Stadiums + 12 Equip)
+            <span>🏟️</span> Non-Player Cards ({TOTAL_STADIUM_CARDS_COUNT} Stadiums + 35+ Equip & Relics)
           </button>
 
           <button
@@ -578,7 +638,310 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
           )}
 
           {/* =========================================================================
-              TAB 2: NON-PLAYER CARDS (36 STADIUMS + 12 EQUIPMENT CARDS)
+              TAB 2: 30 FRANCHISES TOP 25 SINGLE-SEASON WAR VAULT & ACTIVE ROSTERS
+              ========================================================================= */}
+          {activeTab === 'FRANCHISE_TOP_25_WAR' && (
+            <div className="space-y-6">
+              
+              {/* Franchise Selector Header */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/70 via-slate-900 to-black border border-amber-500/50 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-base sm:text-lg font-display font-black text-amber-300 uppercase flex items-center gap-2">
+                      <span>👑</span> All 30 MLB Franchises: All-Time Top 25 WAR Single Seasons & Active Rosters
+                    </h3>
+                    <p className="text-xs text-slate-300 font-mono mt-0.5">
+                      Explore every franchise’s 25 greatest Baseball-Reference WAR peaks or sync their official 26-man active roster via MLB Stats API.
+                    </p>
+                  </div>
+
+                  {/* League Filter */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {(['ALL', 'AL', 'NL'] as const).map((lg) => (
+                      <button
+                        key={lg}
+                        type="button"
+                        onClick={() => setFranchiseLeagueFilter(lg)}
+                        className={`px-3 py-1 rounded-xl text-xs font-mono font-bold uppercase transition-all ${
+                          franchiseLeagueFilter === lg
+                            ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+                            : 'bg-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {lg === 'ALL' ? 'All 30 Teams' : `${lg} (15)`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 30 MLB Franchises Carousel / Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-thin">
+                  {MLB_TEAMS
+                    .filter(t => franchiseLeagueFilter === 'ALL' || t.league === franchiseLeagueFilter)
+                    .map((team) => {
+                      const isSelected = selectedFranchise === team.name;
+                      return (
+                        <button
+                          key={team.id}
+                          type="button"
+                          onClick={() => {
+                            soundManager.playButtonClick();
+                            setSelectedFranchise(team.name);
+                            if (franchiseViewMode === 'ACTIVE_26_MAN') {
+                              handleFetchLiveRoster(team.name);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 border ${
+                            isSelected
+                              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 border-amber-300 shadow-md font-black scale-102'
+                              : 'bg-slate-800/90 text-slate-300 border-white/10 hover:text-white hover:bg-slate-700/80'
+                          }`}
+                        >
+                          <span className="text-sm">{team.logoIcon}</span>
+                          <span>{team.shortName}</span>
+                          <span className="text-[9px] font-mono opacity-70">({team.division})</span>
+                        </button>
+                      );
+                    })}
+                </div>
+
+                {/* View Mode Toggle & Live Sync Bar */}
+                <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFranchiseViewMode('TOP_25_LEGENDS')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 ${
+                        franchiseViewMode === 'TOP_25_LEGENDS'
+                          ? 'bg-amber-400 text-slate-950 font-black shadow'
+                          : 'bg-slate-800 text-slate-300 hover:text-white'
+                      }`}
+                    >
+                      <span>🏆</span> Top 25 Single-Season WAR Records
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFranchiseViewMode('ACTIVE_26_MAN');
+                        if (!liveRoster) handleFetchLiveRoster(selectedFranchise);
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 ${
+                        franchiseViewMode === 'ACTIVE_26_MAN'
+                          ? 'bg-cyan-500 text-slate-950 font-black shadow'
+                          : 'bg-slate-800 text-slate-300 hover:text-white'
+                      }`}
+                    >
+                      <Radio className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
+                      <span>Active 26-Man Roster (MLB Stats API)</span>
+                    </button>
+                  </div>
+
+                  {franchiseViewMode === 'ACTIVE_26_MAN' && (
+                    <button
+                      type="button"
+                      onClick={() => handleFetchLiveRoster(selectedFranchise)}
+                      disabled={isLoadingLiveRoster}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-mono text-xs flex items-center gap-1.5 border border-cyan-500/40"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isLoadingLiveRoster ? 'animate-spin' : ''}`} />
+                      <span>{isLoadingLiveRoster ? 'Syncing with MLB API...' : `Sync ${selectedFranchise} (ID: ${getTeamIdByName(selectedFranchise)})`}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* View 1: Top 25 Single-Season WAR Legends */}
+              {franchiseViewMode === 'TOP_25_LEGENDS' && (() => {
+                const warSeasons = getFranchiseTop25War(selectedFranchise);
+                const richLegendSeasons = getTeamTop25WarSeasons(selectedFranchise);
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+                      <span>Franchise: <strong className="text-amber-400">{selectedFranchise}</strong> · All-Time Top 25 Single Seasons Ranked by bRef WAR</span>
+                      <span className="text-emerald-400 font-bold">25 Historic Outliers Cataloged</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {warSeasons.map((entry) => {
+                        const richEntry = richLegendSeasons.find(r => r.rank === entry.rank) || richLegendSeasons[entry.rank - 1] || richLegendSeasons[0];
+                        const cardObject = convertWarSeasonToCard(richEntry, selectedFranchise);
+
+                        return (
+                          <div
+                            key={`${selectedFranchise}_${entry.rank}`}
+                            className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 hover:border-amber-400/60 transition-all shadow-md flex flex-col justify-between group"
+                          >
+                            <div>
+                              {/* Top Bar: Rank, Season, Position */}
+                              <div className="flex items-center justify-between mb-1.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`w-6 h-6 rounded-full flex items-center justify-center font-display font-black text-xs ${
+                                    entry.rank === 1 ? 'bg-amber-400 text-slate-950 ring-2 ring-yellow-200' :
+                                    entry.rank === 2 ? 'bg-slate-300 text-slate-950' :
+                                    entry.rank === 3 ? 'bg-amber-700 text-white' :
+                                    'bg-slate-800 text-slate-300'
+                                  }`}>
+                                    #{entry.rank}
+                                  </span>
+                                  <span className="text-xs font-mono font-bold text-amber-300">
+                                    {entry.season}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-200 font-bold">
+                                    {entry.position}
+                                  </span>
+                                  <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40">
+                                    {entry.war} WAR
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Player Name & Archetype */}
+                              <h4 className="text-sm font-display font-black text-white group-hover:text-amber-300 transition-colors uppercase leading-tight">
+                                {entry.playerName}
+                              </h4>
+                              
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[9.5px] font-mono px-2 py-0.5 rounded bg-amber-950/80 text-amber-200 border border-amber-500/30 font-bold">
+                                  {entry.archetype}
+                                </span>
+                                <span className="text-[9.5px] font-mono text-cyan-300 font-bold">
+                                  {entry.basePointsMultiplier}x RE24 Pts
+                                </span>
+                              </div>
+
+                              {/* Key Feat */}
+                              {entry.keyFeat && (
+                                <p className="text-[10.5px] font-mono text-slate-300 mt-2 leading-relaxed bg-black/40 p-2 rounded-lg border border-white/5">
+                                  {entry.keyFeat}
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Actions: Inspect 3D & Deploy */}
+                            <div className="pt-3 mt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playButtonClick();
+                                  setInspectedCard(cardObject);
+                                }}
+                                className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-mono text-xs flex items-center gap-1"
+                              >
+                                <Eye className="w-3.5 h-3.5 text-amber-300" />
+                                <span>3D Card & 360°</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundManager.playBatCrack(true);
+                                  onSelectCardForShowdown?.(cardObject);
+                                  onClose();
+                                }}
+                                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:brightness-110 text-slate-950 font-display font-black text-xs uppercase tracking-wide flex items-center gap-1 shadow"
+                              >
+                                <Play className="w-3 h-3 fill-slate-950" />
+                                <span>Deploy</span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* View 2: Active 26-Man MLB Roster (MLB Stats API) */}
+              {franchiseViewMode === 'ACTIVE_26_MAN' && (
+                <div className="space-y-4">
+                  {/* Status Banner */}
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-cyan-400" />
+                      <span className="text-slate-300">
+                        Official MLB Endpoint: <code className="text-cyan-300 font-bold">https://statsapi.mlb.com/api/v1/teams/{getTeamIdByName(selectedFranchise)}/roster?rosterType=active</code>
+                      </span>
+                    </div>
+                    {liveRosterError && (
+                      <span className="text-amber-400 text-[11px]">{liveRosterError}</span>
+                    )}
+                  </div>
+
+                  {/* Active Roster Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                    {(liveRoster || BASE_ACTIVE_PLAYERS.filter(p => p.team === selectedFranchise).slice(0, 26).map((p, idx) => ({
+                      id: 700000 + idx,
+                      fullName: p.name,
+                      position: p.position,
+                      status: 'Active',
+                      jerseyNumber: String((idx % 40) + 1)
+                    }))).map((player) => {
+                      const matchedCard = BASE_ACTIVE_PLAYERS.find(p => p.name.toLowerCase() === player.fullName.toLowerCase() && p.team === selectedFranchise) ||
+                        BASE_ACTIVE_PLAYERS.find(p => p.team === selectedFranchise) ||
+                        BASE_ACTIVE_PLAYERS[0];
+
+                      return (
+                        <div
+                          key={player.id}
+                          className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-cyan-400/50 transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="w-6 h-6 rounded bg-slate-800 text-cyan-300 font-mono font-bold text-xs flex items-center justify-center">
+                                #{player.jerseyNumber}
+                              </span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                                {player.status}
+                              </span>
+                            </div>
+                            <h4 className="text-xs font-display font-black text-white uppercase truncate">
+                              {player.fullName}
+                            </h4>
+                            <span className="text-[10px] font-mono text-slate-400 block mt-0.5">
+                              Position: <strong className="text-white">{player.position}</strong> · MLB ID: {player.id}
+                            </span>
+                          </div>
+
+                          <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundManager.playButtonClick();
+                                setInspectedCard(matchedCard);
+                              }}
+                              className="text-[10px] font-mono text-amber-300 hover:underline"
+                            >
+                              Inspect Card
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundManager.playBatCrack(true);
+                                onSelectCardForShowdown?.(matchedCard);
+                                onClose();
+                              }}
+                              className="px-2 py-0.5 rounded bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-display font-black text-[10px] uppercase"
+                            >
+                              Field Player
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 3: NON-PLAYER CARDS (36 STADIUMS + 35+ EQUIPMENT & RELIC CARDS)
               ========================================================================= */}
           {activeTab === 'NON_PLAYER_CARDS' && (
             <div className="space-y-6">
@@ -673,26 +1036,120 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 ))}
               </div>
 
-              {/* Equipment Cards Section */}
-              <div className="pt-4 border-t border-white/10 space-y-3">
-                <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
-                  <span>🛡️</span> Equipment & Relic Cards (12 Vault Items)
-                </h3>
+              {/* Equipment & Relics Section */}
+              <div className="pt-4 border-t border-white/10 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-display font-black text-white uppercase flex items-center gap-2">
+                      <span>🛡️</span> Equipment, Armor & Game-Used Relic Cards ({INITIAL_EQUIPMENT_CARDS.length} Vault Items)
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">
+                      Authentic batting gloves, fielding gloves, game-used bats, protective armor, cleats, and verified relics.
+                    </p>
+                  </div>
+
+                  {/* Subcategory Filter Tabs */}
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pb-1">
+                    {[
+                      { id: 'ALL', label: 'All Equipment' },
+                      { id: 'BATTING_GLOVES', label: 'Batting Gloves' },
+                      { id: 'FIELDING_GLOVE', label: 'Fielding Gloves' },
+                      { id: 'BAT', label: 'Bats' },
+                      { id: 'CLEATS', label: 'Cleats' },
+                      { id: 'ARMOR', label: 'Armor' },
+                      { id: 'RELIC', label: 'Relics' },
+                      { id: 'RITUAL', label: 'Rituals' },
+                      { id: 'COACH', label: 'Coaches' },
+                    ].map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setEquipmentTypeFilter(cat.id)}
+                        className={`px-2.5 py-1 rounded-xl text-xs font-mono font-bold uppercase transition-all shrink-0 ${
+                          equipmentTypeFilter === cat.id
+                            ? 'bg-cyan-500 text-slate-950 font-black shadow'
+                            : 'bg-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {INITIAL_EQUIPMENT_CARDS.map((eq) => (
+                  {INITIAL_EQUIPMENT_CARDS
+                    .filter(eq => equipmentTypeFilter === 'ALL' || eq.type === equipmentTypeFilter || (equipmentTypeFilter === 'FIELDING_GLOVE' && eq.type === 'GLOVE'))
+                    .map((eq) => (
                     <div
                       key={eq.id}
-                      className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-cyan-500/40 transition-all space-y-2"
+                      className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10 hover:border-cyan-500/40 transition-all space-y-2 flex flex-col justify-between"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xl">{eq.icon}</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
-                          {eq.rarity} · {eq.type}
-                        </span>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl">{eq.icon}</span>
+                          <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded ${
+                            eq.rarity === 'LEGENDARY' ? 'bg-amber-950 text-amber-300 border border-amber-400/40' :
+                            eq.rarity === 'VINTAGE' ? 'bg-purple-950 text-purple-300 border border-purple-400/40' :
+                            eq.rarity === 'RARE' ? 'bg-cyan-950 text-cyan-300 border border-cyan-400/40' :
+                            'bg-slate-800 text-slate-300'
+                          }`}>
+                            {eq.rarity} · {eq.type.replace(/_/g, ' ')}
+                          </span>
+                        </div>
+
+                        <h4 className="text-xs font-display font-black text-white uppercase mt-1 leading-tight">{eq.name}</h4>
+                        <p className="text-[10.5px] font-mono text-slate-300 leading-tight mt-1">{eq.description}</p>
+                        
+                        {/* Stat Buff Badges */}
+                        <div className="mt-2 flex flex-wrap gap-1.5 text-[9px] font-mono">
+                          {eq.buffStats.contactBonus && (
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">
+                              +{eq.buffStats.contactBonus} Contact
+                            </span>
+                          )}
+                          {eq.buffStats.powerBonus && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-500/30 font-bold">
+                              +{eq.buffStats.powerBonus} Power
+                            </span>
+                          )}
+                          {eq.buffStats.chopBounceBonus && (
+                            <span className="px-1.5 py-0.5 rounded bg-orange-950/80 text-orange-300 border border-orange-500/30 font-bold">
+                              +{eq.buffStats.chopBounceBonus}% Chop Bounce
+                            </span>
+                          )}
+                          {eq.buffStats.fieldingBonus && (
+                            <span className="px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-500/30 font-bold">
+                              +{eq.buffStats.fieldingBonus} Fielding
+                            </span>
+                          )}
+                          {eq.buffStats.speedBonus && (
+                            <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 font-bold">
+                              +{eq.buffStats.speedBonus} Speed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Relic Specific Authentication Details */}
+                        {eq.relicDetails && (
+                          <div className="mt-2 p-2 rounded-xl bg-black/60 border border-amber-500/30 text-[9.5px] font-mono space-y-0.5 text-amber-200">
+                            <div className="flex items-center justify-between font-bold text-amber-300">
+                              <span>CERTIFIED GAME-USED RELIC</span>
+                              <span className="text-[8px] bg-amber-950 px-1 rounded">{eq.relicDetails.authenticationId}</span>
+                            </div>
+                            <div className="text-slate-400">Date: {eq.relicDetails.gameDate}</div>
+                            <div className="text-slate-400">Material: {eq.relicDetails.materialType}</div>
+                            <div className="text-slate-400">Location: {eq.relicDetails.gameLocation}</div>
+                          </div>
+                        )}
+
+                        <p className="text-[9.5px] font-mono text-slate-500 italic leading-tight mt-1">"{eq.lore}"</p>
                       </div>
-                      <h4 className="text-xs font-display font-black text-white uppercase">{eq.name}</h4>
-                      <p className="text-[10.5px] font-mono text-slate-300 leading-tight">{eq.description}</p>
-                      <p className="text-[9.5px] font-mono text-slate-500 italic leading-tight">{eq.lore}</p>
+
+                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-slate-400">Status: {eq.equipped ? 'Equipped in Bag' : 'In Vault'}</span>
+                        <span className="text-cyan-400 font-bold">Ready to Equip</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1129,6 +1586,86 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
           )}
 
         </div>
+
+        {/* =========================================================================
+            3D CARD INSPECTION MODAL OVERLAY WITH 360° SPIN & RAINBOW CHASE TRACKER
+            ========================================================================= */}
+        {inspectedCard && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
+            <div className="bg-slate-950 border border-amber-500/50 rounded-3xl p-4 sm:p-6 w-full max-w-2xl max-h-[92vh] overflow-y-auto flex flex-col items-center gap-4 relative shadow-[0_0_50px_rgba(245,158,11,0.25)]">
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setInspectedCard(null)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                aria-label="Close 3D inspection"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Title & Instructions */}
+              <div className="text-center space-y-1">
+                <span className="text-[10px] font-mono text-amber-400 uppercase tracking-widest font-black">
+                  ★ 360° INTERACTIVE CARD VAULT ★
+                </span>
+                <h3 className="text-lg font-display font-black text-white uppercase">
+                  {inspectedCard.name} ({inspectedCard.era})
+                </h3>
+                <p className="text-xs text-slate-400 font-mono">
+                  Drag card to turn 360 degrees, or click the orbit spin button to view the metallic stamped serial number on the slab header.
+                </p>
+              </div>
+
+              {/* 3D Card Container */}
+              <div className="my-2 flex justify-center">
+                <Card3D card={inspectedCard} size="large" interactive={true} />
+              </div>
+
+              {/* The Rainbow Chase Collection Tracker (6-Slot Parallel Carousel) */}
+              <div className="w-full">
+                <RainbowChaseTracker
+                  card={inspectedCard}
+                  onRainbowCompleted={(cardName) => {
+                    soundManager.playHomeRunFanfare();
+                  }}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="w-full flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onOpenCardDetails) {
+                      onOpenCardDetails(inspectedCard);
+                      setInspectedCard(null);
+                    }
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <BarChart2 className="w-4 h-4" />
+                  <span>Season Stats & Leaderboard</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playBatCrack(true);
+                      onSelectCardForShowdown?.(inspectedCard);
+                      setInspectedCard(null);
+                      onClose();
+                    }}
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:brightness-110 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-all"
+                  >
+                    <Play className="w-4 h-4 fill-slate-950" />
+                    <span>Deploy to Showdown</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

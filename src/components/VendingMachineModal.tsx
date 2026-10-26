@@ -28,9 +28,9 @@ export const VendingMachineModal: React.FC<VendingMachineModalProps> = ({
 
   if (!isOpen) return null;
 
-  const pullVendingMachine = () => {
-    if (vendingTokens < 1 || dispensing) return;
-    const success = onUseToken(1);
+  const pullVendingMachine = (cost: number = 1) => {
+    if (vendingTokens < cost || dispensing) return;
+    const success = onUseToken(cost);
     if (!success) return;
 
     setDispensing(true);
@@ -38,8 +38,18 @@ export const VendingMachineModal: React.FC<VendingMachineModalProps> = ({
     soundManager.playVendingDispense();
 
     setTimeout(() => {
-      // Pick random equipment card
-      const loot = INITIAL_EQUIPMENT_CARDS[Math.floor(Math.random() * INITIAL_EQUIPMENT_CARDS.length)];
+      // Pick equipment matching tier
+      let pool = INITIAL_EQUIPMENT_CARDS;
+      if (cost === 5) {
+        pool = INITIAL_EQUIPMENT_CARDS.filter(e => e.rarity === 'LEGENDARY' || e.rarity === 'VINTAGE');
+      } else if (cost === 3) {
+        pool = INITIAL_EQUIPMENT_CARDS.filter(e => e.rarity === 'RARE');
+      } else {
+        pool = INITIAL_EQUIPMENT_CARDS.filter(e => e.rarity === 'COMMON' || e.rarity === 'RARE');
+      }
+      if (pool.length === 0) pool = INITIAL_EQUIPMENT_CARDS;
+
+      const loot = pool[Math.floor(Math.random() * pool.length)];
       setDispensedCard(loot);
       setDispensing(false);
       onEquipItem(loot);
@@ -127,16 +137,50 @@ export const VendingMachineModal: React.FC<VendingMachineModalProps> = ({
               </div>
             </div>
 
-            {/* Dispense Lever Button */}
-            <button
-              type="button"
-              disabled={vendingTokens < 1 || dispensing}
-              onClick={pullVendingMachine}
-              className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-display font-black text-base tracking-wider uppercase rounded-2xl shadow-xl transition-all transform active:scale-98 disabled:opacity-40 flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-5 h-5" />
-              {dispensing ? 'Rotating Mechanical Coil...' : 'Insert 🪙 1 Token & Dispense Card'}
-            </button>
+            {/* Tiered Dispense Lever Buttons */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest block font-bold">
+                SELECT COIN DROP TIER:
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  disabled={vendingTokens < 1 || dispensing}
+                  onClick={() => pullVendingMachine(1)}
+                  className="p-2.5 bg-slate-800 hover:bg-emerald-700 disabled:opacity-40 rounded-xl border border-emerald-500/30 text-center transition-all"
+                >
+                  <span className="text-xs font-mono font-black text-emerald-400 block">TIER 1 (🪙 1)</span>
+                  <span className="text-[9px] text-slate-300 block mt-0.5">Common / Base Gear</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={vendingTokens < 3 || dispensing}
+                  onClick={() => pullVendingMachine(3)}
+                  className="p-2.5 bg-slate-800 hover:bg-cyan-700 disabled:opacity-40 rounded-xl border border-cyan-500/30 text-center transition-all"
+                >
+                  <span className="text-xs font-mono font-black text-cyan-400 block">TIER 2 (🪙 3)</span>
+                  <span className="text-[9px] text-slate-300 block mt-0.5">Rare Pro Equipment</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={vendingTokens < 5 || dispensing}
+                  onClick={() => pullVendingMachine(5)}
+                  className="p-2.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:brightness-110 disabled:opacity-40 rounded-xl border border-amber-300 text-center transition-all shadow-md"
+                >
+                  <span className="text-xs font-mono font-black text-slate-950 block">TIER 3 (🪙 5)</span>
+                  <span className="text-[9px] text-slate-950 font-bold block mt-0.5">Legendary Relic</span>
+                </button>
+              </div>
+
+              {dispensing && (
+                <div className="p-2 text-center text-xs font-mono text-emerald-400 animate-pulse bg-black/40 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2">
+                  <Sparkles className="w-4 h-4 animate-spin" />
+                  <span>Rotating Mechanical Coils... Dispensing Authenticated Gear!</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right: Dispensed Item & Active Equipped Loadout */}

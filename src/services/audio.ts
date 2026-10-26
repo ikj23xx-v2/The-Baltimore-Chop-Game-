@@ -513,6 +513,11 @@ class SoundEngine {
       offset += n.d * 0.85;
     });
   }
+
+  // Home Run & Master Achievement Fanfare
+  public playHomeRunFanfare(): void {
+    this.playRetro8BitOrganCharge();
+  }
 }
 
 export const soundManager = new SoundEngine();

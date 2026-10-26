@@ -88,7 +88,18 @@ export interface PlayerCard {
   activeEquipmentIds?: string[];
 }
 
-export type EquipmentType = 'BAT' | 'GLOVE' | 'STADIUM' | 'RITUAL' | 'COACH';
+export type EquipmentType = 
+  | 'BAT' 
+  | 'GLOVE' 
+  | 'FIELDING_GLOVE'
+  | 'BATTING_GLOVES'
+  | 'CLEATS'
+  | 'ARMOR'
+  | 'RELIC'
+  | 'STADIUM' 
+  | 'RITUAL' 
+  | 'COACH';
+
 export type EquipmentRarity = 'COMMON' | 'RARE' | 'VINTAGE' | 'LEGENDARY';
 
 export interface NonPlayerCard {
@@ -105,6 +116,14 @@ export interface NonPlayerCard {
     controlBonus?: number;
     chopBounceBonus?: number;
     pitchHintAccuracy?: number;
+    speedBonus?: number;
+    fieldingBonus?: number;
+  };
+  relicDetails?: {
+    gameDate?: string;
+    authenticationId?: string;
+    materialType?: string;
+    gameLocation?: string;
   };
   equipped?: boolean;
 }

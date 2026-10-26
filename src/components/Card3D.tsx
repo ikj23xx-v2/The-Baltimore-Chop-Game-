@@ -440,8 +440,31 @@ export const Card3D: React.FC<Card3DProps> = ({
                 }}
               />
 
+              {/* AUTHENTIC ACRYLIC SLAB HEADER (Graded / Stamped Foil) */}
+              <div className="relative z-30 px-2 py-0.5 bg-gradient-to-r from-black/90 via-slate-900/90 to-black/90 border-b border-white/10 flex items-center justify-between text-[8.5px] font-mono">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                  <span className="font-black text-slate-300 tracking-wider">CHOP SLAB VAULT</span>
+                </div>
+                {effectiveSerialStamp && (
+                  <div className={`px-1.5 py-0.2 rounded font-black tracking-widest text-[8px] border shadow-sm ${
+                    effectiveSerialStamp.includes('1/1') || card.refractorTier === 'SUPERFRACTOR_1_OF_1'
+                      ? 'bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-500 text-black border-amber-300 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse'
+                      : card.refractorTier === 'GOLD_WAVE'
+                      ? 'bg-amber-950 text-amber-300 border-amber-400'
+                      : card.refractorTier === 'SAPPHIRE'
+                      ? 'bg-blue-950 text-blue-300 border-blue-400'
+                      : card.refractorTier === 'ATOMIC_MOJO'
+                      ? 'bg-purple-950 text-cyan-300 border-fuchsia-400'
+                      : 'bg-slate-800 text-slate-200 border-slate-600'
+                  }`}>
+                    {effectiveSerialStamp.includes('1/1') || card.refractorTier === 'SUPERFRACTOR_1_OF_1' ? '★ 1/1 GOLD FOIL ★' : effectiveSerialStamp}
+                  </div>
+                )}
+              </div>
+
               {/* CARD TOP BAR: TEAM ARCH & CHOP LOGO */}
-              <div className="relative z-20 pt-2 px-2.5 flex items-start justify-between">
+              <div className="relative z-20 pt-1.5 px-2.5 flex items-start justify-between">
                 <div className="flex flex-col">
                   <span className={`text-[12px] uppercase leading-none drop-shadow-md ${setBorder.teamHeaderClass}`}>
                     {card.team.toUpperCase()}
@@ -604,6 +627,20 @@ export const Card3D: React.FC<Card3DProps> = ({
             backfaceVisibility: 'hidden'
           }}
         >
+          {/* Slab Header on Back */}
+          <div className="border-b border-current/25 pb-1 mb-1 flex items-center justify-between text-[8px] font-mono">
+            <span className="font-black tracking-wider uppercase opacity-75">AUTHENTICATED SLAB BACK</span>
+            {effectiveSerialStamp && (
+              <span className={`px-1.5 py-0.2 rounded font-black tracking-widest border shadow-sm ${
+                effectiveSerialStamp.includes('1/1') || card.refractorTier === 'SUPERFRACTOR_1_OF_1'
+                  ? 'bg-amber-400 text-black border-amber-300 font-black'
+                  : 'bg-black/70 text-amber-300 border-amber-500/40'
+              }`}>
+                {effectiveSerialStamp.includes('1/1') || card.refractorTier === 'SUPERFRACTOR_1_OF_1' ? '1/1 GOLD FOIL' : effectiveSerialStamp}
+              </span>
+            )}
+          </div>
+
           {/* Top Bar: Card Number, Name, Position */}
           <div className="border-b border-current/25 pb-1.5 flex items-start justify-between">
             <div className="flex items-center gap-2">
