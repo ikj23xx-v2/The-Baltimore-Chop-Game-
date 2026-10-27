@@ -91,8 +91,6 @@ import { ArtOfChopGallery } from './components/ArtOfChopGallery';
 import { SeasonalBinderGallery } from './components/SeasonalBinderGallery';
 import { ChopWalletModal } from './components/ChopWalletModal';
 import { ChopControlCenter } from './components/ChopControlCenter';
-import { OnboardingSplashModal } from './components/OnboardingSplashModal';
-import { SplashLoginGate } from './components/SplashLoginGate';
 import { MLB_TEAMS } from './data/mlbTeams';
 import { SocialShareModal } from './components/SocialShareModal';
 import { DigitalCardShop3D, StoreItem } from './components/DigitalCardShop3D';
@@ -118,7 +116,8 @@ export type ActiveTab =
 
 export default function App() {
   // --- NAVIGATION VIEW TABS ---
-  const [mainTab, setMainTab] = useState<ActiveTab>('ARENA');
+  // Default landing tab is "26-Man Draft" (Tab 1 in navigation order)
+  const [mainTab, setMainTab] = useState<ActiveTab>('DEPTH_CHART');
 
   // --- ROSTER & PLAYERS ---
   const [roster, setRoster] = useState<PlayerCard[]>(INITIAL_ROSTER);
@@ -208,6 +207,7 @@ export default function App() {
 
   // --- AT-BAT GAMEPLAY ACTIVE STATE ---
   const [isGameActive, setIsGameActive] = useState<boolean>(false);
+  const [isShowdownSetupOpen, setIsShowdownSetupOpen] = useState<boolean>(false);
   const [gameDifficulty, setGameDifficulty] = useState<'ROOKIE' | 'VETERAN' | 'HALL_OF_FAME'>('VETERAN');
   const [gameInnings, setGameInnings] = useState<number>(9);
   const [pitchSpeed, setPitchSpeed] = useState<'STANDARD' | 'HIGH_HEAT'>('STANDARD');
@@ -978,22 +978,35 @@ export default function App() {
                     playByPlay={playByPlay}
                   />
                 </div>
-              ) : (
-                /* Pre-Game Setup Screen when no active game is in progress */
-                <div className="liquid-glass-panel rounded-3xl p-6 sm:p-8 border border-amber-500/40 shadow-2xl space-y-6">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
-                        BALLPARK DASHBOARD · PRE-GAME SHOWDOWN SETUP
-                      </span>
+              ) : isShowdownSetupOpen ? (
+                /* Pre-Game Setup Splash Screen (Active when user clicks to enter Showdown) */
+                <div className="liquid-glass-panel rounded-3xl p-6 sm:p-8 border border-amber-500/40 shadow-2xl space-y-6 animate-fadeIn">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                          BALLPARK DASHBOARD · PRE-GAME SHOWDOWN SETUP
+                        </span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight">
+                        Configure At-Bat Showdown
+                      </h2>
+                      <p className="text-xs sm:text-sm text-slate-300 font-mono mt-1">
+                        Set up your game conditions, choose difficulty and opposing ace, then step into the batter's box.
+                      </p>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight">
-                      Configure At-Bat Showdown
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-300 font-mono mt-1">
-                      Set up your game conditions, choose difficulty and opposing ace, then step into the batter's box for high-leverage at-bats.
-                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setIsShowdownSetupOpen(false);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-mono font-bold border border-slate-700 flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Return to Manager Dashboard"
+                    >
+                      ✕ Close
+                    </button>
                   </div>
 
                   {/* Matchup Preview Box */}
@@ -1084,21 +1097,184 @@ export default function App() {
                   </div>
 
                   {/* Big Glowing Start Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundManager.playBatCrack(true);
-                      setBalls(0);
-                      setStrikes(0);
-                      setOuts(1);
-                      setIsGameActive(true);
-                      addLog(`⚾ STEPPED INTO THE BOX: ${activeBatter.name} vs ${opposingPitcher.name} (${gameDifficulty} difficulty)!`, 'chop');
-                    }}
-                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 text-slate-950 font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_0_25px_rgba(251,191,36,0.4)] transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <span>⚾</span>
-                    <span>START AT-BAT SHOWDOWN</span>
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setIsShowdownSetupOpen(false);
+                      }}
+                      className="py-4 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-display font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playBatCrack(true);
+                        setBalls(0);
+                        setStrikes(0);
+                        setOuts(1);
+                        setIsGameActive(true);
+                        setIsShowdownSetupOpen(false);
+                        addLog(`⚾ STEPPED INTO THE BOX: ${activeBatter.name} vs ${opposingPitcher.name} (${gameDifficulty} difficulty)!`, 'chop');
+                      }}
+                      className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 text-slate-950 font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_0_25px_rgba(251,191,36,0.4)] transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>⚾</span>
+                      <span>START AT-BAT SHOWDOWN</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Clean Franchise Manager Dashboard (Showdown Overlay is hidden when no active game) */
+                <div className="liquid-glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                          FRANCHISE HEADQUARTERS · DASHBOARD
+                        </span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight">
+                        {currentTeamTheme.name}
+                      </h2>
+                      <p className="text-xs text-slate-400 font-mono mt-0.5">
+                        Home Ballpark: {currentTeamTheme.ballpark} · 26-Man Roster Active
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundManager.playButtonClick();
+                          setIsShowdownSetupOpen(true);
+                        }}
+                        className="py-3 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 font-display font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.35)] transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>⚔️</span>
+                        <span>Play At-Bat Showdown</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Franchise Quick Stats Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-center">
+                    <div className="p-3 rounded-2xl bg-slate-950/70 border border-white/10">
+                      <span className="text-[10px] text-slate-500 uppercase block">SEASON RECORD</span>
+                      <span className="text-base sm:text-lg font-black text-white">{seasonRecord.wins}W - {seasonRecord.losses}L</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-950/70 border border-white/10">
+                      <span className="text-[10px] text-slate-500 uppercase block">WIN STREAK</span>
+                      <span className="text-base sm:text-lg font-black text-emerald-400">🔥 {streakCount} Games</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-950/70 border border-white/10">
+                      <span className="text-[10px] text-slate-500 uppercase block">VENDING TOKENS</span>
+                      <span className="text-base sm:text-lg font-black text-amber-300">🪙 {bankAccount.vendingTokenBalance.toLocaleString()}</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-950/70 border border-white/10">
+                      <span className="text-[10px] text-slate-500 uppercase block">FRANCHISE POINTS</span>
+                      <span className="text-base sm:text-lg font-black text-orange-400">⭐ {franchisePoints.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Today's Scheduled Game Matchup */}
+                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/10">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                        TODAY'S SCHEDULED MATCHUP
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        CRISIS 9TH INNING
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl shrink-0">
+                          {activeBatter.avatarIcon || '🏏'}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[9px] font-mono text-slate-400 uppercase">Leadoff Slugger</span>
+                          <h4 className="font-display font-bold text-sm text-white uppercase truncate">{activeBatter.name}</h4>
+                          <span className="text-[10px] font-mono text-amber-400">{activeBatter.position} · {activeBatter.bRefWar.toFixed(1)} bRef WAR</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-white/5">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-xl shrink-0">
+                          {opposingPitcher.avatarIcon || '⚾'}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[9px] font-mono text-slate-400 uppercase">Opposing Hurler</span>
+                          <h4 className="font-display font-bold text-sm text-white uppercase truncate">{opposingPitcher.name}</h4>
+                          <span className="text-[10px] font-mono text-blue-400">{opposingPitcher.team} · {opposingPitcher.bRefWar.toFixed(1)} WAR</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Action Navigation Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setMainTab('DEPTH_CHART');
+                      }}
+                      className="p-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-500/40 text-left transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xl">📋</span>
+                        <span className="font-display font-bold text-xs text-white uppercase group-hover:text-amber-300 transition-colors">
+                          26-Man Big Board
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-mono text-slate-400">
+                        Review all 26 drafted cards and manage depth chart.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setMainTab('HOBBY_OUTPOST');
+                      }}
+                      className="p-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-500/40 text-left transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xl">📦</span>
+                        <span className="font-display font-bold text-xs text-white uppercase group-hover:text-amber-300 transition-colors">
+                          Hobby Outpost
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-mono text-slate-400">
+                        Unseal Foil Packs, Blasters & Official Hobby Boxes.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setIsFranchiseOpen(true);
+                      }}
+                      className="p-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-500/40 text-left transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xl">🏟️</span>
+                        <span className="font-display font-bold text-xs text-white uppercase group-hover:text-amber-300 transition-colors">
+                          162-0 Franchise
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-mono text-slate-400">
+                        Simulate series games and deploy managerial cards.
+                      </p>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1795,12 +1971,6 @@ export default function App() {
         onBroadcastLog={addLog}
       />
 
-      {/* Stadium Tunnel Walk-Out Entrance & Franchise Selector */}
-      <StadiumTunnelEntrance
-        isOpen={isSplashOpen}
-        onComplete={handleTeamSelected}
-        onClose={() => setIsSplashOpen(false)}
-      />
 
       {/* 5-in-7 Days Login Streak Modal */}
       <LoginStreakModal
@@ -1900,38 +2070,32 @@ export default function App() {
         }}
       />
 
-      {/* Primary Splash Login Gate & Cinematic Retro Tunnel Walkout */}
-      {isSplashLoginOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <SplashLoginGate
-            initialTeam={currentTeamTheme.name}
-            onClose={() => setIsSplashLoginOpen(false)}
-            onLoginSuccess={(profile, bonusTokens, chosenTeam) => {
-              const finalProfile = profile || {
-                uid: `gm_${Date.now()}`,
-                email: 'manager@thebaltimorechop.app',
-                displayName: 'Baltimore GM',
-                username: 'ChopMaster',
-                photoURL: null,
-                isAnonymous: false,
-                linkedProviders: ['password'],
-                createdAt: Date.now(),
-                lastUsernameChangeAt: null,
-                usernameHistory: []
-              };
-              const bonus = bonusTokens ?? 0;
-              if (chosenTeam) {
-                const theme = teamThemeService.setFavoriteTeam(chosenTeam);
-                if (theme) {
-                  handleTeamSelected(theme);
-                }
-              }
-              handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'ARENA');
-              setIsSplashLoginOpen(false);
-            }}
-          />
-        </div>
-      )}
+      {/* Primary Stadium Tunnel Walkout & GM Email Sign-Up / Login Gate */}
+      <StadiumTunnelEntrance
+        isOpen={isSplashLoginOpen}
+        initialTeam={currentTeamTheme.name}
+        onClose={() => setIsSplashLoginOpen(false)}
+        onComplete={(selectedTeam, profile, bonusTokens) => {
+          const finalProfile = profile || {
+            uid: `gm_${Date.now()}`,
+            email: 'manager@thebaltimorechop.app',
+            displayName: 'Baltimore GM',
+            username: 'ChopMaster',
+            photoURL: null,
+            isAnonymous: false,
+            linkedProviders: ['password'],
+            createdAt: Date.now(),
+            lastUsernameChangeAt: null,
+            usernameHistory: []
+          };
+          const bonus = bonusTokens ?? 0;
+          if (selectedTeam) {
+            handleTeamSelected(selectedTeam);
+          }
+          handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'DEPTH_CHART');
+          setIsSplashLoginOpen(false);
+        }}
+      />
 
       {/* Social Media Sharing & Viral Token Rewards Modal */}
       <SocialShareModal

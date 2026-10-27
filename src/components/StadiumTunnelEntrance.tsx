@@ -1,9 +1,15 @@
+// src/components/StadiumTunnelEntrance.tsx
 import React, { useState, useEffect } from 'react';
 import { MLB_TEAMS, MLB_DIVISIONS, MLBTeamInfo } from '../data/mlbTeams';
 import { teamThemeService, ActiveTeamTheme, NEGRO_LEAGUES_TEAM_INFO } from '../services/teamThemeService';
 import { NEGRO_LEAGUE_LEGENDS } from '../data/negroLeagues';
 import { soundManager } from '../services/audio';
 import { triggerHapticFeedback } from '../services/haptics';
+import { hobbyAudio } from '../utils/hobbySoundEngine';
+import { UserAccountProfile, authService } from '../services/authService';
+import { REWARD_CONFIG } from '../config/rewardsConfig';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 import { 
   Sparkles, 
   MapPin, 
@@ -12,36 +18,44 @@ import {
   ArrowRight, 
   RotateCcw, 
   Users, 
-  Volume2, 
-  VolumeX, 
-  Trophy, 
-  Flame,
-  ChevronRight,
-  Eye,
-  Zap
+  CheckCircle2,
+  Lock,
+  Mail,
+  User,
+  AlertCircle
 } from 'lucide-react';
 
 interface StadiumTunnelEntranceProps {
   isOpen: boolean;
-  onComplete: (selectedTeam: ActiveTeamTheme) => void;
+  onComplete: (selectedTeam: ActiveTeamTheme, profile?: UserAccountProfile, bonusTokens?: number) => void;
   onClose?: () => void;
+  initialTeam?: string;
 }
 
 export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
   isOpen,
   onComplete,
-  onClose
+  onClose,
+  initialTeam = 'Baltimore Orioles'
 }) => {
-  // Cinematic Walkout Stages: 'TUNNEL_DEPTH' -> 'WALKING_FORWARD' -> 'FIELD_BURST' -> 'TEAM_SELECTION'
-  const [cinematicStage, setCinematicStage] = useState<'TUNNEL_DEPTH' | 'WALKING_FORWARD' | 'FIELD_BURST' | 'TEAM_SELECTION'>('TUNNEL_DEPTH');
+  // Cinematic Walkout Stages: 'TUNNEL_DEPTH' -> 'WALKING_FORWARD' -> 'FIELD_BURST' -> 'ON_FIELD_SIGNUP'
+  const [cinematicStage, setCinematicStage] = useState<'TUNNEL_DEPTH' | 'WALKING_FORWARD' | 'FIELD_BURST' | 'ON_FIELD_SIGNUP'>('TUNNEL_DEPTH');
   const [walkProgress, setWalkProgress] = useState(0); // 0 to 100%
   
   // League Filter for Team Selection: 'ALL' | 'AL' | 'NL' | 'NEGRO_LEAGUES'
   const [leagueFilter, setLeagueFilter] = useState<'ALL' | 'AL' | 'NL' | 'NEGRO_LEAGUES'>('ALL');
   
   // Currently Chosen Team
-  const [selectedTeamName, setSelectedTeamName] = useState<string>(() => teamThemeService.getActiveTeam().name);
+  const [selectedTeamName, setSelectedTeamName] = useState<string>(() => initialTeam || teamThemeService.getActiveTeam().name);
   const [activeTheme, setActiveTheme] = useState<ActiveTeamTheme>(() => teamThemeService.getActiveTeam());
+
+  // Email Sign Up & Credentials State
+  const [isSigningUp, setIsSigningUp] = useState<boolean>(true);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Subscribe to theme updates
   useEffect(() => {
@@ -60,8 +74,9 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
             setCinematicStage('FIELD_BURST');
             soundManager.playBatCrack(true);
             triggerHapticFeedback('HEAVY');
+            playSynthCrowdCheer();
             setTimeout(() => {
-              setCinematicStage('TEAM_SELECTION');
+              setCinematicStage('ON_FIELD_SIGNUP');
               soundManager.playJackpotChime();
             }, 900);
             return 100;
@@ -89,10 +104,10 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
     setWalkProgress(0);
   };
 
-  // Skip straight to Team Selection
+  // Skip straight to On-Field Sign Up & Login
   const handleSkipCinematic = () => {
     soundManager.playButtonClick();
-    setCinematicStage('TEAM_SELECTION');
+    setCinematicStage('ON_FIELD_SIGNUP');
     setWalkProgress(100);
   };
 
@@ -105,15 +120,136 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
     setActiveTheme(updated);
   };
 
-  // Final confirmation: Lock in team and enter game
-  const handleLockInAndPlay = () => {
+  // Handle Email Credentials Submit (Sign In or Register)
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setErrorMessage('Please provide your GM email address.');
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage('Please enter your account password.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    let authUserUid: string | null = null;
+    let authUserEmail: string = cleanEmail;
+    let authDisplayName: string = username.trim() || cleanEmail.split('@')[0];
+
+    try {
+      if (isSigningUp) {
+        if (password.length < 6) {
+          setErrorMessage('Password must be at least 6 characters.');
+          setIsLoading(false);
+          return;
+        }
+        const cred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+        if (cred?.user) {
+          authUserUid = cred.user.uid;
+          if (cred.user.email) authUserEmail = cred.user.email;
+        }
+      } else {
+        const cred = await signInWithEmailAndPassword(auth, cleanEmail, password);
+        if (cred?.user) {
+          authUserUid = cred.user.uid;
+          if (cred.user.email) authUserEmail = cred.user.email;
+          if (cred.user.displayName) authDisplayName = cred.user.displayName;
+        }
+      }
+    } catch (err: any) {
+      console.warn('Firebase email auth message:', err);
+      const code = err?.code || '';
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setErrorMessage('Invalid email or password. Check credentials or switch to Register New GM.');
+        setIsLoading(false);
+        return;
+      } else if (code === 'auth/user-not-found') {
+        setErrorMessage('No account found for this email. Switch to Register New GM to create one.');
+        setIsLoading(false);
+        return;
+      } else if (code === 'auth/email-already-in-use') {
+        setErrorMessage('Email already registered. Switch to Sign In to enter your password.');
+        setIsSigningUp(false);
+        setIsLoading(false);
+        return;
+      } else if (code === 'auth/weak-password') {
+        setErrorMessage('Password should be at least 6 characters.');
+        setIsLoading(false);
+        return;
+      } else if (code === 'auth/invalid-email') {
+        setErrorMessage('Please enter a valid email address.');
+        setIsLoading(false);
+        return;
+      }
+      // If network/offline, proceed gracefully with local profile
+    }
+
+    const cleanHandle = username.trim() || authDisplayName || `GM_${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const profile: UserAccountProfile = {
+      uid: authUserUid || `gm_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      email: authUserEmail,
+      displayName: cleanHandle,
+      username: cleanHandle,
+      photoURL: null,
+      isAnonymous: false,
+      linkedProviders: ['password'],
+      createdAt: Date.now(),
+      lastUsernameChangeAt: null,
+      usernameHistory: []
+    };
+
+    try {
+      localStorage.setItem('baltimore_chop_local_user_v1', JSON.stringify(profile));
+      localStorage.setItem('the_baltimore_chop_onboarding_completed', 'true');
+      sessionStorage.setItem('chop_splash_dismissed', 'true');
+      authService.saveProfile(profile);
+    } catch {
+      // ignore
+    }
+
+    const finalTeam = teamThemeService.setFavoriteTeam(selectedTeamName);
     soundManager.playBatCrack(true);
     triggerHapticFeedback('CHOP');
-    setTimeout(() => {
-      soundManager.playBaltimoreChop();
-    }, 150);
+    setIsLoading(false);
+
+    onComplete(finalTeam, profile, 0);
+  };
+
+  // Direct Guest Play quick entrance
+  const handleGuestQuickEnter = () => {
+    hobbyAudio.playBoxOpen();
+    const guestProfile: UserAccountProfile = {
+      uid: `gm_guest_${Date.now()}`,
+      email: 'guest@thebaltimorechop.app',
+      displayName: 'Guest GM',
+      username: username.trim() || 'CamdenSlugger',
+      photoURL: null,
+      isAnonymous: true,
+      linkedProviders: ['anonymous'],
+      createdAt: Date.now(),
+      lastUsernameChangeAt: null,
+      usernameHistory: []
+    };
+    try {
+      localStorage.setItem('baltimore_chop_local_user_v1', JSON.stringify(guestProfile));
+      localStorage.setItem('the_baltimore_chop_onboarding_completed', 'true');
+      sessionStorage.setItem('chop_splash_dismissed', 'true');
+      authService.saveProfile(guestProfile);
+    } catch {
+      // ignore
+    }
+
     const finalTeam = teamThemeService.setFavoriteTeam(selectedTeamName);
-    onComplete(finalTeam);
+    soundManager.playBatCrack(true);
+    triggerHapticFeedback('CHOP');
+    onComplete(finalTeam, guestProfile, 0);
   };
 
   // Filtered teams list
@@ -125,10 +261,22 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black select-none overflow-hidden animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black select-none overflow-hidden animate-fade-in font-sans">
       
+      {/* Top Close Button (if dismissed) */}
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50 w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-sm border border-white/20 transition-all cursor-pointer shadow-lg"
+          title="Close Splash Gate"
+        >
+          ✕
+        </button>
+      )}
+
       {/* ============================================================== */}
-      {/* CINEMATIC STAGES 1 & 2: FIRST-PERSON MLB STADIUM TUNNEL WALKOUT */}
+      {/* CINEMATIC STAGES 1, 2 & 3: FIRST-PERSON MLB STADIUM TUNNEL WALKOUT */}
       {/* ============================================================== */}
       {(cinematicStage === 'TUNNEL_DEPTH' || cinematicStage === 'WALKING_FORWARD' || cinematicStage === 'FIELD_BURST') && (
         <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden">
@@ -233,13 +381,13 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
           </div>
 
           {/* HUD Overlay in Tunnel Mode */}
-          <div className="relative z-30 flex flex-col items-center text-center p-6 max-w-md w-full">
+          <div className="relative z-30 flex flex-col items-center text-center p-6 max-w-md w-full animate-fadeIn">
             {/* Overhead Stadium Signage */}
-            <div className="px-4 py-2 rounded-2xl bg-black/80 border-2 border-amber-500/60 shadow-[0_0_30px_rgba(245,158,11,0.5)] mb-6 backdrop-blur-md">
+            <div className="px-5 py-3 rounded-2xl bg-black/85 border-2 border-amber-500/60 shadow-[0_0_35px_rgba(245,158,11,0.5)] mb-6 backdrop-blur-md">
               <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
-                MLB CLUBHOUSE ACCESS TUNNEL
+                THE BALTIMORE CHOP™ • STADIUM TUNNEL ENTRANCE
               </span>
-              <h2 className="text-xl sm:text-2xl font-display font-black text-white uppercase tracking-wide">
+              <h2 className="text-xl sm:text-2xl font-display font-black text-white uppercase tracking-wide mt-0.5">
                 {activeTheme.name}
               </h2>
               <span className="text-xs text-slate-300 font-mono flex items-center justify-center gap-1 mt-0.5">
@@ -247,24 +395,24 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
               </span>
             </div>
 
-            {/* Prompt Action: Walk out or skip */}
+            {/* Prompt Actions */}
             {cinematicStage === 'TUNNEL_DEPTH' && (
               <div className="space-y-3 w-full">
                 <button
                   type="button"
                   onClick={handleStartWalkout}
-                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-base uppercase tracking-wider shadow-[0_0_35px_rgba(249,115,22,0.8)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-base uppercase tracking-wider shadow-[0_0_35px_rgba(249,115,22,0.8)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 group cursor-pointer"
                 >
-                  <span>WALK OUT ONTO THE FIELD</span>
+                  <span>🚶‍♂️ WALK OUT ONTO THE FIELD</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleSkipCinematic}
-                  className="text-xs text-slate-400 hover:text-white font-mono underline uppercase tracking-wider transition-colors"
+                  className="text-xs text-amber-400 hover:text-white font-mono underline uppercase tracking-wider transition-colors cursor-pointer block mx-auto pt-1"
                 >
-                  Skip Directly to Team Selection & Roster
+                  ⚡ Skip Straight to GM Email Login & Roster →
                 </button>
               </div>
             )}
@@ -276,7 +424,7 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
                   <span>EMERGING FROM TUNNEL...</span>
                   <span>{Math.round(walkProgress)}%</span>
                 </div>
-                <div className="w-full h-3 rounded-full bg-slate-900 border border-slate-700 overflow-hidden p-0.5">
+                <div className="w-full h-3 rounded-full bg-slate-900 border border-slate-700 overflow-hidden p-0.5 shadow-inner">
                   <div 
                     className="h-full rounded-full bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 transition-all duration-75"
                     style={{ width: `${walkProgress}%` }}
@@ -292,16 +440,16 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
       )}
 
       {/* ============================================================== */}
-      {/* STAGE 4: ON-FIELD GAME SETUP & FAVORITE TEAM CUSTOMIZER HUB      */}
+      {/* STAGE 4: ON-FIELD SIGN UP & EMAIL LOGIN PAGE (THE DIAMOND)     */}
       {/* ============================================================== */}
-      {cinematicStage === 'TEAM_SELECTION' && (
-        <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col liquid-glass-panel rounded-3xl border-2 border-orange-500/60 p-5 sm:p-7 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden animate-fade-in mx-3">
+      {cinematicStage === 'ON_FIELD_SIGNUP' && (
+        <div className="relative w-full max-w-5xl max-h-[94vh] flex flex-col liquid-glass-panel rounded-3xl border-2 border-amber-500/70 p-4 sm:p-7 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.95)] overflow-hidden animate-fade-in mx-3 my-auto">
           
-          {/* Header Banner */}
+          {/* Top Header Banner: Active Club & Walkout Replay */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10 shrink-0">
             <div className="flex items-center gap-3">
               <div 
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-lg border border-white/20"
+                className="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl shadow-lg border border-white/20"
                 style={{
                   backgroundColor: activeTheme.primaryColor || '#DF4601'
                 }}
@@ -310,13 +458,16 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-display font-black text-white uppercase tracking-wide">
-                    CHOOSE YOUR FRANCHISE & TAKE THE FIELD
-                  </h2>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                    ON-FIELD GM REGISTRATION
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono hidden sm:inline">
+                    {activeTheme.ballpark}
+                  </span>
                 </div>
-                <p className="text-xs text-slate-300 font-mono">
-                  Select your home club. The app theme, ballpark, colors, and 26-man starting roster will adapt to your franchise!
-                </p>
+                <h2 className="text-xl sm:text-2xl font-display font-black text-white uppercase tracking-wide leading-tight">
+                  SIGN UP & TAKE THE FIELD
+                </h2>
               </div>
             </div>
 
@@ -327,212 +478,358 @@ export const StadiumTunnelEntrance: React.FC<StadiumTunnelEntranceProps> = ({
                   soundManager.playButtonClick();
                   setCinematicStage('TUNNEL_DEPTH');
                 }}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                 title="Replay stadium tunnel walkout animation"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-orange-400" /> Replay Walkout
+                <RotateCcw className="w-3.5 h-3.5 text-amber-400" /> Walk Stadium Tunnel
               </button>
             </div>
           </div>
 
-          {/* League Filter Navigation Tabs */}
-          <div className="flex items-center gap-2 py-3 border-b border-white/10 shrink-0 overflow-x-auto">
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setLeagueFilter('ALL');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all whitespace-nowrap ${
-                leagueFilter === 'ALL'
-                  ? 'bg-orange-600 text-white shadow'
-                  : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              All 30 MLB Teams
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setLeagueFilter('AL');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all whitespace-nowrap ${
-                leagueFilter === 'AL'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              American League (AL)
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setLeagueFilter('NL');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all whitespace-nowrap ${
-                leagueFilter === 'NL'
-                  ? 'bg-red-600 text-white shadow'
-                  : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              National League (NL)
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setLeagueFilter('NEGRO_LEAGUES');
-                handleSelectTeam('Negro League Legends');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                leagueFilter === 'NEGRO_LEAGUES'
-                  ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-slate-950 font-black shadow-[0_0_15px_rgba(245,158,11,0.5)]'
-                  : 'bg-amber-950/40 text-amber-300 hover:text-white border border-amber-500/40'
-              }`}
-            >
-              <Trophy className="w-3.5 h-3.5" /> Negro League Legends (Top 50 WAR)
-            </button>
-          </div>
-
-          {/* Active Chosen Franchise Feature Box */}
-          <div 
-            className="my-3 p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-300"
-            style={{
-              backgroundColor: `${activeTheme.primaryColor}25`,
-              borderColor: activeTheme.primaryColor || '#f97316'
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{activeTheme.logoIcon}</span>
+          {/* 2-Column Responsive Slabs: Left = Email Credentials, Right = Team Selector */}
+          <div className="flex-1 overflow-y-auto pt-4 grid grid-cols-1 lg:grid-cols-12 gap-5 pr-1">
+            
+            {/* Left Column: GM Email Authentication Form */}
+            <div className="lg:col-span-5 bg-slate-950/80 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-lg">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-black/60 text-amber-300 border border-white/10">
-                    CURRENT SELECTION
-                  </span>
-                  <span className="text-xs font-mono text-slate-300">
-                    {activeTheme.division}
-                  </span>
+                {/* Sign In vs Register Toggle */}
+                <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hobbyAudio.playCardShuffleFlick();
+                      setErrorMessage(null);
+                      setIsSigningUp(false);
+                    }}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      !isSigningUp 
+                        ? 'bg-amber-500 text-slate-950 shadow font-black' 
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hobbyAudio.playCardShuffleFlick();
+                      setErrorMessage(null);
+                      setIsSigningUp(true);
+                    }}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      isSigningUp 
+                        ? 'bg-amber-500 text-slate-950 shadow font-black' 
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Register New GM
+                  </button>
                 </div>
-                <h3 className="text-lg sm:text-xl font-display font-black text-white uppercase tracking-wider">
-                  {activeTheme.name}
-                </h3>
-                <span className="text-xs text-amber-300 font-mono flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" /> Home Field: <strong>{activeTheme.ballpark}</strong>
-                </span>
+
+                {/* Error Banner */}
+                {errorMessage && (
+                  <div className="p-2.5 rounded-xl bg-red-950/60 border border-red-500/40 text-[11px] font-mono text-red-300 mb-3 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                {/* Email Sign In Form */}
+                <form onSubmit={handleAuthSubmit} className="space-y-3 font-mono">
+                  <div>
+                    <label className="text-[10px] text-amber-300 font-bold block mb-1 uppercase tracking-wider flex items-center gap-1">
+                      <Mail className="w-3 h-3" /> GM Email
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="manager@franchise.com"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] text-amber-300 font-bold block mb-1 uppercase tracking-wider flex items-center gap-1">
+                      <Lock className="w-3 h-3" /> Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
+
+                  {isSigningUp && (
+                    <div>
+                      <label className="text-[10px] text-amber-300 font-bold block mb-1 uppercase tracking-wider flex items-center gap-1">
+                        <User className="w-3 h-3" /> GM Handle / Username
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="e.g. CamdenSlugger, IronMan_8"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors"
+                      />
+                    </div>
+                  )}
+
+                  {/* New GM Grant Callout */}
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] space-y-0.5">
+                    <span className="text-amber-400 font-bold uppercase block">
+                      🎁 NEW GM SIGNUP GRANT
+                    </span>
+                    <span className="text-slate-200 block">
+                      1,500 Base + 1,000 Bonus = <strong className="text-amber-300 font-mono">2,500 Vending Tokens</strong>
+                    </span>
+                    <span className="text-emerald-400 block text-[9.5px]">
+                      ✓ Rip a 750-Token Hobby Box immediately upon entry!
+                    </span>
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 text-slate-950 font-display font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50"
+                  >
+                    {isLoading ? (
+                      <span>⚾ Authenticating GM...</span>
+                    ) : isSigningUp ? (
+                      <span>⚾ Create Account & Take The Field</span>
+                    ) : (
+                      <span>⚾ Sign In & Take The Field</span>
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* Bottom Quick Guest Alternative */}
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono">
+                <button
+                  type="button"
+                  onClick={() => {
+                    hobbyAudio.playCardShuffleFlick();
+                    setErrorMessage(null);
+                    setIsSigningUp(!isSigningUp);
+                  }}
+                  className="text-amber-400 hover:text-white underline cursor-pointer"
+                >
+                  {isSigningUp ? 'Already a GM? Sign In' : 'Need an account? Register'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGuestQuickEnter}
+                  className="text-slate-400 hover:text-amber-300 underline cursor-pointer"
+                >
+                  Direct Guest Play →
+                </button>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleLockInAndPlay}
-              className="w-full sm:w-auto py-3 px-6 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-sm uppercase tracking-wider shadow-[0_4px_25px_rgba(249,115,22,0.6)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0"
-            >
-              <span>LOCK IN & PLAY BALL ⚾</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Scrollable Teams Grid */}
-          <div className="flex-1 overflow-y-auto pr-1">
-            {leagueFilter === 'NEGRO_LEAGUES' ? (
-              /* Negro Leagues Spotlight Showcase */
-              <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/80 to-slate-950 border border-amber-500/40">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="w-5 h-5 text-amber-400" />
-                    <h4 className="text-base font-display font-black text-white uppercase">
-                      Top 50 Negro League Legends (Historical Immortals)
-                    </h4>
-                  </div>
-                  <p className="text-xs text-slate-300 font-mono leading-relaxed">
-                    Unassigned historical immortals from the Kansas City Monarchs, Homestead Grays, Pittsburgh Crawfords, and Newark Eagles. Includes Josh Gibson, Satchel Paige, Oscar Charleston, Cool Papa Bell, Buck Leonard, and more!
+            {/* Right Column: Interactive Franchise Selector */}
+            <div className="lg:col-span-7 flex flex-col space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-display font-bold uppercase tracking-wider text-amber-400">
+                    SELECT YOUR HOME FRANCHISE
+                  </span>
+                  <p className="text-[10px] text-slate-400 font-mono">
+                    Selected Club: <strong className="text-white">{selectedTeamName}</strong> ({activeTheme.ballpark})
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {NEGRO_LEAGUE_LEGENDS.slice(0, 18).map((legend) => (
-                    <div
-                      key={legend.id}
-                      className="p-3 rounded-2xl bg-slate-950/80 border border-amber-500/30 hover:border-amber-400 transition-all flex items-center justify-between group shadow-sm"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-2xl">{legend.avatarIcon}</span>
-                        <div>
-                          <h5 className="text-xs font-display font-black text-white uppercase group-hover:text-amber-300 transition-colors">
-                            {legend.name}
-                          </h5>
-                          <span className="text-[10px] font-mono text-amber-400 block">
-                            {legend.position} · {legend.era.split('•')[0]}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right text-[10px] font-mono">
-                        <span className="text-slate-400 block">WAR</span>
-                        <span className="text-white font-bold">{legend.bRefWar.toFixed(1)}</span>
-                      </div>
-                    </div>
-                  ))}
+                {/* League Filter Navigation Tabs */}
+                <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-white/10 text-[10px] font-display font-bold uppercase">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playButtonClick();
+                      setLeagueFilter('ALL');
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-all ${
+                      leagueFilter === 'ALL'
+                        ? 'bg-amber-500 text-slate-950 font-black'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    All MLB
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playButtonClick();
+                      setLeagueFilter('AL');
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-all ${
+                      leagueFilter === 'AL'
+                        ? 'bg-amber-500 text-slate-950 font-black'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    AL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playButtonClick();
+                      setLeagueFilter('NL');
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-all ${
+                      leagueFilter === 'NL'
+                        ? 'bg-amber-500 text-slate-950 font-black'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    NL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playButtonClick();
+                      setLeagueFilter('NEGRO_LEAGUES');
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-all ${
+                      leagueFilter === 'NEGRO_LEAGUES'
+                        ? 'bg-amber-500 text-slate-950 font-black'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Negro Leagues
+                  </button>
                 </div>
               </div>
-            ) : (
-              /* MLB 30 Franchises Grid */
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {filteredTeams.map((team) => {
-                  const isSelected = selectedTeamName === team.name;
 
-                  return (
-                    <div
-                      key={team.id}
-                      onClick={() => handleSelectTeam(team.name)}
-                      className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
-                        isSelected
-                          ? 'bg-slate-950 border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)] scale-[1.02]'
-                          : 'bg-slate-950/70 border-white/10 hover:border-white/30 hover:bg-slate-900/90'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow"
-                          style={{ backgroundColor: `${team.primaryColor}30`, borderColor: team.primaryColor }}
-                        >
-                          {team.logoIcon}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase">
-                              {team.league} {team.division}
-                            </span>
-                            {isSelected && (
-                              <Check className="w-3.5 h-3.5 text-orange-400" />
-                            )}
-                          </div>
-                          <h4 className="text-xs sm:text-sm font-display font-black text-white uppercase tracking-wide">
-                            {team.name}
-                          </h4>
-                          <span className="text-[10px] font-mono text-slate-400 block truncate max-w-[150px]">
-                            {team.ballpark}
-                          </span>
-                        </div>
+              {/* Scrollable Teams Grid */}
+              <div className="overflow-y-auto max-h-[360px] pr-1 space-y-2">
+                {leagueFilter === 'NEGRO_LEAGUES' ? (
+                  <div
+                    onClick={() => handleSelectTeam('Negro League Legends')}
+                    className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                      selectedTeamName === 'Negro League Legends'
+                        ? 'bg-slate-950 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+                        : 'bg-slate-950/70 border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl">
+                        👑
                       </div>
-
-                      <div className="text-right">
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 text-slate-300 border border-white/5">
-                          26-Man
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] font-mono font-bold text-amber-400 uppercase">
+                            HISTORIC ERA
+                          </span>
+                          {selectedTeamName === 'Negro League Legends' && (
+                            <Check className="w-3.5 h-3.5 text-amber-400" />
+                          )}
+                        </div>
+                        <h4 className="text-xs font-display font-black text-white uppercase">
+                          Negro League Legends
+                        </h4>
+                        <span className="text-[10px] font-mono text-slate-400">
+                          Satchel Paige, Josh Gibson, Cool Papa Bell, Buck Leonard
                         </span>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {filteredTeams.map((team) => {
+                      const isSelected = selectedTeamName === team.name;
+
+                      return (
+                        <div
+                          key={team.id}
+                          onClick={() => handleSelectTeam(team.name)}
+                          className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex items-center justify-between ${
+                            isSelected
+                              ? 'bg-slate-950 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.35)] scale-[1.01]'
+                              : 'bg-slate-950/70 border-white/10 hover:border-white/30 hover:bg-slate-900/90'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div 
+                              className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shadow shrink-0"
+                              style={{ backgroundColor: `${team.primaryColor}30`, borderColor: team.primaryColor }}
+                            >
+                              {team.logoIcon}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1">
+                                <span className="text-[8px] font-mono font-bold text-slate-400 uppercase">
+                                  {team.league} {team.division}
+                                </span>
+                                {isSelected && (
+                                  <Check className="w-3 h-3 text-amber-400 shrink-0" />
+                                )}
+                              </div>
+                              <h4 className="text-xs font-display font-bold text-white uppercase tracking-tight truncate">
+                                {team.name}
+                              </h4>
+                              <span className="text-[9px] font-mono text-slate-400 block truncate">
+                                {team.ballpark}
+                              </span>
+                            </div>
+                          </div>
+
+                          <span className="text-[8.5px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 text-slate-300 border border-white/5 shrink-0">
+                            26-Man
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
           </div>
         </div>
       )}
     </div>
   );
 };
+
+function playSynthCrowdCheer() {
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const audioCtx = new AudioCtx();
+    const duration = 2.8;
+    const bufferSize = audioCtx.sampleRate * duration;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 1.2);
+    filter.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + duration);
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.14, audioCtx.currentTime + 0.9);
+    gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+    whiteNoise.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    whiteNoise.start();
+  } catch (err) {
+    console.warn('AudioContext failed to trigger', err);
+  }
+}
