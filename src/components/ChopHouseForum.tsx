@@ -63,11 +63,7 @@ const SAMPLE_LEADERBOARD: ManagerLeaderboardItem[] = [
         clutchWinRate: 0.78,
         topWARPlayerName: 'Cal Ripken Jr. (1991)'
       },
-      gamerTags: {
-        psn: 'Camden_Iron8',
-        xboxGamertag: 'RipkenChop',
-        discordHandle: 'BirdLand#1991'
-      },
+      gamerTags: {},
       trophies: {
         hasWorldSeriesCrown: true,
         trueRainbowCompleted: true
@@ -100,10 +96,7 @@ const SAMPLE_LEADERBOARD: ManagerLeaderboardItem[] = [
         clutchWinRate: 0.71,
         topWARPlayerName: 'Babe Ruth (1923)'
       },
-      gamerTags: {
-        psn: 'JudgeDugout_NY',
-        discordHandle: 'PinstripePower#27'
-      },
+      gamerTags: {},
       trophies: {
         hasWorldSeriesCrown: true,
         trueRainbowCompleted: false
@@ -136,10 +129,7 @@ const SAMPLE_LEADERBOARD: ManagerLeaderboardItem[] = [
         clutchWinRate: 0.69,
         topWARPlayerName: 'Rickey Henderson (1985)'
       },
-      gamerTags: {
-        xboxGamertag: 'SpeedDemonRickey',
-        steamId: 'HendersonGreenGold'
-      },
+      gamerTags: {},
       trophies: {
         hasWorldSeriesCrown: false,
         trueRainbowCompleted: true
@@ -172,10 +162,7 @@ const SAMPLE_LEADERBOARD: ManagerLeaderboardItem[] = [
         clutchWinRate: 0.74,
         topWARPlayerName: 'Pedro Martinez (1999)'
       },
-      gamerTags: {
-        psn: 'FenwayPitchMaster',
-        discordHandle: 'PedroChangeup#45'
-      },
+      gamerTags: {},
       trophies: {
         hasWorldSeriesCrown: false,
         trueRainbowCompleted: false
@@ -208,10 +195,7 @@ const SAMPLE_LEADERBOARD: ManagerLeaderboardItem[] = [
         clutchWinRate: 0.65,
         topWARPlayerName: 'Sandy Koufax (1965)'
       },
-      gamerTags: {
-        psn: 'KoufaxCurve_LA',
-        xTwitter: '@DodgerChopVin'
-      },
+      gamerTags: {},
       trophies: {
         hasWorldSeriesCrown: true,
         trueRainbowCompleted: false

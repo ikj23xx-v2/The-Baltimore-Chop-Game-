@@ -61,12 +61,12 @@ Please analyze this bug report within the codebase, determine the root cause in 
   };
 
   return (
-    <div className="fixed bottom-20 sm:bottom-6 right-4 z-40">
+    <div className="fixed top-14 sm:top-16 right-3 sm:right-6 z-40">
       {!isOpen ? (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-full shadow-2xl border border-amber-300 flex items-center gap-2 transition-transform hover:scale-105 active:scale-95 text-xs sm:text-sm font-display uppercase tracking-wider"
+          className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full shadow-2xl border border-amber-300 flex items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 text-xs font-display uppercase tracking-wider cursor-pointer"
         >
           <span>⚾ Scout Support</span>
         </button>

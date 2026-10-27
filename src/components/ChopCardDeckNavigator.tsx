@@ -24,13 +24,13 @@ export const ChopCardDeckNavigator: React.FC<ChopCardDeckNavigatorProps> = ({
   unreadClubhouseCount = 0,
 }) => {
   const tabs: { id: DeckNavigationTab; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { id: 'ARENA', label: 'At-Bat Arena', icon: <Swords className="w-4 h-4" /> },
-    { id: 'ROSTER', label: '26-Man Roster', icon: <Users className="w-4 h-4" /> },
+    { id: 'ROSTER', label: '26-Man Draft', icon: <Users className="w-4 h-4" /> },
+    { id: 'ARENA', label: 'Dashboard', icon: <Swords className="w-4 h-4" /> },
+    { id: 'SEASON', label: '162-0 Franchise', icon: <Calendar className="w-4 h-4" /> },
+    { id: 'BINDER', label: 'Card Vault', icon: <BookOpen className="w-4 h-4" /> },
+    { id: 'BANK', label: 'Token Vault', icon: <Landmark className="w-4 h-4" /> },
     { id: 'HOBBY', label: 'Hobby Outpost', icon: <Package className="w-4 h-4" /> },
-    { id: 'BINDER', label: 'Slab Vault', icon: <BookOpen className="w-4 h-4" /> },
     { id: 'CLUBHOUSE', label: 'Clubhouse', icon: <MessageSquare className="w-4 h-4" />, badge: unreadClubhouseCount },
-    { id: 'BANK', label: 'Bank Vault', icon: <Landmark className="w-4 h-4" /> },
-    { id: 'SEASON', label: 'Franchise', icon: <Calendar className="w-4 h-4" /> },
     { id: 'ALMANAC', label: 'Almanac', icon: <FileText className="w-4 h-4" /> },
   ];
 

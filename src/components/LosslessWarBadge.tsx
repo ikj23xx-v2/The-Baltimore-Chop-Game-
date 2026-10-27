@@ -168,8 +168,19 @@ export const LosslessWarBadge: React.FC<LosslessWarBadgeProps> = ({ card, classN
             </div>
           </div>
 
+          {/* Clickable Official Baseball-Reference Link */}
+          <a
+            href={`https://www.baseball-reference.com/search/search.fcgi?search=${encodeURIComponent(card.name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full mt-2 py-1 px-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 hover:text-amber-200 text-[9px] font-mono font-bold flex items-center justify-center gap-1 transition-all"
+          >
+            <span>🔗</span> View Official Baseball-Reference Record →
+          </a>
+
           {/* Footer Note */}
-          <div className="text-[7.5px] font-mono text-slate-400 text-center opacity-80 pt-1 border-t border-white/5">
+          <div className="text-[7.5px] font-mono text-slate-400 text-center opacity-80 pt-1.5 border-t border-white/5 mt-1.5">
             Calibrated against Baseball-Reference & FanGraphs MLB historical databases.
           </div>
 

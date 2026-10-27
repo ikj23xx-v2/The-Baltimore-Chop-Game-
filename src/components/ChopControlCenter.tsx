@@ -92,7 +92,7 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
                 }}
                 className="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-transform active:scale-95 shadow flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>👝</span> Open Leather Wallet
+                <span>👝</span> Open Chop Wallet
               </button>
             </div>
 
@@ -119,14 +119,14 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
               </div>
               <div className="my-2 flex items-center gap-2">
                 <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shadow"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shadow shrink-0"
                   style={{ backgroundColor: teamTheme.primaryColor, color: teamTheme.secondaryColor }}
                 >
                   {teamTheme.logoIcon}
                 </div>
-                <div>
-                  <div className="text-xs font-black text-white">{teamTheme.name}</div>
-                  <div className="text-[10px] text-slate-400">{teamTheme.ballpark}</div>
+                <div className="min-w-0">
+                  <div className="text-xs font-black text-white truncate">{teamTheme.name}</div>
+                  <div className="text-[10px] text-slate-400 truncate">{teamTheme.ballpark}</div>
                 </div>
               </div>
               <button

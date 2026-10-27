@@ -251,13 +251,18 @@ export const BASEBALL_REFERENCE_NICKNAMES: Record<string, { nickname: string; ic
   'Manny Machado': { nickname: 'El Ministro', icon: '🧱' },
 };
 
+export function getPlayerBRefUrl(playerName: string): string {
+  return `https://www.baseball-reference.com/search/search.fcgi?search=${encodeURIComponent(playerName)}`;
+}
+
 /**
  * Returns authentic Baseball-Reference nickname and icon for any player
  */
-export function getPlayerBRefNickname(playerName: string, position: Position = 'CF'): { nickname: string; icon: string; isFamous: boolean } {
+export function getPlayerBRefNickname(playerName: string, position: Position = 'CF'): { nickname: string; icon: string; isFamous: boolean; bRefUrl: string } {
+  const bRefUrl = getPlayerBRefUrl(playerName);
   const direct = BASEBALL_REFERENCE_NICKNAMES[playerName];
   if (direct) {
-    return { nickname: direct.nickname, icon: direct.icon, isFamous: true };
+    return { nickname: direct.nickname, icon: direct.icon, isFamous: true, bRefUrl };
   }
 
   // Check partial match (e.g. without accents)
@@ -267,15 +272,15 @@ export function getPlayerBRefNickname(playerName: string, position: Position = '
   );
   if (foundKey) {
     const entry = BASEBALL_REFERENCE_NICKNAMES[foundKey];
-    return { nickname: entry.nickname, icon: entry.icon, isFamous: true };
+    return { nickname: entry.nickname, icon: entry.icon, isFamous: true, bRefUrl };
   }
 
-  // Fallback to position-derived moniker and authentic baseball icon
+  // User requirement: For players without a formal name/nickname, do not use nicknames
   const posData = POSITION_ICON_REGISTRY[position] || POSITION_ICON_REGISTRY['CF'];
-  const surname = playerName.split(' ').slice(-1)[0] || playerName;
   return {
-    nickname: `The ${posData.roleName.split(' ')[0]}`,
+    nickname: '',
     icon: posData.symbol,
-    isFamous: false
+    isFamous: false,
+    bRefUrl
   };
 }

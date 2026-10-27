@@ -40,7 +40,7 @@ export const ChopWalletModal: React.FC<ChopWalletModalProps> = ({
             <div>
               <span className="text-xl">👝</span>
               <h2 className="text-base font-black text-amber-400 inline ml-2 tracking-wider">
-                THE CHOP LEATHER WALLET
+                OPEN CHOP WALLET
               </h2>
               <p className="text-[10px] text-amber-200/60 mt-0.5">Official Franchise Token Reserve</p>
             </div>

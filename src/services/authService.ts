@@ -214,7 +214,7 @@ class AuthService {
     return fallback;
   }
 
-  private setProfile(p: UserAccountProfile) {
+  public setProfile(p: UserAccountProfile) {
     this.currentUserProfile = p;
     try {
       localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(p));
@@ -222,6 +222,10 @@ class AuthService {
       // ignore
     }
     this.listeners.forEach((fn) => fn(p));
+  }
+
+  public saveProfile(p: UserAccountProfile) {
+    this.setProfile(p);
   }
 
   public subscribe(fn: (profile: UserAccountProfile | null) => void): () => void {

@@ -19,20 +19,21 @@ interface PositionCoords {
   fullName: string;
   x: number; // percentage in SVG (0-100)
   y: number; // percentage in SVG (0-100)
+  pLabel: string;
 }
 
 const POSITION_MAP: Record<Position, PositionCoords> = {
-  'SP': { scorecardNum: '1', baseNum: 'P', label: 'SP', fullName: 'Starting Pitcher', x: 50, y: 55 },
-  'RP': { scorecardNum: '1', baseNum: 'RP', label: 'RP', fullName: 'Relief Pitcher', x: 50, y: 55 },
-  'C':  { scorecardNum: '2', baseNum: 'C', label: 'C', fullName: 'Catcher', x: 50, y: 88 },
-  '1B': { scorecardNum: '3', baseNum: '1', label: '1B', fullName: 'First Base', x: 74, y: 55 },
-  '2B': { scorecardNum: '4', baseNum: '2', label: '2B', fullName: 'Second Base', x: 62, y: 38 },
-  '3B': { scorecardNum: '5', baseNum: '3', label: '3B', fullName: 'Third Base', x: 26, y: 55 },
-  'SS': { scorecardNum: '6', baseNum: '4', label: 'SS', fullName: 'Shortstop', x: 38, y: 38 },
-  'LF': { scorecardNum: '7', baseNum: '7', label: 'LF', fullName: 'Left Field', x: 22, y: 22 },
-  'CF': { scorecardNum: '8', baseNum: '8', label: 'CF', fullName: 'Center Field', x: 50, y: 14 },
-  'RF': { scorecardNum: '9', baseNum: '9', label: 'RF', fullName: 'Right Field', x: 78, y: 22 },
-  'DH': { scorecardNum: '10', baseNum: 'DH', label: 'DH', fullName: 'Designated Hitter', x: 50, y: 72 }
+  '1B': { scorecardNum: '3', baseNum: '1', label: '1B', pLabel: 'P1', fullName: 'First Base', x: 74, y: 55 },
+  '2B': { scorecardNum: '4', baseNum: '2', label: '2B', pLabel: 'P2', fullName: 'Second Base', x: 62, y: 38 },
+  '3B': { scorecardNum: '5', baseNum: '3', label: '3B', pLabel: 'P3', fullName: 'Third Base', x: 26, y: 55 },
+  'SS': { scorecardNum: '6', baseNum: '4', label: 'SS', pLabel: 'P4', fullName: 'Shortstop', x: 38, y: 38 },
+  'C':  { scorecardNum: '2', baseNum: 'C', label: 'C',  pLabel: 'P5', fullName: 'Catcher', x: 50, y: 88 },
+  'LF': { scorecardNum: '7', baseNum: '7', label: 'LF', pLabel: 'P6', fullName: 'Left Field', x: 22, y: 22 },
+  'CF': { scorecardNum: '8', baseNum: '8', label: 'CF', pLabel: 'P7', fullName: 'Center Field', x: 50, y: 14 },
+  'RF': { scorecardNum: '9', baseNum: '9', label: 'RF', pLabel: 'P8', fullName: 'Right Field', x: 78, y: 22 },
+  'DH': { scorecardNum: '10', baseNum: 'DH', label: 'DH', pLabel: 'P9', fullName: 'Designated Hitter', x: 50, y: 72 },
+  'SP': { scorecardNum: '1', baseNum: 'P', label: 'SP', pLabel: 'P10', fullName: 'Starting Pitcher', x: 50, y: 56 },
+  'RP': { scorecardNum: '1', baseNum: 'RP', label: 'RP', pLabel: 'P10', fullName: 'Relief Pitcher', x: 50, y: 56 }
 };
 
 export const BaseballDiamondBadge: React.FC<BaseballDiamondBadgeProps> = ({
@@ -160,21 +161,21 @@ export const BaseballDiamondBadge: React.FC<BaseballDiamondBadgeProps> = ({
 
           {/* 3D Raised Coin / Enamel Medallion */}
           <div 
-            className={`${dimensions.badge} rounded-full bg-gradient-to-b from-amber-300 via-orange-500 to-amber-700 text-slate-950 font-display font-black flex items-center justify-center shadow-lg border border-yellow-200`}
+            className={`${dimensions.badge} rounded-full bg-gradient-to-b from-amber-300 via-orange-500 to-amber-700 text-slate-950 font-display font-black flex items-center justify-center shadow-lg border border-yellow-200 shadow-[0_0_10px_rgba(245,158,11,0.8)]`}
             style={{
-              boxShadow: '0 3px 6px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.8), inset 0 -1.5px 2px rgba(0,0,0,0.8)'
+              boxShadow: '0 0 10px rgba(245,158,11,0.9), 0 3px 6px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.8), inset 0 -1.5px 2px rgba(0,0,0,0.8)'
             }}
           >
             <span className="leading-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
-              {displayNum}
+              {posData.pLabel}
             </span>
           </div>
         </div>
 
         {/* Micro Scorecard Mode Stamp at Bottom */}
         <div className="absolute bottom-0.5 inset-x-0 flex items-center justify-center pointer-events-none">
-          <span className="text-[6.5px] font-mono font-black text-amber-300/80 tracking-tighter bg-black/70 px-1 rounded-sm leading-tight border border-amber-500/20 shadow-sm">
-            {posData.label} #{displayNum}
+          <span className="text-[6.5px] font-mono font-black text-amber-300 tracking-tighter bg-black/80 px-1 rounded-sm leading-tight border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+            {posData.pLabel} · {posData.label}
           </span>
         </div>
       </div>

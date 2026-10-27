@@ -103,6 +103,8 @@ import { getInitialBankAccount, recordTransaction } from './engine/bankingLedger
 import { BankAccountState } from './types/banking';
 import { ProductSKU, PRODUCT_CATALOG } from './types/boxProducts';
 import { analyzeSeriesPerformance, SeriesGameBoxScore, SeriesRecapReport } from './engine/seriesAnalysisEngine';
+import { ChopBatterCardIcon } from './components/ChopBatterCardIcon';
+import { CardVaultView } from './components/CardVaultView';
 
 // Contract navigation tab type
 export type ActiveTab = 
@@ -197,12 +199,18 @@ export default function App() {
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [walletSpent, setWalletSpent] = useState<{ daily: number; monthly: number }>({ daily: 0, monthly: 0 });
   // --- PRIMARY SPLASH SCREEN & GM AUTHENTICATION GATE ---
-  // Defaults to true on launch so every visitor experiences the proper splash screen immediately!
-  const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(true);
+  // Defaults to false so users land directly on Dashboard without redirect
+  const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(false);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
   const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
   const [is3DShopOpen, setIs3DShopOpen] = useState(false);
   const [isRipBenchOpen, setIsRipBenchOpen] = useState(false);
+
+  // --- AT-BAT GAMEPLAY ACTIVE STATE ---
+  const [isGameActive, setIsGameActive] = useState<boolean>(false);
+  const [gameDifficulty, setGameDifficulty] = useState<'ROOKIE' | 'VETERAN' | 'HALL_OF_FAME'>('VETERAN');
+  const [gameInnings, setGameInnings] = useState<number>(9);
+  const [pitchSpeed, setPitchSpeed] = useState<'STANDARD' | 'HIGH_HEAT'>('STANDARD');
 
   // --- REFRACTOR FORGE INLINE STATE ---
   const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
@@ -724,43 +732,30 @@ export default function App() {
       <header className="sticky top-0 z-40 w-full bg-[#0a0f1d]/95 backdrop-blur-md border-b border-white/10 px-3 sm:px-6 py-2 transition-all">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           
-          {/* Brand & Active Team Theme Badge (Compact) */}
+          {/* Top-Left: Selected Username & Chop Batter Card Silhouette Icon */}
           <button
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
-              setIsSplashLoginOpen(true);
+              setIsAccountModalOpen(true);
             }}
-            className="flex items-center gap-2 group text-left transition-transform active:scale-95 cursor-pointer"
-            title="Click to Open Splash Screen & Change Team"
+            className="flex items-center gap-2.5 group text-left transition-transform active:scale-95 cursor-pointer"
+            title="Click to Open Manager Identity & Franchise Settings"
           >
-            <div 
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center font-display font-black text-xs sm:text-sm shadow border border-white/20 transition-all group-hover:scale-105"
-              style={{ backgroundColor: currentTeamTheme.primaryColor, color: currentTeamTheme.secondaryColor }}
-            >
-              <span>{currentTeamTheme.logoIcon}</span>
-            </div>
+            <ChopBatterCardIcon size={28} />
             <div className="flex flex-col">
-              <span className="font-display font-black text-xs sm:text-sm tracking-wider text-white uppercase group-hover:text-amber-400 transition-colors truncate max-w-[120px] sm:max-w-none">
+              <span className="font-display font-black text-xs sm:text-sm tracking-wider text-amber-300 uppercase group-hover:text-amber-200 transition-colors truncate max-w-[130px] sm:max-w-none">
+                @{userProfile?.username || 'CamdenSlugger'}
+              </span>
+              <span className="text-[9.5px] font-mono text-slate-400 group-hover:text-slate-300 truncate">
                 {currentTeamTheme.name}
               </span>
             </div>
           </button>
 
-          {/* Center: Splash Screen Entrance & iOS / Android Style Control Center */}
+          {/* Center: Lo-Fi Radio Soundscape & iOS / Android Style Control Center */}
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsSplashLoginOpen(true);
-              }}
-              className="px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/40 text-amber-300 font-mono text-[11px] sm:text-xs font-bold shadow-[0_0_12px_rgba(251,191,36,0.2)] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              title="Open Splash Screen & GM Entrance Gate"
-            >
-              <span>🏟️</span>
-              <span className="hidden sm:inline">Splash Screen</span>
-            </button>
+            <LofiPlayerToggle />
 
             <button
               type="button"
@@ -837,45 +832,35 @@ export default function App() {
       {/* ================= 3. MAIN DASHBOARD CONTENT ================= */}
       <main className="w-full max-w-7xl mx-auto p-3 sm:p-6 space-y-6 pt-4">
         
-        {/* Ballpark Scoreboard */}
-        <Scoreboard
-          homeScore={homeScore}
-          awayScore={awayScore}
-          inning={inning}
-          halfInning={halfInning}
-          balls={balls}
-          strikes={strikes}
-          outs={outs}
-          baseRunners={baseRunners}
-          franchisePoints={franchisePoints}
-          vendingTokens={vendingTokens}
-          isMuted={isMuted}
-          onToggleMute={handleToggleMute}
-          gameModeLabel={
-            mainTab === 'ARENA'
-              ? `At-Bat Showdown · ${currentTeamTheme.ballpark}`
-              : mainTab === 'DEPTH_CHART'
-              ? `Stick-To-The-Board Matrix · 26-Man ${currentTeamTheme.name} Depth Chart`
-              : mainTab === 'REFRAC_FORGE'
-              ? `Refractor Forge & Rainbow Chase · 6 Authentic Parallels`
-              : mainTab === 'MARKETPLACE'
-              ? `Seasonal Sets Vault & Marketplace · 8 Authentic Collector Series`
-              : mainTab === 'CHOP_HOUSE'
-              ? `The Chop House · Clubhouse Forums, Leaderboard & Jersey Avatars`
-              : `GM Operations & 30-Franchise Top 25 Single-Season WAR Vault`
-          }
-        />
+        {/* Ballpark Scoreboard (Active Game Only) */}
+        {isGameActive && (
+          <Scoreboard
+            homeScore={homeScore}
+            awayScore={awayScore}
+            inning={inning}
+            halfInning={halfInning}
+            balls={balls}
+            strikes={strikes}
+            outs={outs}
+            baseRunners={baseRunners}
+            franchisePoints={franchisePoints}
+            vendingTokens={vendingTokens}
+            isMuted={isMuted}
+            onToggleMute={handleToggleMute}
+            gameModeLabel={`At-Bat Showdown · ${currentTeamTheme.ballpark} · ${gameDifficulty} (${pitchSpeed})`}
+          />
+        )}
 
-        {/* ---------------- VIEW 1: ARENA SHOWDOWN ---------------- */}
+        {/* ---------------- VIEW 1: DASHBOARD & ARENA SHOWDOWN ---------------- */}
         {mainTab === 'ARENA' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: 3D Inspectable Card Stage with 360° Drag & Click-to-Inspect */}
             <div className="lg:col-span-4 flex flex-col items-center liquid-glass-panel rounded-3xl p-5 shadow-2xl">
               <div className="w-full flex items-center justify-between mb-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                  <span className={`w-2 h-2 rounded-full ${isGameActive ? 'bg-emerald-400 animate-pulse' : 'bg-orange-500'}`} />
                   <span className="text-xs font-display font-bold uppercase tracking-wider text-orange-400">
-                    Active Card · 360° Interactive Stage
+                    {isGameActive ? 'At-Bat Batter in Box' : 'Active Batter · 360° Stage'}
                   </span>
                 </div>
                 <button
@@ -940,7 +925,7 @@ export default function App() {
                   onClick={() => setIsRosterOpen(true)}
                   className="flex-1 py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/10 text-xs font-display font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
                 >
-                  <span>📋</span> 26-Man Lineup
+                  <span>📋</span> Lineup Roster
                 </button>
                 <button
                   type="button"
@@ -952,23 +937,170 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Column: Strike Zone Arena & Counter Matchup */}
+            {/* Right Column: Pre-Game Configuration OR Active At-Bat Showdown */}
             <div className="lg:col-span-8 flex flex-col space-y-6">
-              <AtBatArena
-                currentBatter={activeBatter}
-                currentPitcher={opposingPitcher}
-                selectedPitchType={selectedPitchType}
-                onSelectPitchType={setSelectedPitchType}
-                selectedZone={selectedZone}
-                onSelectZone={setSelectedZone}
-                activeSkill={activeSkill}
-                onSelectSkill={setActiveSkill}
-                onSwing={handleSwing}
-                isPitching={isPitching}
-                pitchSequence={pitchSequence}
-                streakCount={streakCount}
-                playByPlay={playByPlay}
-              />
+              {isGameActive ? (
+                <div className="space-y-4">
+                  {/* Active Matchup Bar with Exit Button */}
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/40">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                      <span className="font-display font-black text-xs sm:text-sm uppercase text-amber-300">
+                        SHOWDOWN ACTIVE: {activeBatter.name} vs {opposingPitcher.name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setIsGameActive(false);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-mono font-bold border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>⏹️</span> Exit to Dashboard
+                    </button>
+                  </div>
+
+                  {/* Active Interactive Batting Arena */}
+                  <AtBatArena
+                    currentBatter={activeBatter}
+                    currentPitcher={opposingPitcher}
+                    selectedPitchType={selectedPitchType}
+                    onSelectPitchType={setSelectedPitchType}
+                    selectedZone={selectedZone}
+                    onSelectZone={setSelectedZone}
+                    activeSkill={activeSkill}
+                    onSelectSkill={setActiveSkill}
+                    onSwing={handleSwing}
+                    isPitching={isPitching}
+                    pitchSequence={pitchSequence}
+                    streakCount={streakCount}
+                    playByPlay={playByPlay}
+                  />
+                </div>
+              ) : (
+                /* Pre-Game Setup Screen when no active game is in progress */
+                <div className="liquid-glass-panel rounded-3xl p-6 sm:p-8 border border-amber-500/40 shadow-2xl space-y-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                        BALLPARK DASHBOARD · PRE-GAME SHOWDOWN SETUP
+                      </span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight">
+                      Configure At-Bat Showdown
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-300 font-mono mt-1">
+                      Set up your game conditions, choose difficulty and opposing ace, then step into the batter's box for high-leverage at-bats.
+                    </p>
+                  </div>
+
+                  {/* Matchup Preview Box */}
+                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl">
+                        {activeBatter.avatarIcon || '🏏'}
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">Scheduled Batter</span>
+                        <h4 className="font-display font-black text-sm text-white uppercase">{activeBatter.name}</h4>
+                        <span className="text-[10px] font-mono text-amber-400">{activeBatter.position} · {activeBatter.bRefWar.toFixed(1)} bRef WAR</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 sm:border-l sm:border-slate-800 sm:pl-4">
+                      <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl">
+                        {opposingPitcher.avatarIcon || '⚾'}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">Opposing Ace</span>
+                        <h4 className="font-display font-black text-sm text-white uppercase">{opposingPitcher.name}</h4>
+                        <span className="text-[10px] font-mono text-blue-400">{opposingPitcher.team} · {opposingPitcher.bRefWar.toFixed(1)} WAR</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Difficulty, Inning & Pitch Velocity Controls */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                    {/* Difficulty */}
+                    <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                      <label className="text-slate-400 text-[10px] uppercase font-bold block">Difficulty Tier</label>
+                      <select
+                        value={gameDifficulty}
+                        onChange={(e) => setGameDifficulty(e.target.value as any)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold"
+                      >
+                        <option value="ROOKIE">Rookie (+20% timing)</option>
+                        <option value="VETERAN">Veteran (Standard)</option>
+                        <option value="HALL_OF_FAME">Hall of Fame (High Deception)</option>
+                      </select>
+                    </div>
+
+                    {/* Innings */}
+                    <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                      <label className="text-slate-400 text-[10px] uppercase font-bold block">Regulation Length</label>
+                      <select
+                        value={gameInnings}
+                        onChange={(e) => setGameInnings(Number(e.target.value))}
+                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold"
+                      >
+                        <option value={3}>3-Inning Blitz</option>
+                        <option value={9}>9-Inning Regulation</option>
+                      </select>
+                    </div>
+
+                    {/* Pitch Velocity */}
+                    <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                      <label className="text-slate-400 text-[10px] uppercase font-bold block">Pitch Velocity</label>
+                      <select
+                        value={pitchSpeed}
+                        onChange={(e) => setPitchSpeed(e.target.value as any)}
+                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold"
+                      >
+                        <option value="STANDARD">Standard 94 MPH</option>
+                        <option value="HIGH_HEAT">High-Heat 102 MPH</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Opponent Pitcher Ace Dropdown */}
+                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 font-mono text-xs">
+                    <label className="text-slate-400 text-[10px] uppercase font-bold block">Select Opposing Ace Hurler</label>
+                    <select
+                      value={opposingPitcher.id}
+                      onChange={(e) => {
+                        const found = ALL_PLAYERS.find(p => p.id === e.target.value);
+                        if (found) setOpposingPitcher(found);
+                      }}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-bold"
+                    >
+                      {ALL_PLAYERS.filter(p => p.position === 'SP' || p.position === 'RP').map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.team} · {p.era}) — {p.bRefWar.toFixed(1)} bRef WAR
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Big Glowing Start Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundManager.playBatCrack(true);
+                      setBalls(0);
+                      setStrikes(0);
+                      setOuts(1);
+                      setIsGameActive(true);
+                      addLog(`⚾ STEPPED INTO THE BOX: ${activeBatter.name} vs ${opposingPitcher.name} (${gameDifficulty} difficulty)!`, 'chop');
+                    }}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 text-slate-950 font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_0_25px_rgba(251,191,36,0.4)] transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>⚾</span>
+                    <span>START AT-BAT SHOWDOWN</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1140,134 +1272,20 @@ export default function App() {
           </div>
         )}
 
-        {/* ---------------- VIEW 4: MARKETPLACE, SETS & RELICS ---------------- */}
+        {/* ---------------- VIEW 4: CARD VAULT & PHYSICAL SHOWROOM ---------------- */}
         {mainTab === 'MARKETPLACE' && (
-          <div className="space-y-6">
-            <div className="liquid-glass-panel rounded-3xl p-6 border border-orange-500/30">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-display font-black text-white uppercase tracking-wide">
-                    Seasonal Sets Vault & Marketplace
-                  </h2>
-                  <p className="text-xs text-slate-300 font-mono mt-1">
-                    8 authentic series releases, sealed foil pack ripping, and 35+ equipment & game-used relic artifacts.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsVendingOpen(true)}
-                    className="px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 font-display font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5"
-                  >
-                    <span>🥫</span> Vending Relics
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsPackRipOpen(true)}
-                    className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 text-slate-950 font-display font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-1.5"
-                  >
-                    <span>⚡</span> Rip Sealed Pack
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 8 Authentic Sets Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {CARD_SETS.map((set) => {
-                const isSelected = activeSetId === set.id;
-                return (
-                  <div
-                    key={set.id}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      setActiveSetId(set.id);
-                    }}
-                    className={`liquid-glass-panel rounded-2xl p-4 cursor-pointer transition-all border flex flex-col justify-between ${
-                      isSelected ? 'border-orange-500 shadow-xl scale-[1.02]' : 'border-white/10 hover:border-white/30'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/60 text-amber-400 border border-white/10">
-                          {set.seasonName}
-                        </span>
-                        {set.status === 'ACTIVE' ? (
-                          <span className="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-500/40 px-1.5 py-0.5 rounded-full">
-                            ● Active ({set.daysRemaining}d)
-                          </span>
-                        ) : (
-                          <span className="text-[9px] font-mono text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded-full border border-slate-800">
-                            Drops in {set.daysRemaining}d
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="text-base font-display font-black text-white uppercase tracking-tight">
-                        {set.name}
-                      </h3>
-                      <p className="text-[11px] font-mono text-slate-400 mt-1 line-clamp-2">
-                        {set.lore}
-                      </p>
-                      <div className="mt-3 p-2 rounded-xl bg-black/40 border border-white/5 text-[10px] font-mono space-y-1">
-                        <div>
-                          <span className="text-slate-500">3D Border:</span>{' '}
-                          <span className="text-orange-300 font-bold">{set.borderTheme}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between gap-1.5">
-                      <span className="text-[10px] font-mono text-slate-400">{set.totalCards} Cards</span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveSetId(set.id);
-                          setMainTab('ARENA');
-                        }}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-display font-bold uppercase transition-all ${
-                          isSelected ? 'bg-white/20 text-white border border-white/30' : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white'
-                        }`}
-                      >
-                        {isSelected ? 'Selected' : 'Apply'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Featured 35+ Equipment Relics Highlights */}
-            <div className="liquid-glass-panel rounded-3xl p-6 border border-emerald-500/30 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-display font-black text-emerald-400 uppercase tracking-wide flex items-center gap-2">
-                    <span>🥫</span> Authenticated Equipment & Dugout Relics (35+ Items)
-                  </h3>
-                  <p className="text-xs text-slate-300 font-mono">
-                    Tier 1 (1 token), Tier 2 (3 tokens), Tier 3 (5 tokens) pulls with individual Certificate of Authenticity IDs.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsVendingOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-display font-black text-xs uppercase"
-                >
-                  Open Vending Machine
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                {TIERED_EQUIPMENT_CARDS.slice(0, 6).map((item) => (
-                  <div key={item.id} className="p-3 rounded-2xl bg-slate-900/80 border border-slate-800 text-center flex flex-col justify-between">
-                    <span className="text-3xl mb-1">{item.icon}</span>
-                    <h4 className="font-display font-bold text-xs text-white truncate">{item.name}</h4>
-                    <span className="text-[9px] font-mono text-emerald-400 mt-1">Tier {item.tier} · 🪙 {item.tokenVendingCost} Tok</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <CardVaultView
+            roster={roster}
+            inventory={inventory}
+            activeSetId={activeSetId}
+            onSelectActiveSet={setActiveSetId}
+            onOpenVending={() => setIsVendingOpen(true)}
+            onOpenPackRip={() => setIsPackRipOpen(true)}
+            onOpenHobbyShop={() => setMainTab('HOBBY_OUTPOST')}
+            onInspectCard={(card) => setInspectedCardForStats(card)}
+            vendingTokens={bankAccount.vendingTokenBalance}
+            franchisePoints={franchisePoints}
+          />
         )}
 
         {/* ---------------- VIEW 5: THE CHOP HOUSE FORUM & LEADERBOARDS ---------------- */}
@@ -1871,7 +1889,7 @@ export default function App() {
         bankAccount={bankAccount}
         userProfile={userProfile}
         onOpenWallet={() => setIsWalletOpen(true)}
-        onOpenSwitchTeam={() => setIsSplashLoginOpen(true)}
+        onOpenSwitchTeam={() => setIsAccountModalOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSocialShare={() => setIsSocialShareOpen(true)}
         onSelectMode={(mode) => {
@@ -1895,12 +1913,12 @@ export default function App() {
                 username: 'ChopMaster',
                 photoURL: null,
                 isAnonymous: false,
-                linkedProviders: ['google.com'],
+                linkedProviders: ['password'],
                 createdAt: Date.now(),
                 lastUsernameChangeAt: null,
                 usernameHistory: []
               };
-              const bonus = bonusTokens ?? REWARD_CONFIG.GOOGLE_SIGNUP_BONUS_TOKENS;
+              const bonus = bonusTokens ?? 0;
               if (chosenTeam) {
                 const theme = teamThemeService.setFavoriteTeam(chosenTeam);
                 if (theme) {
