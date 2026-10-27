@@ -15,6 +15,7 @@ interface ChopControlCenterProps {
   onOpenSwitchTeam: () => void;
   onOpenFeedback: () => void;
   onOpenSocialShare: () => void;
+  onOpenSplashGate?: () => void;
   onSelectMode: (mode: string) => void;
 }
 
@@ -28,6 +29,7 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
   onOpenSwitchTeam,
   onOpenFeedback,
   onOpenSocialShare,
+  onOpenSplashGate,
   onSelectMode,
 }) => {
   if (!isOpen) return null;
@@ -59,14 +61,29 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
                 SYSTEM OS
               </span>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              title="Close Control Center"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2">
+              {onOpenSplashGate && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenSplashGate();
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold font-mono transition-colors cursor-pointer"
+                  title="Open Splash / Sign Up Page"
+                >
+                  ⚾ Splash / Sign-Up
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                title="Close Control Center"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           {/* Grid of iOS-Style Control Tiles */}

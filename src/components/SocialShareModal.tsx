@@ -18,9 +18,9 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [sharedPlatforms, setSharedPlatforms] = useState<string[]>([]);
 
-  if (!isOpen) return null;
-
-  const currentUrl = typeof window !== 'undefined' ? window.location.origin : 'https://thebaltimorechop.app';
+  const currentUrl = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost:3000')
+    ? window.location.origin
+    : 'https://ais-pre-wufuplv7mdmrtiszfyaxof-138824501190.us-west2.run.app';
   const shareText = `⚾ Join me on The Baltimore Chop™! Rip official hobby refractors, assemble a 26-man legendary squad, and execute 9th-inning high bounce hits! Use my invite code @${userHandle}:`;
   const referralLink = `${currentUrl}?ref=${encodeURIComponent(userHandle)}`;
 

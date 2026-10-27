@@ -199,8 +199,8 @@ export default function App() {
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [walletSpent, setWalletSpent] = useState<{ daily: number; monthly: number }>({ daily: 0, monthly: 0 });
   // --- PRIMARY SPLASH SCREEN & GM AUTHENTICATION GATE ---
-  // Defaults to false so users land directly on Dashboard without redirect
-  const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(false);
+  // Starts directly on the splash page for signing up on app launch
+  const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(true);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
   const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
   const [is3DShopOpen, setIs3DShopOpen] = useState(false);
@@ -1892,6 +1892,7 @@ export default function App() {
         onOpenSwitchTeam={() => setIsAccountModalOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSocialShare={() => setIsSocialShareOpen(true)}
+        onOpenSplashGate={() => setIsSplashLoginOpen(true)}
         onSelectMode={(mode) => {
           if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(mode)) {
             setMainTab(mode as ActiveTab);
