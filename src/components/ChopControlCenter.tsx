@@ -12,7 +12,7 @@ interface ChopControlCenterProps {
   bankAccount: BankAccountState;
   userProfile: UserAccountProfile | null;
   onOpenWallet: () => void;
-  onOpenSwitchTeam: () => void;
+  onOpenSwitchTeam?: () => void;
   onOpenFeedback: () => void;
   onOpenSplashGate?: () => void;
   onSelectMode: (mode: string) => void;
@@ -144,16 +144,18 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
                   <div className="text-[10px] text-slate-400 truncate">{teamTheme.ballpark}</div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onOpenSwitchTeam();
-                }}
-                className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>⟲</span> Switch Franchise
-              </button>
+              {onOpenSwitchTeam && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenSwitchTeam();
+                  }}
+                  className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>⟲</span> Switch Franchise
+                </button>
+              )}
             </div>
 
             {/* Tile 4: Feedback & Scout Dispatch */}

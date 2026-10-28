@@ -69,13 +69,11 @@ import { OfficialHomepageGate } from './components/OfficialHomepageGate';
 import { teamThemeService, ActiveTeamTheme } from './services/teamThemeService';
 import { getRosterForTeam } from './data/players';
 import { LoginStreakModal } from './components/LoginStreakModal';
-import { AccountProfileModal } from './components/AccountProfileModal';
 import { CardAlmanacModal } from './components/CardAlmanacModal';
 import { FirstEnterPortalModal } from './components/FirstEnterPortalModal';
 import { ChopExtremeHubModal } from './components/ChopExtremeHubModal';
 import { CardStatsDetailModal } from './components/CardStatsDetailModal';
 import { ChopHouseForum } from './components/ChopHouseForum';
-import { SupportChatbot } from './components/SupportChatbot';
 import { RainbowChaseTracker } from './components/RainbowChaseTracker';
 import { JerseyAvatar } from './components/JerseyAvatar';
 import { CommunityRankBadge } from './components/CommunityRankBadge';
@@ -156,8 +154,7 @@ export default function App() {
   const [isStreakOpen, setIsStreakOpen] = useState(false);
   const [streakStatus, setStreakStatus] = useState(() => getSevenDayStreakStatus());
 
-  // --- USER PROFILE & SOCIAL ACCOUNT MODAL ---
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  // --- USER PROFILE ---
   const [userProfile, setUserProfile] = useState<UserAccountProfile | null>(() => authService.getProfile());
 
   // --- BROADCAST & SIMULATION ---
@@ -760,25 +757,21 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           
           {/* Top-Left: Selected Username & Chop Batter Card Silhouette Icon */}
-          <button
-            type="button"
-            onClick={() => {
-              soundManager.playButtonClick();
-              setIsAccountModalOpen(true);
-            }}
-            className="flex items-center gap-2.5 group text-left transition-transform active:scale-95 cursor-pointer"
-            title="Click to Open Manager Identity & Franchise Settings"
+          {/* Top-Left: Selected Username & Chop Batter Card Silhouette Icon */}
+          <div
+            className="flex items-center gap-2.5 text-left"
+            title="Active Franchise Manager"
           >
             <ChopBatterCardIcon size={28} />
             <div className="flex flex-col">
-              <span className="font-display font-black text-xs sm:text-sm tracking-wider text-amber-300 uppercase group-hover:text-amber-200 transition-colors truncate max-w-[130px] sm:max-w-none">
+              <span className="font-display font-black text-xs sm:text-sm tracking-wider text-amber-300 uppercase truncate max-w-[130px] sm:max-w-none">
                 @{userProfile?.username || 'CamdenSlugger'}
               </span>
-              <span className="text-[9.5px] font-mono text-slate-400 group-hover:text-slate-300 truncate">
+              <span className="text-[9.5px] font-mono text-slate-400 truncate">
                 {currentTeamTheme.name}
               </span>
             </div>
-          </button>
+          </div>
 
           {/* Center: Lo-Fi Radio Soundscape & iOS / Android Style Control Center */}
           <div className="flex items-center gap-2">
@@ -822,26 +815,21 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   soundManager.playButtonClick();
-                  setIsAccountModalOpen(true);
+                  setIsSplashLoginOpen(true);
                 }}
                 className="px-2 py-1 rounded-xl bg-amber-950/70 hover:bg-amber-900/80 text-amber-300 border border-amber-600/40 text-[10px] font-mono font-bold transition-all flex items-center gap-1 cursor-pointer"
-                title="Guest Mode: 1 hr daily, 5 hrs total IP limit. Click to Sign Up and unlock unlimited GM play!"
+                title="Guest Mode. Click to Sign Up and unlock unlimited GM play!"
               >
                 <span>🕒</span>
                 <span>Guest Pass</span>
-                <span className="text-amber-400 underline ml-0.5">Save Roster</span>
+                <span className="text-amber-400 underline ml-0.5">Sign Up</span>
               </button>
             )}
 
             {/* User Profile */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsAccountModalOpen(true);
-              }}
-              className="px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/10 text-xs font-mono font-bold transition-all flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer"
-              title="User Account Profile"
+            <div
+              className="px-2 py-1 rounded-xl bg-slate-900 text-slate-200 border border-white/10 text-xs font-mono font-bold flex items-center gap-1 shadow-sm whitespace-nowrap"
+              title="Official GM Identity"
             >
               <JerseyAvatar
                 teamId="BAL"
@@ -853,7 +841,7 @@ export default function App() {
               <span className="text-[11px] truncate max-w-[65px] sm:max-w-[90px]">
                 @{userProfile?.username || 'GM'}
               </span>
-            </button>
+            </div>
           </div>
 
         </div>
@@ -2009,12 +1997,6 @@ export default function App() {
         onClaimReward={handleClaimStreakReward}
       />
 
-      {/* User Profile Modal */}
-      <AccountProfileModal
-        isOpen={isAccountModalOpen}
-        onClose={() => setIsAccountModalOpen(false)}
-        onBroadcastLog={addLog}
-      />
 
       {/* Master Teams & Cards Almanac Checklist */}
       <CardAlmanacModal
@@ -2088,41 +2070,12 @@ export default function App() {
         bankAccount={bankAccount}
         userProfile={userProfile}
         onOpenWallet={() => setIsWalletOpen(true)}
-        onOpenSwitchTeam={() => setIsAccountModalOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSplashGate={() => setIsSplashLoginOpen(true)}
         onSelectMode={(mode) => {
           if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(mode)) {
             setMainTab(mode as ActiveTab);
           }
-        }}
-      />
-
-      {/* Official Homepage of baltimorechop.app for every visitor prior to engaging with game */}
-      <OfficialHomepageGate
-        isOpen={isSplashLoginOpen}
-        onEnterGame={(profile, bonusTokens, chosenTeam) => {
-          const finalProfile = profile || {
-            uid: `gm_${Date.now()}`,
-            email: 'manager@thebaltimorechop.app',
-            displayName: 'Baltimore GM',
-            username: 'ChopMaster',
-            photoURL: null,
-            isAnonymous: false,
-            linkedProviders: ['password'],
-            createdAt: Date.now(),
-            lastUsernameChangeAt: null,
-            usernameHistory: []
-          };
-          const bonus = bonusTokens ?? 0;
-          if (chosenTeam) {
-            const theme = teamThemeService.setFavoriteTeam(chosenTeam);
-            if (theme) {
-              handleTeamSelected(theme);
-            }
-          }
-          handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'DEPTH_CHART');
-          setIsSplashLoginOpen(false);
         }}
       />
 
@@ -2138,14 +2091,6 @@ export default function App() {
           }}
         />
       )}
-
-      {/* Scout CRM Copilot Floating Chatbot */}
-      <SupportChatbot
-        userId={userProfile?.uid || 'guest-mgr-01'}
-        username={userProfile?.username || 'BallparkManager'}
-        currentScreen={mainTab}
-        activeSeason={1}
-      />
 
       {/* 3D Walk-In Card Shop & RPG Vendor Trading Floor */}
       {is3DShopOpen && (
