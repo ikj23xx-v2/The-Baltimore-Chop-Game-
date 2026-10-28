@@ -1,13 +1,8 @@
 // src/components/OfficialHomepageGate.tsx
 import React, { useState } from 'react';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
-} from 'firebase/auth';
-import { auth } from '../firebase';
+import { soundManager } from '../services/audio';
 import { authService, UserAccountProfile } from '../services/authService';
 import { teamThemeService } from '../services/teamThemeService';
-import { soundManager } from '../services/audio';
 import { triggerHapticFeedback } from '../services/haptics';
 
 interface OfficialHomepageGateProps {
@@ -29,37 +24,21 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setAuthError(null);
-
-    const identifier = usernameOrEmail.trim();
-    if (!identifier) {
-      setAuthError('Please enter your Username or Email');
-      return;
-    }
-    if (!password) {
-      setAuthError('Please enter your password');
-      return;
-    }
-
     setIsLoading(true);
+    soundManager.playButtonClick();
 
-    const emailToUse = identifier.includes('@') 
-      ? identifier 
-      : `${identifier.toLowerCase().replace(/[^a-z0-9]/g, '')}@thebaltimorechop.app`;
-    const usernameToUse = identifier.includes('@') ? identifier.split('@')[0] : identifier;
-
-    let authUserUid: string | null = null;
-    try {
-      const cred = await signInWithEmailAndPassword(auth, emailToUse, password);
-      if (cred?.user) {
-        authUserUid = cred.user.uid;
-      }
-    } catch (err: any) {
-      console.warn('Firebase sign in note:', err);
+    const usernameToUse = usernameOrEmail.trim() || 'BaltimoreGM';
+    
+    // Check if user has an existing saved profile
+    const existing = authService.getProfile();
+    if (existing && !existing.isAnonymous) {
+      saveAndLaunch(existing, 0);
+      return;
     }
 
     const profile: UserAccountProfile = {
-      uid: authUserUid || `gm_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      email: emailToUse,
+      uid: `gm_${Date.now()}`,
+      email: usernameOrEmail.includes('@') ? usernameOrEmail.trim() : `${usernameToUse.toLowerCase()}@thebaltimorechop.app`,
       displayName: usernameToUse,
       username: usernameToUse,
       photoURL: null,
@@ -76,37 +55,14 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
   const handleSignUp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setAuthError(null);
-
-    const identifier = usernameOrEmail.trim();
-    if (!identifier) {
-      setAuthError('Please enter your desired Username or Email');
-      return;
-    }
-    if (!password || password.length < 6) {
-      setAuthError('Password must be at least 6 characters');
-      return;
-    }
-
     setIsLoading(true);
+    soundManager.playButtonClick();
 
-    const emailToUse = identifier.includes('@') 
-      ? identifier 
-      : `${identifier.toLowerCase().replace(/[^a-z0-9]/g, '')}@thebaltimorechop.app`;
-    const usernameToUse = identifier.includes('@') ? identifier.split('@')[0] : identifier;
-
-    let authUserUid: string | null = null;
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, emailToUse, password);
-      if (cred?.user) {
-        authUserUid = cred.user.uid;
-      }
-    } catch (err: any) {
-      console.warn('Firebase register note:', err);
-    }
+    const usernameToUse = usernameOrEmail.trim() || `GM_${Math.floor(1000 + Math.random() * 9000)}`;
 
     const profile: UserAccountProfile = {
-      uid: authUserUid || `gm_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      email: emailToUse,
+      uid: `gm_${Date.now()}`,
+      email: usernameOrEmail.includes('@') ? usernameOrEmail.trim() : `${usernameToUse.toLowerCase()}@thebaltimorechop.app`,
       displayName: usernameToUse,
       username: usernameToUse,
       photoURL: null,
@@ -117,17 +73,8 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
       usernameHistory: []
     };
 
+    // Grant 1,000 bonus tokens + starter grant
     saveAndLaunch(profile, 1000);
-  };
-
-  const handleClaimGrant = () => {
-    soundManager.playPackRip();
-    if (!usernameOrEmail) {
-      setUsernameOrEmail('NewGM_' + Math.floor(100 + Math.random() * 900));
-    }
-    if (!password) {
-      setPassword('chop2025');
-    }
   };
 
   const saveAndLaunch = (profile: UserAccountProfile, bonus: number) => {
@@ -168,15 +115,14 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
             background-repeat: no-repeat;
             background-attachment: fixed;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
-            padding: clamp(20px, 4vw, 50px) clamp(20px, 5vw, 60px);
+            padding: clamp(20px, 4vw, 50px) clamp(24px, 6vw, 80px);
             padding-top: max(clamp(20px, 4vw, 50px), env(safe-area-inset-top, 20px));
             padding-bottom: max(clamp(20px, 4vw, 50px), env(safe-area-inset-bottom, 20px));
-            gap: 24px;
         }
 
-        /* Dark overlay to ensure contrast across all viewport ratios */
+        /* Subtle vignette overlay to ensure text readability without darkening background art */
         .landing-container::before {
             content: '';
             position: fixed;
@@ -184,86 +130,9 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.42);
+            background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 100%);
             z-index: 1;
             pointer-events: none;
-        }
-
-        /* Left Side Content / Branding */
-        .brand-section {
-            position: relative;
-            z-index: 2;
-            color: #ffffff;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .brand-section h1 {
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            color: #ff6b00;
-            font-weight: 900;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.85);
-            line-height: 1.1;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        .brand-section h2 {
-            font-size: clamp(0.95rem, 2vw, 1.2rem);
-            font-weight: 700;
-            letter-spacing: 1.8px;
-            color: #f1f1f1;
-            margin-bottom: 22px;
-            text-transform: uppercase;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-        }
-
-        .app-icon-preview {
-            width: clamp(75px, 12vw, 110px);
-            height: clamp(75px, 12vw, 110px);
-            border-radius: 16px;
-            border: 3px solid #ff6b00;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.7);
-            margin-bottom: 18px;
-            background: url('/assets/aistudio/chopchop_085f9a0d.jpeg') center/cover;
-            background-color: #111;
-            flex-shrink: 0;
-        }
-
-        /* Grant Banner Card */
-        .grant-banner {
-            position: relative;
-            z-index: 2;
-            background: rgba(255, 248, 220, 0.96);
-            border: 2px solid #d4af37;
-            border-radius: 8px;
-            padding: 14px 18px;
-            max-width: 440px;
-            color: #222;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.55);
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .grant-banner:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(212, 175, 55, 0.4);
-        }
-
-        .grant-banner h3 {
-            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-            color: #8b4513;
-            margin-bottom: 4px;
-            font-weight: 800;
-        }
-
-        .grant-banner p {
-            font-size: clamp(0.78rem, 1.4vw, 0.85rem);
-            font-weight: 600;
-            line-height: 1.4;
-            color: #222;
         }
 
         /* Right Side Credential / Login Box */
@@ -273,7 +142,7 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
             background: rgba(245, 240, 230, 0.95);
             border: 3px solid #b58d3d;
             border-radius: 12px;
-            width: 320px;
+            width: 330px;
             max-width: 100%;
             padding: 24px 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.75);
@@ -355,149 +224,72 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
         }
 
         .btn-signin {
-            background-color: #3e4e5e;
-            color: white;
-            border: 1px solid #2c3540;
+            background-color: #2d3748;
+            color: #f7fafc;
+            font-size: 0.82rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
         }
 
         .btn-signin:hover {
-            background-color: #2c3540;
+            background-color: #1a202c;
         }
 
         .btn-signup {
-            background-color: #e65c00;
+            background-color: #d9531e;
             color: white;
-            margin-top: 12px;
-            box-shadow: 0 4px 10px rgba(230, 92, 0, 0.4);
+            box-shadow: 0 4px 10px rgba(217, 83, 30, 0.4);
         }
 
         .btn-signup:hover {
-            background-color: #cc5200;
+            background-color: #bf4313;
         }
 
-        /* ========================================================= */
-        /* RESPONSIVE LAYOUT ACROSS ALL PHONE & FOLDABLE SCREEN RATIOS */
-        /* ========================================================= */
-        
-        /* 1. Desktop & Widescreen (Landscape > 900px) */
-        @media (min-width: 901px) {
-            .landing-container {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .grant-banner {
-                position: absolute;
-                bottom: clamp(24px, 4vw, 40px);
-                left: clamp(24px, 5vw, 60px);
-            }
+        .auth-grant-tag {
+            margin-top: 14px;
+            padding: 8px 10px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px dashed #b58d3d;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #5a3810;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+            line-height: 1.3;
         }
 
-        /* 2. Foldable Phones Unfolded & Tablets (Aspect Ratio ~ 4:3, 5:4, 1:1, width 641px - 900px) */
-        @media (min-width: 641px) and (max-width: 900px) {
+        /* Responsive Layout for Mobile and Foldables */
+        @media (max-width: 899px) {
             .landing-container {
-                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                gap: 20px;
-                padding: 24px;
-            }
-            .brand-section {
-                max-width: 480px;
-                text-align: center;
-                align-items: center;
-            }
-            .app-icon-preview {
-                margin: 0 auto 14px auto;
+                padding: 24px 16px;
             }
             .auth-card {
-                width: 360px;
-            }
-            .grant-banner {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                width: 360px;
-                max-width: 100%;
+                width: 100%;
+                max-width: 340px;
+                margin: auto;
             }
         }
 
-        /* 3. Standard & Tall Narrow Phones / Foldable Cover Screens (< 640px, 19.5:9, 21:9, 23:9 ratios) */
-        @media (max-width: 640px) {
+        /* Foldable phones when unfolded (square-ish aspect ratios: 4:3, 3:2, 1:1) */
+        @media (min-width: 600px) and (max-width: 960px) and (min-aspect-ratio: 4/5) {
             .landing-container {
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-                padding: 16px;
-                padding-top: max(16px, env(safe-area-inset-top, 16px));
-                padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
-                gap: 16px;
-            }
-            .brand-section {
-                width: 100%;
-                max-width: 340px;
-                text-align: center;
-                align-items: center;
-            }
-            .app-icon-preview {
-                width: 72px;
-                height: 72px;
-                border-radius: 14px;
-                margin: 0 auto 10px auto;
-            }
-            .brand-section h1 {
-                font-size: 2rem;
-                margin-bottom: 6px;
-            }
-            .brand-section h2 {
-                font-size: 0.85rem;
-                letter-spacing: 1.2px;
-                margin-bottom: 12px;
+                justify-content: flex-end;
+                padding-right: 32px;
             }
             .auth-card {
-                width: 100%;
-                max-width: 340px;
-                padding: 18px 16px;
-            }
-            .auth-card h3 {
-                font-size: 1.05rem;
-                margin-bottom: 12px;
-                padding-bottom: 6px;
-            }
-            .grant-banner {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                width: 100%;
-                max-width: 340px;
-                padding: 12px 14px;
+                max-width: 320px;
             }
         }
       `}</style>
 
       <div className="landing-container">
-        
-        {/* Left Hero Details */}
-        <div className="brand-section">
-          <div className="app-icon-preview"></div>
-          <h1>THE BALTIMORE CHOP™</h1>
-          <h2>OFFICIAL FRANCHISE GM & HOBBY COLLECTOR</h2>
-        </div>
-
-        {/* Bottom Left Bonus Grant Notice */}
-        <div 
-          className="grant-banner" 
-          onClick={handleClaimGrant}
-          title="Click to claim 2,500 Vending Tokens starter grant!"
-        >
-          <h3>NEW GM SIGNUP GRANT:</h3>
-          <p>
-            1,500 Base + 1,000 Bonus = 2,500 Vending Tokens!<br />
-            ✓ Enough to rip a 750-Token Hobby Box right away!
-          </p>
-        </div>
-
-        {/* Right Side Auth / Action Card */}
+        {/* Right Side Interactive Credentials Card */}
         <div className="auth-card">
           <h3>CREDENTIALS</h3>
 
@@ -554,8 +346,12 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
               SIGN UP
             </button>
           </form>
-        </div>
 
+          <div className="auth-grant-tag">
+            <span>🎁</span>
+            <span>2,500 Vending Tokens Starter Grant on Signup!</span>
+          </div>
+        </div>
       </div>
     </div>
   );
