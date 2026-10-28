@@ -65,6 +65,7 @@ import { PWAInstallButton } from './components/PWAInstallButton';
 import { PackRippingModal } from './components/PackRippingModal';
 import { AdminOperationsModal } from './components/AdminOperationsModal';
 import { StadiumTunnelEntrance } from './components/StadiumTunnelEntrance';
+import { OfficialHomepageGate } from './components/OfficialHomepageGate';
 import { teamThemeService, ActiveTeamTheme } from './services/teamThemeService';
 import { getRosterForTeam } from './data/players';
 import { LoginStreakModal } from './components/LoginStreakModal';
@@ -2070,12 +2071,10 @@ export default function App() {
         }}
       />
 
-      {/* Primary Stadium Tunnel Walkout & GM Email Sign-Up / Login Gate */}
-      <StadiumTunnelEntrance
+      {/* Official Homepage of baltimorechop.app for every visitor prior to engaging with game */}
+      <OfficialHomepageGate
         isOpen={isSplashLoginOpen}
-        initialTeam={currentTeamTheme.name}
-        onClose={() => setIsSplashLoginOpen(false)}
-        onComplete={(selectedTeam, profile, bonusTokens) => {
+        onEnterGame={(profile, bonusTokens, chosenTeam) => {
           const finalProfile = profile || {
             uid: `gm_${Date.now()}`,
             email: 'manager@thebaltimorechop.app',
@@ -2089,8 +2088,11 @@ export default function App() {
             usernameHistory: []
           };
           const bonus = bonusTokens ?? 0;
-          if (selectedTeam) {
-            handleTeamSelected(selectedTeam);
+          if (chosenTeam) {
+            const theme = teamThemeService.setFavoriteTeam(chosenTeam);
+            if (theme) {
+              handleTeamSelected(theme);
+            }
           }
           handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'DEPTH_CHART');
           setIsSplashLoginOpen(false);
