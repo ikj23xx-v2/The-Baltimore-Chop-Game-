@@ -64,7 +64,6 @@ import { DraftBoardGrid } from './components/DraftBoardGrid';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { PackRippingModal } from './components/PackRippingModal';
 import { AdminOperationsModal } from './components/AdminOperationsModal';
-import { StadiumTunnelEntrance } from './components/StadiumTunnelEntrance';
 import { OfficialHomepageGate } from './components/OfficialHomepageGate';
 import { teamThemeService, ActiveTeamTheme } from './services/teamThemeService';
 import { getRosterForTeam } from './data/players';
