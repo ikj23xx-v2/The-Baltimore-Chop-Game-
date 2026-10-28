@@ -14,7 +14,6 @@ interface ChopControlCenterProps {
   onOpenWallet: () => void;
   onOpenSwitchTeam: () => void;
   onOpenFeedback: () => void;
-  onOpenSocialShare: () => void;
   onOpenSplashGate?: () => void;
   onSelectMode: (mode: string) => void;
 }
@@ -28,7 +27,6 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
   onOpenWallet,
   onOpenSwitchTeam,
   onOpenFeedback,
-  onOpenSocialShare,
   onOpenSplashGate,
   onSelectMode,
 }) => {
@@ -158,36 +156,26 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
               </button>
             </div>
 
-            {/* Tile 4: Social Rewards & Scout Wire */}
+            {/* Tile 4: Feedback & Scout Dispatch */}
             <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between shadow-lg">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">SHARE & DISPATCH</span>
-                <span className="text-xs">🎁</span>
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">SCOUT DISPATCH</span>
+                <span className="text-xs">📋</span>
               </div>
               <div className="my-2 space-y-0.5">
-                <span className="text-xs font-bold text-amber-300 block">Earn +250 Tokens</span>
-                <span className="text-[10px] text-slate-400 font-mono block">Share on X, Instagram, Facebook</span>
+                <span className="text-xs font-bold text-amber-300 block">Feedback & Reports</span>
+                <span className="text-[10px] text-slate-400 font-mono block">Submit bug reports & GM notes</span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onOpenSocialShare();
-                  }}
-                  className="py-1.5 px-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold text-center transition-colors cursor-pointer"
-                >
-                  📣 Share Site
-                </button>
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={() => {
                     onClose();
                     onOpenFeedback();
                   }}
-                  className="py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 border border-slate-700 text-[10px] font-bold text-center transition-colors cursor-pointer"
+                  className="w-full py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 border border-slate-700 text-[10px] font-bold text-center transition-colors cursor-pointer"
                 >
-                  📋 Dispatch
+                  📋 Feedback & Scouting Dispatch
                 </button>
               </div>
             </div>

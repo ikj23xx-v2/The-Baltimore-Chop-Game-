@@ -12,6 +12,7 @@ import { authService, UserAccountProfile } from '../services/authService';
 import { teamThemeService } from '../services/teamThemeService';
 import { soundManager } from '../services/audio';
 import { triggerHapticFeedback } from '../services/haptics';
+import { guestPlayLimitService, GuestLimitStatus } from '../services/guestPlayLimitService';
 
 interface OfficialHomepageGateProps {
   isOpen: boolean;
@@ -26,6 +27,12 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [guestStatus, setGuestStatus] = useState<GuestLimitStatus>(() => guestPlayLimitService.getLimitStatus());
+
+  React.useEffect(() => {
+    const unsub = guestPlayLimitService.subscribe(setGuestStatus);
+    return unsub;
+  }, []);
 
   if (!isOpen) return null;
 
@@ -223,6 +230,16 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
 
   const handleGuestEnter = () => {
     soundManager.playButtonClick();
+
+    if (!guestStatus.canPlay) {
+      if (guestStatus.reason === 'TOTAL_LIMIT') {
+        setAuthError('Guest Pass Limit Reached: 5 hours total per IP. Please Sign Up or Log In to continue!');
+      } else {
+        setAuthError('Guest Pass Limit Reached: 1 hour daily limit reached today. Please Sign Up or Log In to continue!');
+      }
+      return;
+    }
+
     const guestProfile: UserAccountProfile = {
       uid: `gm_guest_${Date.now()}`,
       email: 'guest@thebaltimorechop.app',
@@ -634,21 +651,43 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
-              <button
-                type="button"
-                onClick={handleGuestEnter}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#555',
-                  fontSize: '0.8rem',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
-              >
-                Direct Guest Play →
-              </button>
+              {guestStatus.canPlay ? (
+                <button
+                  type="button"
+                  onClick={handleGuestEnter}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#555',
+                    fontSize: '0.8rem',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    fontWeight: 600
+                  }}
+                  title="Direct Guest Play: 1 hour daily limit, 5 hours total per IP"
+                >
+                  Direct Guest Play → ({guestPlayLimitService.formatRemainingTime(guestStatus.remainingDailySeconds)} left today · {guestPlayLimitService.formatRemainingTime(guestStatus.remainingTotalSeconds)} trial left)
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleGuestEnter}
+                  style={{
+                    background: '#e9dfcc',
+                    border: '1px solid #d4af37',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    color: '#8b4513',
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                    fontWeight: 700
+                  }}
+                >
+                  🔒 Direct Guest Play (
+                  {guestStatus.reason === 'TOTAL_LIMIT' ? '5h IP Limit Reached' : '1h Daily Limit Reached'}
+                  ) → Sign Up Free
+                </button>
+              )}
             </div>
           </form>
         </div>

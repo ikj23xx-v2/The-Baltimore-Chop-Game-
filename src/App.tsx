@@ -93,7 +93,8 @@ import { SeasonalBinderGallery } from './components/SeasonalBinderGallery';
 import { ChopWalletModal } from './components/ChopWalletModal';
 import { ChopControlCenter } from './components/ChopControlCenter';
 import { MLB_TEAMS } from './data/mlbTeams';
-import { SocialShareModal } from './components/SocialShareModal';
+import { GuestLimitModal } from './components/GuestLimitModal';
+import { guestPlayLimitService } from './services/guestPlayLimitService';
 import { DigitalCardShop3D, StoreItem } from './components/DigitalCardShop3D';
 import { CardRipWorkbench } from './components/CardRipWorkbench';
 import { REWARD_CONFIG } from './config/rewardsConfig';
@@ -202,7 +203,7 @@ export default function App() {
   // Starts directly on the splash page for signing up on app launch
   const [isSplashLoginOpen, setIsSplashLoginOpen] = useState<boolean>(true);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
-  const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
+  const [guestLimitExpiredType, setGuestLimitExpiredType] = useState<'DAILY_LIMIT' | 'TOTAL_LIMIT' | null>(null);
   const [is3DShopOpen, setIs3DShopOpen] = useState(false);
   const [isRipBenchOpen, setIsRipBenchOpen] = useState(false);
 
@@ -666,24 +667,17 @@ export default function App() {
     addLog(`🎉 Welcome GM @${newProfile.username}! Granted +${totalStartingTokens} Tokens & ${startingCredits} Credits.`, 'chop');
   };
 
-  // Viral social media sharing credit reward
-  const handleAwardShareTokens = (amount: number, platformName: string) => {
-    try {
-      const { updatedAccount } = recordTransaction(bankAccount, {
-        type: 'CREDIT',
-        currency: 'VENDING_TOKENS',
-        amount,
-        category: 'ADMIN_ADJUSTMENT',
-        description: `Social Viral Share Bounty: ${platformName} (+${amount} Tokens)`,
+  // Live guest playtime tracking (1 hour daily, 5 hours total per IP limit)
+  useEffect(() => {
+    if (userProfile?.isAnonymous && !isSplashLoginOpen) {
+      const cleanup = guestPlayLimitService.startLiveTracking((reason) => {
+        setGuestLimitExpiredType(reason);
+        soundManager.playUmpireCall(true);
+        addLog(`⏱️ GUEST TRIAL EXPIRED: ${reason === 'TOTAL_LIMIT' ? '5-Hour IP limit reached' : '1-Hour daily limit reached'}. Sign up required to continue!`, 'info');
       });
-      setBankAccount(updatedAccount);
-      setVendingTokens(updatedAccount.vendingTokenBalance);
-      soundManager.playRefractorShine();
-      addLog(`📣 SHARED ON ${platformName.toUpperCase()}: +${amount} Vending Tokens credited!`, 'chop');
-    } catch (err: unknown) {
-      console.error(err);
+      return cleanup;
     }
-  };
+  }, [userProfile?.isAnonymous, isSplashLoginOpen]);
 
   // Deploy manager tactical card
   const handleDeployManagerCard = () => {
@@ -822,19 +816,22 @@ export default function App() {
               <span className="hidden md:inline text-[9px] text-slate-400">TOKENS</span>
             </button>
 
-            {/* Social Share Reward Pill */}
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playButtonClick();
-                setIsSocialShareOpen(true);
-              }}
-              className="px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-white/10 text-xs font-bold transition-all hidden sm:flex items-center gap-1 cursor-pointer"
-              title="Share site on social media for +250 free tokens"
-            >
-              <span>📣</span>
-              <span className="text-[10px] text-amber-400">+250</span>
-            </button>
+            {/* Guest Pass Badge if playing as anonymous guest */}
+            {userProfile?.isAnonymous && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  setIsAccountModalOpen(true);
+                }}
+                className="px-2 py-1 rounded-xl bg-amber-950/70 hover:bg-amber-900/80 text-amber-300 border border-amber-600/40 text-[10px] font-mono font-bold transition-all flex items-center gap-1 cursor-pointer"
+                title="Guest Mode: 1 hr daily, 5 hrs total IP limit. Click to Sign Up and unlock unlimited GM play!"
+              >
+                <span>🕒</span>
+                <span>Guest Pass</span>
+                <span className="text-amber-400 underline ml-0.5">Save Roster</span>
+              </button>
+            )}
 
             {/* User Profile */}
             <button
@@ -2017,7 +2014,6 @@ export default function App() {
         isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
         onBroadcastLog={addLog}
-        onAwardShareTokens={handleAwardShareTokens}
       />
 
       {/* Master Teams & Cards Almanac Checklist */}
@@ -2094,7 +2090,6 @@ export default function App() {
         onOpenWallet={() => setIsWalletOpen(true)}
         onOpenSwitchTeam={() => setIsAccountModalOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
-        onOpenSocialShare={() => setIsSocialShareOpen(true)}
         onOpenSplashGate={() => setIsSplashLoginOpen(true)}
         onSelectMode={(mode) => {
           if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(mode)) {
@@ -2131,13 +2126,18 @@ export default function App() {
         }}
       />
 
-      {/* Social Media Sharing & Viral Token Rewards Modal */}
-      <SocialShareModal
-        isOpen={isSocialShareOpen}
-        onClose={() => setIsSocialShareOpen(false)}
-        userHandle={userProfile?.username || 'BaltimoreGM'}
-        onAwardShareTokens={handleAwardShareTokens}
-      />
+      {/* Guest Trial Expiration Modal (1 hr daily / 5 hr total IP limit reached) */}
+      {guestLimitExpiredType && (
+        <GuestLimitModal
+          isOpen={true}
+          limitType={guestLimitExpiredType}
+          onAccountCreated={(profile) => {
+            setUserProfile(profile);
+            setGuestLimitExpiredType(null);
+            addLog(`🎖️ GM ACCOUNT CREATED! Unlimited franchise GM play unlocked for @${profile.username}!`, 'chop');
+          }}
+        />
+      )}
 
       {/* Scout CRM Copilot Floating Chatbot */}
       <SupportChatbot
