@@ -58,7 +58,6 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
       }
     } catch (err: any) {
       console.warn('Firebase sign in note:', err);
-      // Seamless local profile fallback
     }
 
     const profile: UserAccountProfile = {
@@ -267,309 +266,396 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#070b12] flex items-center justify-center p-2 sm:p-4 select-none overflow-y-auto">
-      
-      {/* ============================================================== */}
-      {/* DESKTOP & TABLET VIEWPORT (Exact 1024x572 16:9 Artwork Match)  */}
-      {/* ============================================================== */}
-      <div className="hidden sm:block relative w-full max-w-[1080px] aspect-[1024/572] rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.95)] border-4 border-[#2b241c] bg-black shrink-0">
-        
-        {/* Background Image: Pixel Art Ballpark Tunnel */}
-        <img
-          src="/assets/aistudio/8eade774-25b0-4c28-893a-8e8401fd2605_028889e8.jpeg"
-          alt="The Baltimore Chop Official Homepage"
-          className="w-full h-full object-cover object-center pointer-events-none"
-        />
+    <div className="fixed inset-0 z-[100] w-screen h-screen overflow-hidden bg-black select-none">
+      <style>{`
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        {/* Interactive Bottom-Left Grant Banner Hotspot */}
-        <button
-          type="button"
-          onClick={handleClaimGrant}
-          title="Click to prefill grant and claim 2,500 Vending Tokens!"
-          className="absolute z-20 cursor-pointer rounded-xl transition-all hover:ring-2 hover:ring-amber-400/60 active:scale-[0.99]"
-          style={{
-            left: '2.5%',
-            top: '81.8%',
-            width: '45.8%',
-            height: '14.5%',
-          }}
-        />
+        /* Landing Page Background Container */
+        .landing-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('/watermarked_img_9229416380901793785.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 60px;
+        }
 
-        {/* Interactive Credentials Overlay (Aligned over the right-hand card) */}
-        <form 
-          onSubmit={handleLogin}
-          className="absolute z-20 flex flex-col justify-between font-sans"
-          style={{
-            left: '77.8%',
-            top: '21.5%',
-            width: '19.4%',
-            height: '55.2%',
-          }}
-        >
-          <div className="w-full h-full flex flex-col justify-between p-[2%] pt-[6%]">
-            
-            {/* Header: Transparent overlay over "CREDENTIALS" */}
-            <div className="w-full text-center py-[1%]">
-              <span className="text-[11px] lg:text-[13px] font-black tracking-widest text-transparent select-none">
-                CREDENTIALS
-              </span>
-            </div>
+        /* Dark overlay to ensure contrast */
+        .landing-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1;
+        }
 
-            {/* Error Message if any */}
-            {authError && (
-              <div className="bg-red-950/90 text-red-200 text-[8px] font-mono p-1 rounded border border-red-500/50 text-center leading-tight">
-                {authError}
-              </div>
-            )}
+        /* Left Side Content / Branding */
+        .brand-section {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            max-width: 450px;
+        }
 
-            {/* Input Form Fields */}
-            <div className="space-y-[4%] w-full">
-              <div>
-                <input
-                  type="text"
-                  value={usernameOrEmail}
-                  onChange={(e) => setUsernameOrEmail(e.target.value)}
-                  placeholder="USERNAME / EMAIL"
-                  className="w-full bg-[#9f9582]/90 hover:bg-[#a89e8b] focus:bg-[#b0a693] text-[#1c1812] placeholder-[#4e483e] font-mono text-[9px] sm:text-[10px] lg:text-[11px] px-2 py-1 lg:py-1.5 rounded-md border border-[#524b3e] focus:border-[#e8581c] outline-none shadow-inner font-bold"
-                />
-              </div>
+        .brand-section h1 {
+            font-size: 3.5rem;
+            color: #ff6b00;
+            font-weight: 900;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            line-height: 1.1;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
 
-              <div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="PASSWORD"
-                  className="w-full bg-[#9f9582]/90 hover:bg-[#a89e8b] focus:bg-[#b0a693] text-[#1c1812] placeholder-[#4e483e] font-mono text-[9px] sm:text-[10px] lg:text-[11px] px-2 py-1 lg:py-1.5 rounded-md border border-[#524b3e] focus:border-[#e8581c] outline-none shadow-inner font-bold"
-                />
-              </div>
-            </div>
+        .brand-section h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #f1f1f1;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
 
-            {/* Action Buttons Stack */}
-            <div className="space-y-[3%] w-full pt-[2%]">
-              {/* 1. LOG IN Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-1 lg:py-1.5 rounded-md bg-gradient-to-b from-[#eb5c1e] to-[#c74007] hover:brightness-110 active:scale-[0.98] text-white font-black text-[10px] sm:text-[11px] lg:text-[12px] tracking-wider uppercase border border-[#6b2103] shadow-[0_2px_4px_rgba(0,0,0,0.5)] cursor-pointer transition-all flex items-center justify-center"
-              >
-                LOG IN
-              </button>
+        .app-icon-preview {
+            width: 110px;
+            height: 110px;
+            border-radius: 16px;
+            border: 3px solid #ff6b00;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+            background: url('/assets/aistudio/chopchop_085f9a0d.jpeg') center/cover;
+            background-color: #111;
+        }
 
-              {/* 2. SIGN IN WITH GOOGLE Button */}
-              <div className="relative w-full">
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={handleGoogleSignIn}
-                  className="w-full py-0.5 lg:py-1 px-1.5 rounded-md bg-white hover:bg-slate-100 active:scale-[0.98] text-[#2c241a] font-bold text-[8px] sm:text-[9px] lg:text-[10px] tracking-tight uppercase border border-[#8a8170] shadow flex items-center justify-center gap-1 cursor-pointer transition-all"
-                >
-                  <svg className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span className="truncate">SIGN IN WITH GOOGLE</span>
-                </button>
-                <div className="absolute -top-1.5 right-0.5 pointer-events-none">
-                  <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-[#302409] font-black text-[6.5px] lg:text-[7.5px] px-1 py-0.2 rounded border border-[#85610e] shadow-sm tracking-tight">
-                    +1000 TOKENS
-                  </span>
-                </div>
-              </div>
+        /* Grant Banner Card */
+        .grant-banner {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 248, 220, 0.95);
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            padding: 15px 20px;
+            max-width: 420px;
+            color: #222;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
 
-              {/* 3. SIGN IN WITH APPLE Button */}
-              <div className="relative w-full">
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={handleAppleSignIn}
-                  className="w-full py-0.5 lg:py-1 px-1.5 rounded-md bg-white hover:bg-slate-100 active:scale-[0.98] text-[#111111] font-bold text-[8px] sm:text-[9px] lg:text-[10px] tracking-tight uppercase border border-[#8a8170] shadow flex items-center justify-center gap-1 cursor-pointer transition-all"
-                >
-                  <svg className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 fill-black shrink-0" viewBox="0 0 170 170">
-                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.07-7.7-7.85-12.01-14.34-6.17-9.35-11.1-19.86-14.79-31.54-3.69-11.68-5.54-22.68-5.54-33 0-14.42 3.65-26.65 10.96-36.68 7.31-10.03 16.64-15.17 27.99-15.42 4.87 0 10.15 1.3 15.84 3.91 5.69 2.61 9.5 3.97 11.43 4.09 1.77 0 5.75-1.42 11.94-4.26 6.19-2.84 11.55-4.14 16.08-3.9 11.95.63 21.72 5.09 29.31 13.37-10.42 6.35-15.5 15.1-15.26 26.25.25 8.74 3.59 16.02 10.02 21.84 6.43 5.82 14.13 9.07 23.1 9.76-2.12 6.42-4.63 12.78-7.53 19.08zM119.22 31.84c0-7.14 2.65-13.91 7.95-20.31 5.3-6.4 11.83-10.45 19.59-12.15.25 1.14.38 2.22.38 3.24 0 7.02-2.73 13.88-8.19 20.58-5.46 6.7-12.19 10.59-20.19 11.68-.26-1.02-.39-2.04-.39-3.04z" />
-                  </svg>
-                  <span className="truncate">SIGN IN WITH APPLE</span>
-                </button>
-                <div className="absolute -top-1.5 right-0.5 pointer-events-none">
-                  <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-[#302409] font-black text-[6.5px] lg:text-[7.5px] px-1 py-0.2 rounded border border-[#85610e] shadow-sm tracking-tight">
-                    +1000 TOKENS
-                  </span>
-                </div>
-              </div>
+        .grant-banner:hover {
+            transform: translateY(-2px);
+        }
 
-              {/* 4. SIGN UP Button */}
-              <button
-                type="button"
-                disabled={isLoading}
-                onClick={handleSignUp}
-                className="w-full py-1 lg:py-1.5 rounded-md bg-gradient-to-b from-[#eb5c1e] to-[#c74007] hover:brightness-110 active:scale-[0.98] text-white font-black text-[10px] sm:text-[11px] lg:text-[12px] tracking-wider uppercase border border-[#6b2103] shadow-[0_2px_4px_rgba(0,0,0,0.5)] cursor-pointer transition-all flex items-center justify-center"
-              >
-                SIGN UP
-              </button>
-            </div>
+        .grant-banner h3 {
+            font-size: 0.95rem;
+            color: #8b4513;
+            margin-bottom: 5px;
+            font-weight: 800;
+        }
 
-            {/* Direct Guest Quick Enter */}
-            <div className="text-center pt-[1%]">
-              <button
-                type="button"
-                onClick={handleGuestEnter}
-                className="text-[7.5px] lg:text-[9px] font-mono text-[#4a3f31] hover:text-[#000000] underline font-bold transition-colors cursor-pointer"
-              >
-                Direct Guest Play →
-              </button>
-            </div>
+        .grant-banner p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
 
-          </div>
-        </form>
+        /* Right Side Credential / Login Box */
+        .auth-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(245, 240, 230, 0.92);
+            border: 3px solid #b58d3d;
+            border-radius: 10px;
+            width: 320px;
+            padding: 25px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        }
 
-      </div>
+        .auth-card h3 {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #2c2c2c;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 8px;
+        }
 
-      {/* ============================================================== */}
-      {/* MOBILE PORTRAIT VIEWPORT (<640px Screen Adaptation)           */}
-      {/* ============================================================== */}
-      <div className="block sm:hidden w-full max-w-md mx-auto space-y-3 pb-8">
-        
-        {/* Ballpark Graphic Card */}
-        <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border-2 border-[#2b241c] bg-black">
-          <img
-            src="/assets/aistudio/8eade774-25b0-4c28-893a-8e8401fd2605_028889e8.jpeg"
-            alt="The Baltimore Chop Official Homepage"
-            className="w-full h-full object-cover object-left"
-          />
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: #e4dec9;
+            border: 1px solid #b58d3d;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b00;
+            background-color: #fff;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-login {
+            background-color: #e65c00;
+            color: white;
+            box-shadow: 0 4px 10px rgba(230, 92, 0, 0.4);
+        }
+
+        .btn-login:hover {
+            background-color: #cc5200;
+        }
+
+        .btn-signin {
+            background-color: #3e4e5e;
+            color: white;
+            border: 1px solid #2c3540;
+        }
+
+        .btn-signin:hover {
+            background-color: #2c3540;
+        }
+
+        .btn-signup {
+            background-color: #e65c00;
+            color: white;
+            margin-top: 12px;
+        }
+
+        .btn-signup:hover {
+            background-color: #cc5200;
+        }
+
+        .btn-oauth {
+            background-color: #ffffff;
+            color: #222;
+            border: 1px solid #b58d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+            padding: 8px;
+            font-size: 0.78rem;
+        }
+
+        .btn-oauth:hover {
+            background-color: #f5f5f5;
+        }
+
+        .oauth-badge {
+            position: absolute;
+            top: -6px;
+            right: 6px;
+            background: linear-gradient(90deg, #f59e0b, #eab308);
+            color: #451a03;
+            font-size: 7.5px;
+            font-weight: 900;
+            padding: 1px 5px;
+            border-radius: 3px;
+            border: 1px solid #78350f;
+        }
+
+        @media (max-width: 768px) {
+            .landing-container {
+                padding: 20px 16px;
+                flex-direction: column;
+                justify-content: flex-start;
+                gap: 16px;
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+            .brand-section h1 {
+                font-size: 2.2rem;
+            }
+            .grant-banner {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                max-width: 100%;
+            }
+        }
+      `}</style>
+
+      <div className="landing-container">
+        {/* Left Hero Details */}
+        <div className="brand-section">
+          <div className="app-icon-preview"></div>
+          <h1>THE BALTIMORE CHOP™</h1>
+          <h2>OFFICIAL FRANCHISE GM & HOBBY COLLECTOR</h2>
         </div>
 
-        {/* Parchment Credentials Mobile Card */}
-        <div className="bg-[#b7ac98] border-4 border-[#2c2419] rounded-2xl p-4 shadow-2xl font-sans text-[#1c1812]">
-          <div className="text-center mb-3 border-b-2 border-[#524b3e]/30 pb-2">
-            <h2 className="text-sm font-black tracking-widest uppercase text-[#2c2419]">
-              CREDENTIALS
-            </h2>
-            <p className="text-[10px] font-mono font-semibold text-[#524b3e]">
-              Enter The Baltimore Chop™ Ballpark
-            </p>
-          </div>
+        {/* Bottom Left Bonus Grant Notice */}
+        <div 
+          className="grant-banner" 
+          onClick={handleClaimGrant}
+          title="Click to claim 2,500 Vending Tokens starter grant!"
+        >
+          <h3>NEW GM SIGNUP GRANT:</h3>
+          <p>
+            1,500 Base + 1,000 Bonus = 2,500 Vending Tokens!<br />
+            ✓ Enough to rip a 750-Token Hobby Box right away!
+          </p>
+        </div>
+
+        {/* Right Side Auth / Action Card */}
+        <div className="auth-card">
+          <h3>CREDENTIALS</h3>
 
           {authError && (
-            <div className="mb-3 bg-red-900/80 text-red-100 text-xs font-mono p-2 rounded border border-red-500/50 text-center">
+            <div className="bg-red-900/90 text-red-100 text-[11px] font-mono p-2 rounded border border-red-500 mb-2 text-center">
               {authError}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-2.5">
-            <div>
-              <label className="block text-[10px] font-mono font-bold uppercase text-[#4e483e] mb-1">
-                USERNAME / EMAIL
-              </label>
-              <input
-                type="text"
+          <form onSubmit={handleLogin}>
+            <div className="form-group">
+              <label>USERNAME / EMAIL</label>
+              <input 
+                type="text" 
                 value={usernameOrEmail}
                 onChange={(e) => setUsernameOrEmail(e.target.value)}
-                placeholder="Manager Handle or Email"
-                className="w-full bg-[#9f9582] text-[#1c1812] placeholder-[#4e483e] font-mono text-sm px-3 py-2 rounded-lg border border-[#524b3e] focus:border-[#e8581c] outline-none font-bold"
+                placeholder="" 
+                disabled={isLoading}
               />
             </div>
-
-            <div>
-              <label className="block text-[10px] font-mono font-bold uppercase text-[#4e483e] mb-1">
-                PASSWORD
-              </label>
-              <input
-                type="password"
+            <div className="form-group">
+              <label>PASSWORD</label>
+              <input 
+                type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password (min 6 characters)"
-                className="w-full bg-[#9f9582] text-[#1c1812] placeholder-[#4e483e] font-mono text-sm px-3 py-2 rounded-lg border border-[#524b3e] focus:border-[#e8581c] outline-none font-bold"
+                placeholder="" 
+                disabled={isLoading}
               />
             </div>
 
-            <div className="pt-2 space-y-2">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 rounded-lg bg-gradient-to-b from-[#eb5c1e] to-[#c74007] text-white font-black text-sm tracking-wider uppercase border border-[#6b2103] shadow-md cursor-pointer"
+            <button type="submit" disabled={isLoading} className="btn btn-login">
+              LOG IN
+            </button>
+
+            {/* Google Sign In with +1000 Tokens badge */}
+            <div className="relative mt-2">
+              <button 
+                type="button" 
+                disabled={isLoading} 
+                onClick={handleGoogleSignIn} 
+                className="btn btn-oauth"
               >
-                LOG IN
+                <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>SIGN IN WITH GOOGLE</span>
               </button>
+              <div className="oauth-badge">+1000 TOKENS</div>
+            </div>
 
-              <div className="relative">
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={handleGoogleSignIn}
-                  className="w-full py-2 px-3 rounded-lg bg-white text-[#2c241a] font-bold text-xs tracking-tight uppercase border border-[#8a8170] shadow flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>SIGN IN WITH GOOGLE</span>
-                </button>
-                <div className="absolute -top-2 right-2 pointer-events-none">
-                  <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-[#302409] font-black text-[9px] px-1.5 py-0.5 rounded border border-[#85610e] shadow-sm">
-                    +1000 TOKENS
-                  </span>
-                </div>
-              </div>
-
-              <div className="relative">
-                <button
-                  type="button"
-                  disabled={isLoading}
-                  onClick={handleAppleSignIn}
-                  className="w-full py-2 px-3 rounded-lg bg-white text-[#111111] font-bold text-xs tracking-tight uppercase border border-[#8a8170] shadow flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <svg className="w-4 h-4 fill-black shrink-0" viewBox="0 0 170 170">
-                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.07-7.7-7.85-12.01-14.34-6.17-9.35-11.1-19.86-14.79-31.54-3.69-11.68-5.54-22.68-5.54-33 0-14.42 3.65-26.65 10.96-36.68 7.31-10.03 16.64-15.17 27.99-15.42 4.87 0 10.15 1.3 15.84 3.91 5.69 2.61 9.5 3.97 11.43 4.09 1.77 0 5.75-1.42 11.94-4.26 6.19-2.84 11.55-4.14 16.08-3.9 11.95.63 21.72 5.09 29.31 13.37-10.42 6.35-15.5 15.1-15.26 26.25.25 8.74 3.59 16.02 10.02 21.84 6.43 5.82 14.13 9.07 23.1 9.76-2.12 6.42-4.63 12.78-7.53 19.08zM119.22 31.84c0-7.14 2.65-13.91 7.95-20.31 5.3-6.4 11.83-10.45 19.59-12.15.25 1.14.38 2.22.38 3.24 0 7.02-2.73 13.88-8.19 20.58-5.46 6.7-12.19 10.59-20.19 11.68-.26-1.02-.39-2.04-.39-3.04z" />
-                  </svg>
-                  <span>SIGN IN WITH APPLE</span>
-                </button>
-                <div className="absolute -top-2 right-2 pointer-events-none">
-                  <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-[#302409] font-black text-[9px] px-1.5 py-0.5 rounded border border-[#85610e] shadow-sm">
-                    +1000 TOKENS
-                  </span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                disabled={isLoading}
-                onClick={handleSignUp}
-                className="w-full py-2.5 rounded-lg bg-gradient-to-b from-[#eb5c1e] to-[#c74007] text-white font-black text-sm tracking-wider uppercase border border-[#6b2103] shadow-md cursor-pointer"
+            {/* Apple Sign In with +1000 Tokens badge */}
+            <div className="relative mt-2">
+              <button 
+                type="button" 
+                disabled={isLoading} 
+                onClick={handleAppleSignIn} 
+                className="btn btn-oauth"
               >
-                SIGN UP
+                <svg className="w-3.5 h-3.5 fill-black shrink-0" viewBox="0 0 170 170">
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.07-7.7-7.85-12.01-14.34-6.17-9.35-11.1-19.86-14.79-31.54-3.69-11.68-5.54-22.68-5.54-33 0-14.42 3.65-26.65 10.96-36.68 7.31-10.03 16.64-15.17 27.99-15.42 4.87 0 10.15 1.3 15.84 3.91 5.69 2.61 9.5 3.97 11.43 4.09 1.77 0 5.75-1.42 11.94-4.26 6.19-2.84 11.55-4.14 16.08-3.9 11.95.63 21.72 5.09 29.31 13.37-10.42 6.35-15.5 15.1-15.26 26.25.25 8.74 3.59 16.02 10.02 21.84 6.43 5.82 14.13 9.07 23.1 9.76-2.12 6.42-4.63 12.78-7.53 19.08zM119.22 31.84c0-7.14 2.65-13.91 7.95-20.31 5.3-6.4 11.83-10.45 19.59-12.15.25 1.14.38 2.22.38 3.24 0 7.02-2.73 13.88-8.19 20.58-5.46 6.7-12.19 10.59-20.19 11.68-.26-1.02-.39-2.04-.39-3.04z" />
+                </svg>
+                <span>SIGN IN WITH APPLE</span>
               </button>
+              <div className="oauth-badge">+1000 TOKENS</div>
+            </div>
 
+            <button 
+              type="button" 
+              onClick={handleLogin} 
+              disabled={isLoading}
+              className="btn btn-signin"
+            >
+              EXISTING USER? SIGN IN
+            </button>
+
+            <button 
+              type="button" 
+              onClick={handleSignUp} 
+              disabled={isLoading}
+              className="btn btn-signup"
+            >
+              SIGN UP
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
               <button
                 type="button"
                 onClick={handleGuestEnter}
-                className="w-full py-1 text-xs font-mono text-[#4a3f31] underline font-bold transition-colors cursor-pointer text-center"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#555',
+                  fontSize: '0.8rem',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontWeight: 600
+                }}
               >
                 Direct Guest Play →
               </button>
             </div>
           </form>
         </div>
-
-        {/* Mobile GM Signup Grant Box */}
-        <div 
-          onClick={handleClaimGrant}
-          className="bg-gradient-to-r from-[#d9a548] to-[#c18c2f] border-2 border-[#735313] rounded-xl p-3 text-[#2a1c07] shadow-lg flex items-center justify-between cursor-pointer active:scale-[0.99]"
-        >
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-wider">NEW GM SIGNUP GRANT:</div>
-            <div className="text-xs font-bold">1500 Base + 1,000 Bonus = 2,500 Vending Tokens!</div>
-            <div className="text-[10px] font-medium text-[#402a0b]">✓ Enough to rip a 750-Token Hobby Box right away!</div>
-          </div>
-          <div className="text-2xl shrink-0 ml-2">📦</div>
-        </div>
-
       </div>
-
     </div>
   );
 };
+
+
 

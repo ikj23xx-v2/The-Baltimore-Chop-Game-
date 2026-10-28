@@ -726,6 +726,38 @@ export default function App() {
   // Playoff status computation
   const playoffStatus: PlayoffStatus = evaluatePlayoffEligibility(seasonProgress);
 
+  // If splash login gate is open, render the exact homepage as the top-level view!
+  if (isSplashLoginOpen) {
+    return (
+      <OfficialHomepageGate
+        isOpen={true}
+        onEnterGame={(profile, bonusTokens, chosenTeam) => {
+          const finalProfile = profile || {
+            uid: `gm_${Date.now()}`,
+            email: 'manager@thebaltimorechop.app',
+            displayName: 'Baltimore GM',
+            username: 'ChopMaster',
+            photoURL: null,
+            isAnonymous: false,
+            linkedProviders: ['password'],
+            createdAt: Date.now(),
+            lastUsernameChangeAt: null,
+            usernameHistory: []
+          };
+          const bonus = bonusTokens ?? 0;
+          if (chosenTeam) {
+            const theme = teamThemeService.setFavoriteTeam(chosenTeam);
+            if (theme) {
+              handleTeamSelected(theme);
+            }
+          }
+          handleOnboardingComplete(finalProfile, bonus, REWARD_CONFIG.STARTER_BASE_CREDITS, 'DEPTH_CHART');
+          setIsSplashLoginOpen(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-orange-500 selection:text-white pb-28">
       
