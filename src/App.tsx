@@ -119,9 +119,35 @@ export default function App() {
   const [mainTab, setMainTab] = useState<ActiveTab>('DEPTH_CHART');
 
   // --- ROSTER & PLAYERS ---
-  const [roster, setRoster] = useState<PlayerCard[]>(INITIAL_ROSTER);
+  // Roster starts BLANK by default so the user drafts their lineup from scratch
+  const [roster, setRoster] = useState<PlayerCard[]>(() => {
+    try {
+      const saved = localStorage.getItem('baltimore_chop_user_roster_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return []; // Blank before the user starts their draft!
+  });
+
+  // Keep roster state synced to localStorage
+  useEffect(() => {
+    try {
+      if (roster.length > 0) {
+        localStorage.setItem('baltimore_chop_user_roster_v2', JSON.stringify(roster));
+      } else {
+        localStorage.removeItem('baltimore_chop_user_roster_v2');
+      }
+    } catch {
+      // ignore
+    }
+  }, [roster]);
+
   const [activeBatterIndex, setActiveBatterIndex] = useState(0);
-  const activeBatter = roster[activeBatterIndex] || roster[0];
+  const activeBatter = roster[activeBatterIndex] || roster[0] || ALL_PLAYERS[0];
   const [opposingPitcher, setOpposingPitcher] = useState<PlayerCard>(ALL_PLAYERS[4]); // Jim Palmer / Opponent Ace
 
   // --- AT-BAT INTERACTIVE INPUTS ---
@@ -211,7 +237,7 @@ export default function App() {
   const [pitchSpeed, setPitchSpeed] = useState<'STANDARD' | 'HIGH_HEAT'>('STANDARD');
 
   // --- REFRACTOR FORGE INLINE STATE ---
-  const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(roster[0]);
+  const [forgeSelectedCard, setForgeSelectedCard] = useState<PlayerCard>(() => roster[0] || ALL_PLAYERS[0]);
   const [forgeTierPreview, setForgeTierPreview] = useState<RefractorTier>('SILVER_REFRACTOR');
 
   // --- GM CONSOLE & VAULT STATE ---
@@ -319,10 +345,8 @@ export default function App() {
     setCurrentTeamTheme(teamTheme);
     setVaultSelectedTeam(teamTheme.name);
 
-    const teamRoster = getRosterForTeam(teamTheme.name);
-    setRoster(teamRoster);
+    // Keep roster blank if user hasn't drafted yet
     setActiveBatterIndex(0);
-    setForgeSelectedCard(teamRoster[0]);
 
     const aces = ALL_PLAYERS.filter(p => p.team !== teamTheme.name && (p.position === 'SP' || p.position === 'RP'));
     if (aces.length > 0) {
@@ -330,8 +354,59 @@ export default function App() {
     }
 
     setIsSplashOpen(false);
-    addLog(`🏟️ Walked out of the stadium tunnel into ${teamTheme.ballpark}! You are managing the ${teamTheme.name}!`, 'chop');
+    addLog(`🏟️ Welcome to ${teamTheme.ballpark}! You are managing the ${teamTheme.name}!`, 'chop');
     soundManager.playBatCrack(true);
+  };
+
+  // Auto-Draft balanced 26-man roster
+  const handleAutoDraft = () => {
+    soundManager.playJackpotChime();
+    const DRAFT_POSITIONS = [
+      'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH',
+      'SP', 'SP', 'SP', 'SP', 'SP',
+      'RP', 'RP', 'RP', 'RP', 'RP', 'RP', 'RP',
+      'C', '1B', '2B', 'SS', 'CF'
+    ];
+    const newRoster: PlayerCard[] = [];
+    const usedIds = new Set<string>();
+
+    for (const pos of DRAFT_POSITIONS) {
+      const teamCandidates = ALL_PLAYERS.filter(
+        (p) => p.team === currentTeamTheme.name && p.position === pos && !usedIds.has(p.id)
+      ).sort((a, b) => b.bRefWar - a.bRefWar);
+
+      const generalCandidates = ALL_PLAYERS.filter(
+        (p) => p.position === pos && !usedIds.has(p.id)
+      ).sort((a, b) => b.bRefWar - a.bRefWar);
+
+      const pick =
+        teamCandidates[0] ||
+        generalCandidates[0] ||
+        ALL_PLAYERS.find((p) => !usedIds.has(p.id)) ||
+        ALL_PLAYERS[0];
+
+      usedIds.add(pick.id);
+      newRoster.push(pick);
+    }
+
+    setRoster(newRoster);
+    setActiveBatterIndex(0);
+    setForgeSelectedCard(newRoster[0]);
+    soundManager.playHomeRunFanfare();
+    addLog(`📋 Complete 26-Man Official Roster Drafted for ${currentTeamTheme.name}!`, 'chop');
+  };
+
+  // Reset/Clear roster back to blank
+  const handleClearRoster = () => {
+    soundManager.playButtonClick();
+    setRoster([]);
+    setActiveBatterIndex(0);
+    try {
+      localStorage.removeItem('baltimore_chop_user_roster_v2');
+    } catch {
+      // ignore
+    }
+    addLog(`🧹 Roster cleared. Big Board reset to blank for a fresh draft!`, 'info');
   };
 
   // Record daily login on launch
@@ -869,6 +944,41 @@ export default function App() {
         )}
 
         {/* ---------------- VIEW 1: DASHBOARD & ARENA SHOWDOWN ---------------- */}
+        {mainTab === 'ARENA' && roster.length === 0 && (
+          <div className="bg-amber-950/70 border border-amber-500/60 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-amber-200">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <h4 className="font-display font-bold text-sm text-white uppercase">
+                  Franchise Roster is Blank (0 / 26 Drafted)
+                </h4>
+                <p className="text-xs text-amber-300/80 font-mono">
+                  Draft your 26-man lineup on the Big Board before taking the field in the At-Bat Arena!
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('DEPTH_CHART');
+                  setIsDraftOpen(true);
+                }}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-display font-black text-xs uppercase shadow transition-transform active:scale-95 cursor-pointer"
+              >
+                🎰 Start Draft Now
+              </button>
+              <button
+                type="button"
+                onClick={handleAutoDraft}
+                className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-display font-bold text-xs uppercase cursor-pointer"
+              >
+                ⚡ Quick Auto-Draft
+              </button>
+            </div>
+          </div>
+        )}
+
         {mainTab === 'ARENA' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: 3D Inspectable Card Stage with 360° Drag & Click-to-Inspect */}
@@ -1302,7 +1412,7 @@ export default function App() {
         {mainTab === 'DEPTH_CHART' && (
           <DraftBoardGrid
             roster={roster}
-            activeBatterId={activeBatter.id}
+            activeBatterId={activeBatter?.id || ''}
             onSelectActiveBatter={(card) => {
               const idx = roster.findIndex((c) => c.id === card.id);
               if (idx !== -1) {
@@ -1313,6 +1423,9 @@ export default function App() {
             onInspectCard={(card) => setInspectedCardForStats(card)}
             onOpenDraft={() => setIsDraftOpen(true)}
             onOpenForge={() => setIsForgeOpen(true)}
+            onAutoDraft={handleAutoDraft}
+            onClearRoster={handleClearRoster}
+            teamName={currentTeamTheme.name}
           />
         )}
 

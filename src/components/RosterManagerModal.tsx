@@ -103,7 +103,27 @@ export const RosterManagerModal: React.FC<RosterManagerModalProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 overflow-y-auto pr-1">
           {/* Left: Player Cards Grid */}
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[58vh] overflow-y-auto pr-1">
-            {filteredPlayers.map((player) => {
+            {filteredPlayers.length === 0 ? (
+              <div className="col-span-1 sm:col-span-2 text-center py-16 space-y-3 bg-slate-950/60 rounded-2xl border border-slate-800 p-6">
+                <span className="text-4xl block">📋</span>
+                <h4 className="text-white font-display font-black text-sm uppercase tracking-wide">
+                  No Players on Roster (Board is Blank)
+                </h4>
+                <p className="text-xs text-slate-400 font-mono max-w-sm mx-auto">
+                  Your 26-man franchise roster is currently blank. Draft players from the draft room to populate your lineup.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={onOpenDraft}
+                    className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-display font-black text-xs uppercase rounded-xl transition-all shadow-md cursor-pointer"
+                  >
+                    🎰 Start 26-Man Draft
+                  </button>
+                </div>
+              </div>
+            ) : (
+              filteredPlayers.map((player) => {
               const isSelected = activeBatter.id === player.id;
               const isInspected = inspectedCard.id === player.id;
 
@@ -188,7 +208,7 @@ export const RosterManagerModal: React.FC<RosterManagerModalProps> = ({
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
 
           {/* Right: 3D Inspect Panel */}
