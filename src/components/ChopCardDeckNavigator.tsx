@@ -10,7 +10,8 @@ export type DeckNavigationTab =
   | 'CLUBHOUSE'
   | 'BANK'
   | 'SEASON'
-  | 'ALMANAC';
+  | 'ALMANAC'
+  | 'KNOWLEDGE';
 
 interface ChopCardDeckNavigatorProps {
   activeTab: DeckNavigationTab;
@@ -26,7 +27,8 @@ export const ChopCardDeckNavigator: React.FC<ChopCardDeckNavigatorProps> = ({
   const tabs: { id: DeckNavigationTab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { id: 'ROSTER', label: '26-Man Draft', icon: <Users className="w-4 h-4" /> },
     { id: 'ARENA', label: 'Dashboard', icon: <Swords className="w-4 h-4" /> },
-    { id: 'SEASON', label: '162-0 Franchise', icon: <Calendar className="w-4 h-4" /> },
+    { id: 'KNOWLEDGE', label: 'Knowledge Base', icon: <BookOpen className="w-4 h-4 text-amber-400" /> },
+    { id: 'SEASON', label: '162-0 Season', icon: <Calendar className="w-4 h-4" /> },
     { id: 'BINDER', label: 'Card Vault', icon: <BookOpen className="w-4 h-4" /> },
     { id: 'BANK', label: 'Token Vault', icon: <Landmark className="w-4 h-4" /> },
     { id: 'HOBBY', label: 'Hobby Outpost', icon: <Package className="w-4 h-4" /> },

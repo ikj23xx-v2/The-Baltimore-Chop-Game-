@@ -3,7 +3,7 @@ import React from 'react';
 import { TEAM_JERSEY_THEMES, TeamId } from '../data/teamJerseyThemes';
 
 interface JerseyAvatarProps {
-  teamId: TeamId;
+  teamId: TeamId | string;
   username: string;
   jerseyNumber?: number | string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -19,7 +19,7 @@ export const JerseyAvatar: React.FC<JerseyAvatarProps> = ({
   showDirt = true,
   className = '',
 }) => {
-  const theme = TEAM_JERSEY_THEMES[teamId] || TEAM_JERSEY_THEMES.BAL;
+  const theme = (TEAM_JERSEY_THEMES as Record<string, any>)[teamId] || TEAM_JERSEY_THEMES.BAL;
 
   const sizeDimensions = {
     sm: { width: 40, height: 44, fontSizeName: 4.5, fontSizeNum: 16 },

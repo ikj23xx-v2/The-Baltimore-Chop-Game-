@@ -4,6 +4,7 @@ import { soundManager } from '../services/audio';
 import { authService, UserAccountProfile } from '../services/authService';
 import { teamThemeService } from '../services/teamThemeService';
 import { triggerHapticFeedback } from '../services/haptics';
+import { MLB_TEAMS } from '../data/mlbTeams';
 
 interface OfficialHomepageGateProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
 }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedFranchise, setSelectedFranchise] = useState('All-MLB All-Stars');
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -27,7 +29,7 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
     setIsLoading(true);
     soundManager.playButtonClick();
 
-    const usernameToUse = usernameOrEmail.trim() || 'BaltimoreGM';
+    const usernameToUse = usernameOrEmail.trim() || 'FranchiseGM';
     
     // Check if user has an existing saved profile
     const existing = authService.getProfile();
@@ -83,7 +85,9 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
       localStorage.setItem('the_baltimore_chop_onboarding_completed', 'true');
       sessionStorage.setItem('chop_splash_dismissed', 'true');
       authService.saveProfile(profile);
-      teamThemeService.setFavoriteTeam('Baltimore Orioles');
+      if (selectedFranchise && selectedFranchise !== 'All-MLB All-Stars') {
+        teamThemeService.setFavoriteTeam(selectedFranchise);
+      }
     } catch {
       // ignore
     }
@@ -91,7 +95,7 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
     soundManager.playBatCrack(true);
     triggerHapticFeedback('CHOP');
     setIsLoading(false);
-    onEnterGame(profile, bonus, 'Baltimore Orioles');
+    onEnterGame(profile, bonus, selectedFranchise);
   };
 
   return (
@@ -314,14 +318,29 @@ export const OfficialHomepageGate: React.FC<OfficialHomepageGateProps> = ({
             </div>
             
             <div className="form-group">
-              <label>PASSWORD</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="" 
+              <label>FAVORITE FRANCHISE / DRAFT BASE</label>
+              <select
+                value={selectedFranchise}
+                onChange={(e) => setSelectedFranchise(e.target.value)}
                 disabled={isLoading}
-              />
+                className="w-full p-2.5 bg-[#e4dec9] border border-[#b58d3d] rounded text-sm text-[#222] font-semibold focus:outline-none focus:border-[#ff6b00] cursor-pointer"
+              >
+                <option value="All-MLB All-Stars">⭐ All-MLB All-Stars (Clean Slate Draft)</option>
+                <optgroup label="American League">
+                  {MLB_TEAMS.filter(t => t.league === 'AL').map(t => (
+                    <option key={t.id} value={t.name}>
+                      {t.name} ({t.city})
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="National League">
+                  {MLB_TEAMS.filter(t => t.league === 'NL').map(t => (
+                    <option key={t.id} value={t.name}>
+                      {t.name} ({t.city})
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
             </div>
 
             <button type="submit" disabled={isLoading} className="btn btn-login">

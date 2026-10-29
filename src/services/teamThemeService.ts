@@ -17,6 +17,18 @@ export interface ActiveTeamTheme {
   isNegroLeagues?: boolean;
 }
 
+export const ALL_MLB_TEAM_INFO: ActiveTeamTheme = {
+  name: 'All-MLB All-Stars',
+  shortName: 'All-MLB',
+  city: 'League-Wide',
+  league: 'AL',
+  division: 'MAJOR LEAGUE BASEBALL',
+  ballpark: 'Field of Dreams / All-Star Stadium',
+  primaryColor: '#002D62',
+  secondaryColor: '#BA0C2F',
+  logoIcon: '⭐'
+};
+
 export const NEGRO_LEAGUES_TEAM_INFO: ActiveTeamTheme = {
   name: 'Negro League Legends',
   shortName: 'Legends',
@@ -43,6 +55,9 @@ class TeamThemeService {
       try {
         const stored = window.localStorage.getItem(STORAGE_KEY);
         if (stored) {
+          if (stored === 'All-MLB All-Stars' || stored === 'All-MLB') {
+            return ALL_MLB_TEAM_INFO;
+          }
           if (stored === 'Negro League Legends') {
             return NEGRO_LEAGUES_TEAM_INFO;
           }
@@ -53,9 +68,8 @@ class TeamThemeService {
         console.warn('Failed to load favorite team from storage', e);
       }
     }
-    // Default to Baltimore Orioles
-    const defMlb = getTeamByName('Baltimore Orioles') || MLB_TEAMS[0];
-    return this.mapMlbToTheme(defMlb);
+    // Default to All-MLB All-Stars for a clean slate
+    return ALL_MLB_TEAM_INFO;
   }
 
   private mapMlbToTheme(mlb: MLBTeamInfo): ActiveTeamTheme {
@@ -87,7 +101,9 @@ class TeamThemeService {
   }
 
   public setFavoriteTeam(teamName: string): ActiveTeamTheme {
-    if (teamName === 'Negro League Legends') {
+    if (teamName === 'All-MLB All-Stars' || teamName === 'All-MLB') {
+      this.currentTeam = ALL_MLB_TEAM_INFO;
+    } else if (teamName === 'Negro League Legends') {
       this.currentTeam = NEGRO_LEAGUES_TEAM_INFO;
     } else {
       const mlb = getTeamByName(teamName);

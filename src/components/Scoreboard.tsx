@@ -23,7 +23,7 @@ interface ScoreboardProps {
 export const Scoreboard: React.FC<ScoreboardProps> = ({
   homeScore,
   awayScore,
-  homeTeamName = 'ORIOLES',
+  homeTeamName = 'HOME',
   awayTeamName = 'VISITORS',
   inning,
   halfInning,

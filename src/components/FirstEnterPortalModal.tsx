@@ -92,7 +92,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
   const [stadiumSearch, setStadiumSearch] = useState('');
 
   // Video Glyphs / Interactive simulation demo state
-  const [activeVideoGlyph, setActiveVideoGlyph] = useState<'CHOP_PHYSICS' | 'RE24_LEVERAGE' | 'ROTATION_360' | 'COUNTER_PREDICTION'>('CHOP_PHYSICS');
+  const [activeVideoGlyph, setActiveVideoGlyph] = useState<'CHOP_PHYSICS' | 'RE24_LEVERAGE' | 'ROTATION_360' | 'COUNTER_PREDICTION' | 'NINTH_INNING_CRISIS'>('CHOP_PHYSICS');
   const [glyphPlaying, setGlyphPlaying] = useState(true);
 
   // Seasons Calendar Inspection
@@ -513,6 +513,15 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     >
                       ▶ 3-Pitch Matrix
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveVideoGlyph('NINTH_INNING_CRISIS')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase transition-all ${
+                        activeVideoGlyph === 'NINTH_INNING_CRISIS' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      ▶ 9th Inning Crisis (Sim Example)
+                    </button>
                   </div>
                 </div>
 
@@ -627,6 +636,33 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
 
                       <div className="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 text-slate-300 leading-relaxed text-[11px]">
                         Pitchers deliver from 6 distinct pitch classifications (4-Seam, Slider, Curveball, Changeup, Sinker, Cutter). Correctly guessing the pitch type and zone unlocks exit velocities exceeding 105 mph and triggers the explosive barrel contact bonus (+50 pts)!
+                      </div>
+                    </div>
+                  )}
+
+                  {activeVideoGlyph === 'NINTH_INNING_CRISIS' && (
+                    <div className="space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-red-400 font-bold border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                          GLYPH #5: THEORETICAL 9TH INNING CRISIS SIMULATION EXAMPLE
+                        </span>
+                        <span className="text-[10px] text-amber-300">Runners on 1st & 3rd · 1 Out · Bottom 9th · 2.5x Multiplier</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-slate-900/90 border border-red-500/40 space-y-2">
+                        <div className="flex items-center justify-between text-white font-bold">
+                          <span>Theoretical Matchup State: Home 4 - Away 3</span>
+                          <span className="text-amber-400">Leverage Index: 2.85 (Ultra-High)</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[11px] text-slate-300">
+                          <span className="px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-500/40">1 Out</span>
+                          <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-500/40">Bases: 1st & 3rd Occupied</span>
+                          <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40">Count: 2 Balls, 2 Strikes</span>
+                        </div>
+                        <p className="text-slate-300 text-[11px] leading-relaxed">
+                          This is an educational scenario model demonstrating extreme game pressure. In this situation, every run scored or conceded swings the Win Probability Added (WPA) by up to ±0.45. Hitting a sacrifice fly or a Baltimore Chop single yields a 2.5x point multiplier, while grounding into an inning-ending double play incurs a severe scoring penalty.
+                        </p>
                       </div>
                     </div>
                   )}

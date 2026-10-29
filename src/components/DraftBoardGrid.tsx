@@ -42,7 +42,7 @@ export const DraftBoardGrid: React.FC<DraftBoardGridProps> = ({
   onOpenDraft,
   onAutoDraft,
   onClearRoster,
-  teamName = 'Baltimore Orioles',
+  teamName = 'All-MLB All-Stars',
 }) => {
   const [filter, setFilter] = useState<PositionFilter>('ALL');
   const [searchQuery, setSearchQuery] = useState('');

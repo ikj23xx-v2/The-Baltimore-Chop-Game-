@@ -148,7 +148,10 @@ export default function App() {
 
   const [activeBatterIndex, setActiveBatterIndex] = useState(0);
   const activeBatter = roster[activeBatterIndex] || roster[0] || ALL_PLAYERS[0];
-  const [opposingPitcher, setOpposingPitcher] = useState<PlayerCard>(ALL_PLAYERS[4]); // Jim Palmer / Opponent Ace
+  const [opposingPitcher, setOpposingPitcher] = useState<PlayerCard>(() => {
+    const pitchers = ALL_PLAYERS.filter(p => p.position === 'SP');
+    return pitchers[0] || ALL_PLAYERS[4];
+  });
 
   // --- AT-BAT INTERACTIVE INPUTS ---
   const [selectedPitchType, setSelectedPitchType] = useState<PitchType>('4-SEAM');
@@ -157,20 +160,20 @@ export default function App() {
   const [isPitching, setIsPitching] = useState(false);
   const [pitchSequence, setPitchSequence] = useState<PitchDelivery[]>([]);
 
-  // --- SCOREBOARD & BASES ---
-  const [homeScore, setHomeScore] = useState(4);
-  const [awayScore, setAwayScore] = useState(3);
-  const [inning, setInning] = useState(9);
-  const [halfInning, setHalfInning] = useState<'TOP' | 'BOTTOM'>('BOTTOM');
+  // --- SCOREBOARD & BASES (CLEAN SLATE: 0-0, 1st Inning, 0 Outs, Empty Bases) ---
+  const [homeScore, setHomeScore] = useState(0);
+  const [awayScore, setAwayScore] = useState(0);
+  const [inning, setInning] = useState(1);
+  const [halfInning, setHalfInning] = useState<'TOP' | 'BOTTOM'>('TOP');
   const [balls, setBalls] = useState(0);
   const [strikes, setStrikes] = useState(0);
-  const [outs, setOuts] = useState(1);
-  const [baseRunners, setBaseRunners] = useState<[boolean, boolean, boolean]>([true, false, true]);
+  const [outs, setOuts] = useState(0);
+  const [baseRunners, setBaseRunners] = useState<[boolean, boolean, boolean]>([false, false, false]);
 
   // --- ECONOMY & INVENTORY ---
-  const [franchisePoints, setFranchisePoints] = useState(1850);
+  const [franchisePoints, setFranchisePoints] = useState(1000);
   const [vendingTokens, setVendingTokens] = useState(5);
-  const [streakCount, setStreakCount] = useState(3);
+  const [streakCount, setStreakCount] = useState(0);
   const [inventory, setInventory] = useState<NonPlayerCard[]>(INITIAL_EQUIPMENT_CARDS);
   const [tasks, setTasks] = useState<TaskRequirement[]>(INITIAL_TASKS);
   const [activeSetId, setActiveSetId] = useState<CardSetId>('SERIES_1');
@@ -182,17 +185,17 @@ export default function App() {
   // --- USER PROFILE ---
   const [userProfile, setUserProfile] = useState<UserAccountProfile | null>(() => authService.getProfile());
 
-  // --- BROADCAST & SIMULATION ---
+  // --- BROADCAST & SIMULATION (CLEAN SLATE) ---
   const [playByPlay, setPlayByPlay] = useState<PlayByPlayEntry[]>([
     {
       id: 'init-1',
-      text: '🏟️ 9th Inning Crisis: Runners on the corners, 1 out in the bottom of the 9th! High Leverage Index active (2.5x Multiplier).',
+      text: '🏟️ Fresh Game Slate. Ready for first pitch! Assemble your 26-man draft lineup or select an at-bat to begin.',
       type: 'info',
       timestamp: Date.now()
     }
   ]);
-  const [seasonRecord, setSeasonRecord] = useState<{ wins: number; losses: number; gamesPlayed: number; mode: '162_SEASON' | 'MINI_SERIES' }>({ wins: 54, losses: 38, gamesPlayed: 92, mode: '162_SEASON' });
-  const [teamArchetype, setTeamArchetype] = useState<'SPEED_CONTACT' | 'BALTIMORE_SLUGGER' | 'IRON_DEFENSE'>('BALTIMORE_SLUGGER');
+  const [seasonRecord, setSeasonRecord] = useState<{ wins: number; losses: number; gamesPlayed: number; mode: '162_SEASON' | 'MINI_SERIES' }>({ wins: 0, losses: 0, gamesPlayed: 0, mode: '162_SEASON' });
+  const [teamArchetype, setTeamArchetype] = useState<'SPEED_CONTACT' | 'BALTIMORE_SLUGGER' | 'IRON_DEFENSE'>('SPEED_CONTACT');
   const [isMuted, setIsMuted] = useState(false);
 
   // --- MODAL CONTROLS ---
@@ -847,9 +850,23 @@ export default function App() {
             </div>
           </div>
 
-          {/* Center: Lo-Fi Radio Soundscape & iOS / Android Style Control Center */}
+          {/* Center: Lo-Fi Radio Soundscape, Knowledge Base & Control Center */}
           <div className="flex items-center gap-2">
             <LofiPlayerToggle />
+
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                setIsPortalOpen(true);
+              }}
+              className="px-3 py-1 sm:py-1.5 rounded-full bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/50 text-amber-300 font-mono text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
+              title="Open Knowledge Base & Theoretical Game Scenarios"
+            >
+              <span>📚</span>
+              <span className="hidden sm:inline">Knowledge Base & Examples</span>
+              <span className="sm:hidden">Knowledge</span>
+            </button>
 
             <button
               type="button"
@@ -906,7 +923,7 @@ export default function App() {
               title="Official GM Identity"
             >
               <JerseyAvatar
-                teamId="BAL"
+                teamId={MLB_TEAMS.find(t => t.name === currentTeamTheme.name)?.id || 'BAL'}
                 username={userProfile?.username || 'Player'}
                 jerseyNumber={8}
                 size="sm"
@@ -929,6 +946,8 @@ export default function App() {
           <Scoreboard
             homeScore={homeScore}
             awayScore={awayScore}
+            homeTeamName={currentTeamTheme.shortName.toUpperCase()}
+            awayTeamName={opposingPitcher.team ? opposingPitcher.team.split(' ').pop()?.toUpperCase() : 'VISITORS'}
             inning={inning}
             halfInning={halfInning}
             balls={balls}
@@ -1914,6 +1933,7 @@ export default function App() {
           else if (tab === 'BANK') setIsBankModalOpen(true);
           else if (tab === 'SEASON') setIsFranchiseOpen(true);
           else if (tab === 'ALMANAC') setIsAlmanacOpen(true);
+          else if (tab === 'KNOWLEDGE') setIsPortalOpen(true);
         }}
       />
 
@@ -2182,6 +2202,7 @@ export default function App() {
         bankAccount={bankAccount}
         userProfile={userProfile}
         onOpenWallet={() => setIsWalletOpen(true)}
+        onOpenSwitchTeam={() => setIsFranchiseOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSplashGate={() => setIsSplashLoginOpen(true)}
         onSelectMode={(mode) => {

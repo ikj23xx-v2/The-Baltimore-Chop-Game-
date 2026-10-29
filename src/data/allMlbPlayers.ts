@@ -4,7 +4,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_01",
     "cardNo": 2,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Adley Rutschman",
     "team": "Baltimore Orioles",
     "position": "C",
@@ -25,7 +25,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_02",
     "cardNo": 3,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Ryan Mountcastle",
     "team": "Baltimore Orioles",
     "position": "1B",
@@ -45,7 +45,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_03",
     "cardNo": 4,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Jackson Holliday",
     "team": "Baltimore Orioles",
     "position": "2B",
@@ -65,7 +65,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_04",
     "cardNo": 5,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Jordan Westburg",
     "team": "Baltimore Orioles",
     "position": "3B",
@@ -85,7 +85,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_05",
     "cardNo": 6,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Gunnar Henderson",
     "team": "Baltimore Orioles",
     "position": "SS",
@@ -165,7 +165,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_09",
     "cardNo": 10,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Cal Ripken Jr.",
     "team": "Baltimore Orioles",
     "position": "SS",
@@ -187,7 +187,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_10",
     "cardNo": 11,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Brooks Robinson",
     "team": "Baltimore Orioles",
     "position": "3B",
@@ -208,7 +208,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_11",
     "cardNo": 12,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Eddie Murray",
     "team": "Baltimore Orioles",
     "position": "1B",
@@ -229,7 +229,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_12",
     "cardNo": 13,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Frank Robinson",
     "team": "Baltimore Orioles",
     "position": "RF",
@@ -250,7 +250,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_13",
     "cardNo": 14,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Ken Singleton",
     "team": "Baltimore Orioles",
     "position": "DH",
@@ -336,7 +336,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_17",
     "cardNo": 18,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Kyle Bradish",
     "team": "Baltimore Orioles",
     "position": "SP",
@@ -358,7 +358,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_18",
     "cardNo": 19,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Jim Palmer",
     "team": "Baltimore Orioles",
     "position": "SP",
@@ -381,7 +381,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_19",
     "cardNo": 20,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Félix Bautista",
     "team": "Baltimore Orioles",
     "position": "RP",
@@ -403,7 +403,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_20",
     "cardNo": 21,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Yennier Cano",
     "team": "Baltimore Orioles",
     "position": "RP",
@@ -425,7 +425,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_21",
     "cardNo": 22,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cionel Pérez",
     "team": "Baltimore Orioles",
     "position": "RP",
@@ -513,7 +513,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_25",
     "cardNo": 26,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Gregory Soto",
     "team": "Baltimore Orioles",
     "position": "RP",
@@ -535,7 +535,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BAL_26",
     "cardNo": 27,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Bryan Baker",
     "team": "Baltimore Orioles",
     "position": "RP",
@@ -557,7 +557,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_01",
     "cardNo": 28,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Connor Wong",
     "team": "Boston Red Sox",
     "position": "C",
@@ -578,7 +578,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_02",
     "cardNo": 29,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Triston Casas",
     "team": "Boston Red Sox",
     "position": "1B",
@@ -598,7 +598,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_03",
     "cardNo": 30,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Enmanuel Valdez",
     "team": "Boston Red Sox",
     "position": "2B",
@@ -618,7 +618,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_04",
     "cardNo": 31,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Rafael Devers",
     "team": "Boston Red Sox",
     "position": "3B",
@@ -638,7 +638,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_05",
     "cardNo": 32,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Trevor Story",
     "team": "Boston Red Sox",
     "position": "SS",
@@ -658,7 +658,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_06",
     "cardNo": 33,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Tyler O'Neill",
     "team": "Boston Red Sox",
     "position": "LF",
@@ -678,7 +678,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_07",
     "cardNo": 34,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Jarren Duran",
     "team": "Boston Red Sox",
     "position": "CF",
@@ -698,7 +698,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_08",
     "cardNo": 35,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Wilyer Abreu",
     "team": "Boston Red Sox",
     "position": "RF",
@@ -718,7 +718,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_09",
     "cardNo": 36,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Masataka Yoshida",
     "team": "Boston Red Sox",
     "position": "DH",
@@ -738,7 +738,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_10",
     "cardNo": 37,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Ted Williams",
     "team": "Boston Red Sox",
     "position": "LF",
@@ -759,7 +759,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_11",
     "cardNo": 38,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Danny Jansen",
     "team": "Boston Red Sox",
     "position": "C",
@@ -779,7 +779,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_12",
     "cardNo": 39,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Ceddanne Rafaela",
     "team": "Boston Red Sox",
     "position": "CF",
@@ -799,7 +799,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_13",
     "cardNo": 40,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Rob Refsnyder",
     "team": "Boston Red Sox",
     "position": "RF",
@@ -819,7 +819,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_14",
     "cardNo": 41,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Tanner Houck",
     "team": "Boston Red Sox",
     "position": "SP",
@@ -841,7 +841,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_15",
     "cardNo": 42,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Brayan Bello",
     "team": "Boston Red Sox",
     "position": "SP",
@@ -863,7 +863,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_16",
     "cardNo": 43,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Kutter Crawford",
     "team": "Boston Red Sox",
     "position": "SP",
@@ -885,7 +885,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_17",
     "cardNo": 44,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Nick Pivetta",
     "team": "Boston Red Sox",
     "position": "SP",
@@ -907,7 +907,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_18",
     "cardNo": 45,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Lucas Giolito",
     "team": "Boston Red Sox",
     "position": "SP",
@@ -929,7 +929,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_19",
     "cardNo": 46,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Kenley Jansen",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -951,7 +951,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_20",
     "cardNo": 47,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Chris Martin",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -973,7 +973,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_21",
     "cardNo": 48,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Justin Slaten",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -995,7 +995,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_22",
     "cardNo": 49,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Brennan Bernardino",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -1017,7 +1017,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_23",
     "cardNo": 50,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Zack Kelly",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -1039,7 +1039,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_24",
     "cardNo": 51,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Greg Weissert",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -1061,7 +1061,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_25",
     "cardNo": 52,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Cam Booser",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -1083,7 +1083,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "BOS_26",
     "cardNo": 53,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Cooper Criswell",
     "team": "Boston Red Sox",
     "position": "RP",
@@ -1105,7 +1105,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_01",
     "cardNo": 54,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Austin Wells",
     "team": "New York Yankees",
     "position": "C",
@@ -1126,7 +1126,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_02",
     "cardNo": 55,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Anthony Rizzo",
     "team": "New York Yankees",
     "position": "1B",
@@ -1146,7 +1146,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_03",
     "cardNo": 56,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Gleyber Torres",
     "team": "New York Yankees",
     "position": "2B",
@@ -1166,7 +1166,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_04",
     "cardNo": 57,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Jazz Chisholm Jr.",
     "team": "New York Yankees",
     "position": "3B",
@@ -1186,7 +1186,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_05",
     "cardNo": 58,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Anthony Volpe",
     "team": "New York Yankees",
     "position": "SS",
@@ -1206,7 +1206,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_06",
     "cardNo": 59,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Alex Verdugo",
     "team": "New York Yankees",
     "position": "LF",
@@ -1226,7 +1226,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_07",
     "cardNo": 60,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Aaron Judge",
     "team": "New York Yankees",
     "position": "CF",
@@ -1247,7 +1247,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_08",
     "cardNo": 61,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Juan Soto",
     "team": "New York Yankees",
     "position": "RF",
@@ -1267,7 +1267,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_09",
     "cardNo": 62,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Giancarlo Stanton",
     "team": "New York Yankees",
     "position": "DH",
@@ -1287,7 +1287,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_10",
     "cardNo": 63,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Babe Ruth",
     "team": "New York Yankees",
     "position": "DH",
@@ -1308,7 +1308,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_11",
     "cardNo": 64,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Jose Trevino",
     "team": "New York Yankees",
     "position": "C",
@@ -1328,7 +1328,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_12",
     "cardNo": 65,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Oswaldo Cabrera",
     "team": "New York Yankees",
     "position": "3B",
@@ -1348,7 +1348,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_13",
     "cardNo": 66,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Trent Grisham",
     "team": "New York Yankees",
     "position": "CF",
@@ -1368,7 +1368,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_14",
     "cardNo": 67,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Gerrit Cole",
     "team": "New York Yankees",
     "position": "SP",
@@ -1390,7 +1390,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_15",
     "cardNo": 68,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Carlos Rodón",
     "team": "New York Yankees",
     "position": "SP",
@@ -1412,7 +1412,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_16",
     "cardNo": 69,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Marcus Stroman",
     "team": "New York Yankees",
     "position": "SP",
@@ -1434,7 +1434,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_17",
     "cardNo": 70,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Nestor Cortes",
     "team": "New York Yankees",
     "position": "SP",
@@ -1456,7 +1456,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_18",
     "cardNo": 71,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Clarke Schmidt",
     "team": "New York Yankees",
     "position": "SP",
@@ -1478,7 +1478,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_19",
     "cardNo": 72,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Mariano Rivera",
     "team": "New York Yankees",
     "position": "RP",
@@ -1501,7 +1501,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_20",
     "cardNo": 73,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Luke Weaver",
     "team": "New York Yankees",
     "position": "RP",
@@ -1523,7 +1523,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_21",
     "cardNo": 74,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Clay Holmes",
     "team": "New York Yankees",
     "position": "RP",
@@ -1545,7 +1545,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_22",
     "cardNo": 75,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Tommy Kahnle",
     "team": "New York Yankees",
     "position": "RP",
@@ -1567,7 +1567,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_23",
     "cardNo": 76,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Ian Hamilton",
     "team": "New York Yankees",
     "position": "RP",
@@ -1589,7 +1589,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_24",
     "cardNo": 77,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Tim Hill",
     "team": "New York Yankees",
     "position": "RP",
@@ -1611,7 +1611,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_25",
     "cardNo": 78,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Jake Cousins",
     "team": "New York Yankees",
     "position": "RP",
@@ -1633,7 +1633,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYY_26",
     "cardNo": 79,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Luis Gil",
     "team": "New York Yankees",
     "position": "RP",
@@ -1655,7 +1655,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_01",
     "cardNo": 80,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Tampa Bay Starting Catcher",
     "team": "Tampa Bay Rays",
     "position": "C",
@@ -1675,7 +1675,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_02",
     "cardNo": 81,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Yandy Díaz",
     "team": "Tampa Bay Rays",
     "position": "1B",
@@ -1695,7 +1695,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_03",
     "cardNo": 82,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Tampa Bay Starting 2nd Base",
     "team": "Tampa Bay Rays",
     "position": "2B",
@@ -1715,7 +1715,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_04",
     "cardNo": 83,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Tampa Bay Starting 3rd Base",
     "team": "Tampa Bay Rays",
     "position": "3B",
@@ -1735,7 +1735,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_05",
     "cardNo": 84,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Tampa Bay Starting Shortstop",
     "team": "Tampa Bay Rays",
     "position": "SS",
@@ -1775,7 +1775,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_07",
     "cardNo": 86,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Tampa Bay Starting Center Field",
     "team": "Tampa Bay Rays",
     "position": "CF",
@@ -1795,7 +1795,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_08",
     "cardNo": 87,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Tampa Bay Starting Right Field",
     "team": "Tampa Bay Rays",
     "position": "RF",
@@ -1815,7 +1815,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_09",
     "cardNo": 88,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Tampa Bay Designated Hitter",
     "team": "Tampa Bay Rays",
     "position": "DH",
@@ -1835,7 +1835,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_10",
     "cardNo": 89,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Tampa Bay Backup Catcher",
     "team": "Tampa Bay Rays",
     "position": "C",
@@ -1855,7 +1855,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_11",
     "cardNo": 90,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Tampa Bay Bench Infielder",
     "team": "Tampa Bay Rays",
     "position": "2B",
@@ -1875,7 +1875,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_12",
     "cardNo": 91,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Tampa Bay Fourth Outfielder",
     "team": "Tampa Bay Rays",
     "position": "LF",
@@ -1895,7 +1895,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_13",
     "cardNo": 92,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Tampa Bay Super Utility",
     "team": "Tampa Bay Rays",
     "position": "DH",
@@ -1937,7 +1937,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_15",
     "cardNo": 94,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Tampa Bay No. 2 Starting Pitcher",
     "team": "Tampa Bay Rays",
     "position": "SP",
@@ -1959,7 +1959,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_16",
     "cardNo": 95,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Tampa Bay No. 3 Starting Pitcher",
     "team": "Tampa Bay Rays",
     "position": "SP",
@@ -1981,7 +1981,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_17",
     "cardNo": 96,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Tampa Bay No. 4 Starting Pitcher",
     "team": "Tampa Bay Rays",
     "position": "SP",
@@ -2003,7 +2003,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_18",
     "cardNo": 97,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Tampa Bay No. 5 Starting Pitcher",
     "team": "Tampa Bay Rays",
     "position": "SP",
@@ -2025,7 +2025,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_19",
     "cardNo": 98,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Tampa Bay Closer",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2047,7 +2047,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_20",
     "cardNo": 99,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Tampa Bay Setup Reliever",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2069,7 +2069,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_21",
     "cardNo": 1,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Tampa Bay High Leverage RP",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2113,7 +2113,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_23",
     "cardNo": 3,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Tampa Bay Middle Reliever 2",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2135,7 +2135,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_24",
     "cardNo": 4,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Tampa Bay Left-Handed Specialist",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2157,7 +2157,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_25",
     "cardNo": 5,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Tampa Bay Right-Handed Specialist",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2179,7 +2179,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TB_26",
     "cardNo": 6,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Tampa Bay Long Reliever",
     "team": "Tampa Bay Rays",
     "position": "RP",
@@ -2201,7 +2201,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_01",
     "cardNo": 7,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Toronto Starting Catcher",
     "team": "Toronto Blue Jays",
     "position": "C",
@@ -2221,7 +2221,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_02",
     "cardNo": 8,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Vladimir Guerrero Jr.",
     "team": "Toronto Blue Jays",
     "position": "1B",
@@ -2241,7 +2241,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_03",
     "cardNo": 9,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Toronto Starting 2nd Base",
     "team": "Toronto Blue Jays",
     "position": "2B",
@@ -2261,7 +2261,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_04",
     "cardNo": 10,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Toronto Starting 3rd Base",
     "team": "Toronto Blue Jays",
     "position": "3B",
@@ -2281,7 +2281,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_05",
     "cardNo": 11,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Toronto Starting Shortstop",
     "team": "Toronto Blue Jays",
     "position": "SS",
@@ -2361,7 +2361,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_09",
     "cardNo": 15,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Toronto Designated Hitter",
     "team": "Toronto Blue Jays",
     "position": "DH",
@@ -2381,7 +2381,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_10",
     "cardNo": 16,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Toronto Backup Catcher",
     "team": "Toronto Blue Jays",
     "position": "C",
@@ -2401,7 +2401,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_11",
     "cardNo": 17,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Toronto Bench Infielder",
     "team": "Toronto Blue Jays",
     "position": "2B",
@@ -2421,7 +2421,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_12",
     "cardNo": 18,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Toronto Fourth Outfielder",
     "team": "Toronto Blue Jays",
     "position": "LF",
@@ -2441,7 +2441,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_13",
     "cardNo": 19,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Toronto Super Utility",
     "team": "Toronto Blue Jays",
     "position": "DH",
@@ -2527,7 +2527,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_17",
     "cardNo": 23,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Toronto No. 4 Starting Pitcher",
     "team": "Toronto Blue Jays",
     "position": "SP",
@@ -2549,7 +2549,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_18",
     "cardNo": 24,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Toronto No. 5 Starting Pitcher",
     "team": "Toronto Blue Jays",
     "position": "SP",
@@ -2571,7 +2571,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_19",
     "cardNo": 25,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Toronto Closer",
     "team": "Toronto Blue Jays",
     "position": "RP",
@@ -2593,7 +2593,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_20",
     "cardNo": 26,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Toronto Setup Reliever",
     "team": "Toronto Blue Jays",
     "position": "RP",
@@ -2615,7 +2615,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_21",
     "cardNo": 27,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Toronto High Leverage RP",
     "team": "Toronto Blue Jays",
     "position": "RP",
@@ -2703,7 +2703,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_25",
     "cardNo": 31,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Toronto Right-Handed Specialist",
     "team": "Toronto Blue Jays",
     "position": "RP",
@@ -2725,7 +2725,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TOR_26",
     "cardNo": 32,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Toronto Long Reliever",
     "team": "Toronto Blue Jays",
     "position": "RP",
@@ -2747,7 +2747,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_01",
     "cardNo": 33,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Starting Catcher",
     "team": "Chicago White Sox",
     "position": "C",
@@ -2767,7 +2767,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_02",
     "cardNo": 34,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Starting 1st Base",
     "team": "Chicago White Sox",
     "position": "1B",
@@ -2787,7 +2787,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_03",
     "cardNo": 35,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago Starting 2nd Base",
     "team": "Chicago White Sox",
     "position": "2B",
@@ -2807,7 +2807,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_04",
     "cardNo": 36,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Chicago Starting 3rd Base",
     "team": "Chicago White Sox",
     "position": "3B",
@@ -2827,7 +2827,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_05",
     "cardNo": 37,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Chicago Starting Shortstop",
     "team": "Chicago White Sox",
     "position": "SS",
@@ -2847,7 +2847,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_06",
     "cardNo": 38,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Chicago Starting Left Field",
     "team": "Chicago White Sox",
     "position": "LF",
@@ -2867,7 +2867,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_07",
     "cardNo": 39,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Luis Robert Jr.",
     "team": "Chicago White Sox",
     "position": "CF",
@@ -2887,7 +2887,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_08",
     "cardNo": 40,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Chicago Starting Right Field",
     "team": "Chicago White Sox",
     "position": "RF",
@@ -2907,7 +2907,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_09",
     "cardNo": 41,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Designated Hitter",
     "team": "Chicago White Sox",
     "position": "DH",
@@ -2927,7 +2927,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_10",
     "cardNo": 42,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Backup Catcher",
     "team": "Chicago White Sox",
     "position": "C",
@@ -2947,7 +2947,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_11",
     "cardNo": 43,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago Bench Infielder",
     "team": "Chicago White Sox",
     "position": "2B",
@@ -2967,7 +2967,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_12",
     "cardNo": 44,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Chicago Fourth Outfielder",
     "team": "Chicago White Sox",
     "position": "LF",
@@ -2987,7 +2987,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_13",
     "cardNo": 45,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Chicago Super Utility",
     "team": "Chicago White Sox",
     "position": "DH",
@@ -3007,7 +3007,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_14",
     "cardNo": 46,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Chicago Ace Starting Pitcher",
     "team": "Chicago White Sox",
     "position": "SP",
@@ -3029,7 +3029,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_15",
     "cardNo": 47,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Chicago No. 2 Starting Pitcher",
     "team": "Chicago White Sox",
     "position": "SP",
@@ -3051,7 +3051,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_16",
     "cardNo": 48,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Chicago No. 3 Starting Pitcher",
     "team": "Chicago White Sox",
     "position": "SP",
@@ -3073,7 +3073,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_17",
     "cardNo": 49,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Chicago No. 4 Starting Pitcher",
     "team": "Chicago White Sox",
     "position": "SP",
@@ -3095,7 +3095,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_18",
     "cardNo": 50,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Chicago No. 5 Starting Pitcher",
     "team": "Chicago White Sox",
     "position": "SP",
@@ -3117,7 +3117,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_19",
     "cardNo": 51,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago Closer",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3139,7 +3139,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_20",
     "cardNo": 52,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Chicago Setup Reliever",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3161,7 +3161,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_21",
     "cardNo": 53,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Chicago High Leverage RP",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3183,7 +3183,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_22",
     "cardNo": 54,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Chicago Middle Reliever 1",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3205,7 +3205,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_23",
     "cardNo": 55,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Chicago Middle Reliever 2",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3227,7 +3227,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_24",
     "cardNo": 56,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Chicago Left-Handed Specialist",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3249,7 +3249,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_25",
     "cardNo": 57,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Right-Handed Specialist",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3271,7 +3271,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CWS_26",
     "cardNo": 58,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Long Reliever",
     "team": "Chicago White Sox",
     "position": "RP",
@@ -3293,7 +3293,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_01",
     "cardNo": 59,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cleveland Starting Catcher",
     "team": "Cleveland Guardians",
     "position": "C",
@@ -3313,7 +3313,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_02",
     "cardNo": 60,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Cleveland Starting 1st Base",
     "team": "Cleveland Guardians",
     "position": "1B",
@@ -3333,7 +3333,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_03",
     "cardNo": 61,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Cleveland Starting 2nd Base",
     "team": "Cleveland Guardians",
     "position": "2B",
@@ -3353,7 +3353,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_04",
     "cardNo": 62,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "José Ramírez",
     "team": "Cleveland Guardians",
     "position": "3B",
@@ -3374,7 +3374,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_05",
     "cardNo": 63,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Cleveland Starting Shortstop",
     "team": "Cleveland Guardians",
     "position": "SS",
@@ -3394,7 +3394,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_06",
     "cardNo": 64,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Cleveland Starting Left Field",
     "team": "Cleveland Guardians",
     "position": "LF",
@@ -3414,7 +3414,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_07",
     "cardNo": 65,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Cleveland Starting Center Field",
     "team": "Cleveland Guardians",
     "position": "CF",
@@ -3434,7 +3434,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_08",
     "cardNo": 66,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Cleveland Starting Right Field",
     "team": "Cleveland Guardians",
     "position": "RF",
@@ -3454,7 +3454,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_09",
     "cardNo": 67,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cleveland Designated Hitter",
     "team": "Cleveland Guardians",
     "position": "DH",
@@ -3474,7 +3474,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_10",
     "cardNo": 68,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Cleveland Backup Catcher",
     "team": "Cleveland Guardians",
     "position": "C",
@@ -3494,7 +3494,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_11",
     "cardNo": 69,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Cleveland Bench Infielder",
     "team": "Cleveland Guardians",
     "position": "2B",
@@ -3514,7 +3514,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_12",
     "cardNo": 70,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Cleveland Fourth Outfielder",
     "team": "Cleveland Guardians",
     "position": "LF",
@@ -3534,7 +3534,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_13",
     "cardNo": 71,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Cleveland Super Utility",
     "team": "Cleveland Guardians",
     "position": "DH",
@@ -3554,7 +3554,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_14",
     "cardNo": 72,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Cleveland Ace Starting Pitcher",
     "team": "Cleveland Guardians",
     "position": "SP",
@@ -3576,7 +3576,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_15",
     "cardNo": 73,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Cleveland No. 2 Starting Pitcher",
     "team": "Cleveland Guardians",
     "position": "SP",
@@ -3598,7 +3598,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_16",
     "cardNo": 74,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Cleveland No. 3 Starting Pitcher",
     "team": "Cleveland Guardians",
     "position": "SP",
@@ -3620,7 +3620,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_17",
     "cardNo": 75,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cleveland No. 4 Starting Pitcher",
     "team": "Cleveland Guardians",
     "position": "SP",
@@ -3642,7 +3642,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_18",
     "cardNo": 76,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Cleveland No. 5 Starting Pitcher",
     "team": "Cleveland Guardians",
     "position": "SP",
@@ -3664,7 +3664,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_19",
     "cardNo": 77,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Cleveland Closer",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3686,7 +3686,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_20",
     "cardNo": 78,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Cleveland Setup Reliever",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3708,7 +3708,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_21",
     "cardNo": 79,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Cleveland High Leverage RP",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3730,7 +3730,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_22",
     "cardNo": 80,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Cleveland Middle Reliever 1",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3752,7 +3752,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_23",
     "cardNo": 81,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Cleveland Middle Reliever 2",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3774,7 +3774,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_24",
     "cardNo": 82,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Cleveland Left-Handed Specialist",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3796,7 +3796,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_25",
     "cardNo": 83,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cleveland Right-Handed Specialist",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3818,7 +3818,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CLE_26",
     "cardNo": 84,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Cleveland Long Reliever",
     "team": "Cleveland Guardians",
     "position": "RP",
@@ -3840,7 +3840,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_01",
     "cardNo": 85,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Detroit Starting Catcher",
     "team": "Detroit Tigers",
     "position": "C",
@@ -3860,7 +3860,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_02",
     "cardNo": 86,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Detroit Starting 1st Base",
     "team": "Detroit Tigers",
     "position": "1B",
@@ -3880,7 +3880,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_03",
     "cardNo": 87,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Detroit Starting 2nd Base",
     "team": "Detroit Tigers",
     "position": "2B",
@@ -3900,7 +3900,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_04",
     "cardNo": 88,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Detroit Starting 3rd Base",
     "team": "Detroit Tigers",
     "position": "3B",
@@ -3920,7 +3920,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_05",
     "cardNo": 89,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Detroit Starting Shortstop",
     "team": "Detroit Tigers",
     "position": "SS",
@@ -3960,7 +3960,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_07",
     "cardNo": 91,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Detroit Starting Center Field",
     "team": "Detroit Tigers",
     "position": "CF",
@@ -3980,7 +3980,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_08",
     "cardNo": 92,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Detroit Starting Right Field",
     "team": "Detroit Tigers",
     "position": "RF",
@@ -4000,7 +4000,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_09",
     "cardNo": 93,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Detroit Designated Hitter",
     "team": "Detroit Tigers",
     "position": "DH",
@@ -4020,7 +4020,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_10",
     "cardNo": 94,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Detroit Backup Catcher",
     "team": "Detroit Tigers",
     "position": "C",
@@ -4040,7 +4040,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_11",
     "cardNo": 95,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Detroit Bench Infielder",
     "team": "Detroit Tigers",
     "position": "2B",
@@ -4060,7 +4060,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_12",
     "cardNo": 96,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Detroit Fourth Outfielder",
     "team": "Detroit Tigers",
     "position": "LF",
@@ -4080,7 +4080,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_13",
     "cardNo": 97,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Detroit Super Utility",
     "team": "Detroit Tigers",
     "position": "DH",
@@ -4122,7 +4122,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_15",
     "cardNo": 99,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Detroit No. 2 Starting Pitcher",
     "team": "Detroit Tigers",
     "position": "SP",
@@ -4144,7 +4144,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_16",
     "cardNo": 1,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Detroit No. 3 Starting Pitcher",
     "team": "Detroit Tigers",
     "position": "SP",
@@ -4166,7 +4166,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_17",
     "cardNo": 2,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Detroit No. 4 Starting Pitcher",
     "team": "Detroit Tigers",
     "position": "SP",
@@ -4188,7 +4188,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_18",
     "cardNo": 3,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Detroit No. 5 Starting Pitcher",
     "team": "Detroit Tigers",
     "position": "SP",
@@ -4210,7 +4210,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_19",
     "cardNo": 4,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Detroit Closer",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4232,7 +4232,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_20",
     "cardNo": 5,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Detroit Setup Reliever",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4254,7 +4254,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_21",
     "cardNo": 6,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Detroit High Leverage RP",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4298,7 +4298,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_23",
     "cardNo": 8,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Detroit Middle Reliever 2",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4320,7 +4320,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_24",
     "cardNo": 9,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Detroit Left-Handed Specialist",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4342,7 +4342,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_25",
     "cardNo": 10,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Detroit Right-Handed Specialist",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4364,7 +4364,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "DET_26",
     "cardNo": 11,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Detroit Long Reliever",
     "team": "Detroit Tigers",
     "position": "RP",
@@ -4386,7 +4386,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_01",
     "cardNo": 12,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Kansas City Starting Catcher",
     "team": "Kansas City Royals",
     "position": "C",
@@ -4406,7 +4406,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_02",
     "cardNo": 13,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Kansas City Starting 1st Base",
     "team": "Kansas City Royals",
     "position": "1B",
@@ -4426,7 +4426,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_03",
     "cardNo": 14,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Kansas City Starting 2nd Base",
     "team": "Kansas City Royals",
     "position": "2B",
@@ -4446,7 +4446,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_04",
     "cardNo": 15,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Kansas City Starting 3rd Base",
     "team": "Kansas City Royals",
     "position": "3B",
@@ -4466,7 +4466,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_05",
     "cardNo": 16,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Bobby Witt Jr.",
     "team": "Kansas City Royals",
     "position": "SS",
@@ -4546,7 +4546,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_09",
     "cardNo": 20,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Kansas City Designated Hitter",
     "team": "Kansas City Royals",
     "position": "DH",
@@ -4566,7 +4566,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_10",
     "cardNo": 21,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Kansas City Backup Catcher",
     "team": "Kansas City Royals",
     "position": "C",
@@ -4586,7 +4586,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_11",
     "cardNo": 22,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Kansas City Bench Infielder",
     "team": "Kansas City Royals",
     "position": "2B",
@@ -4606,7 +4606,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_12",
     "cardNo": 23,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Kansas City Fourth Outfielder",
     "team": "Kansas City Royals",
     "position": "LF",
@@ -4626,7 +4626,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_13",
     "cardNo": 24,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Kansas City Super Utility",
     "team": "Kansas City Royals",
     "position": "DH",
@@ -4712,7 +4712,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_17",
     "cardNo": 28,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Kansas City No. 4 Starting Pitcher",
     "team": "Kansas City Royals",
     "position": "SP",
@@ -4734,7 +4734,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_18",
     "cardNo": 29,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Kansas City No. 5 Starting Pitcher",
     "team": "Kansas City Royals",
     "position": "SP",
@@ -4756,7 +4756,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_19",
     "cardNo": 30,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Kansas City Closer",
     "team": "Kansas City Royals",
     "position": "RP",
@@ -4778,7 +4778,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_20",
     "cardNo": 31,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Kansas City Setup Reliever",
     "team": "Kansas City Royals",
     "position": "RP",
@@ -4800,7 +4800,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_21",
     "cardNo": 32,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Kansas City High Leverage RP",
     "team": "Kansas City Royals",
     "position": "RP",
@@ -4888,7 +4888,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_25",
     "cardNo": 36,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Kansas City Right-Handed Specialist",
     "team": "Kansas City Royals",
     "position": "RP",
@@ -4910,7 +4910,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "KC_26",
     "cardNo": 37,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Kansas City Long Reliever",
     "team": "Kansas City Royals",
     "position": "RP",
@@ -4932,7 +4932,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_01",
     "cardNo": 38,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Minnesota Starting Catcher",
     "team": "Minnesota Twins",
     "position": "C",
@@ -4952,7 +4952,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_02",
     "cardNo": 39,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Minnesota Starting 1st Base",
     "team": "Minnesota Twins",
     "position": "1B",
@@ -4972,7 +4972,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_03",
     "cardNo": 40,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Minnesota Starting 2nd Base",
     "team": "Minnesota Twins",
     "position": "2B",
@@ -4992,7 +4992,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_04",
     "cardNo": 41,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Minnesota Starting 3rd Base",
     "team": "Minnesota Twins",
     "position": "3B",
@@ -5012,7 +5012,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_05",
     "cardNo": 42,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Carlos Correa",
     "team": "Minnesota Twins",
     "position": "SS",
@@ -5032,7 +5032,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_06",
     "cardNo": 43,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Minnesota Starting Left Field",
     "team": "Minnesota Twins",
     "position": "LF",
@@ -5052,7 +5052,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_07",
     "cardNo": 44,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Minnesota Starting Center Field",
     "team": "Minnesota Twins",
     "position": "CF",
@@ -5072,7 +5072,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_08",
     "cardNo": 45,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Minnesota Starting Right Field",
     "team": "Minnesota Twins",
     "position": "RF",
@@ -5092,7 +5092,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_09",
     "cardNo": 46,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Minnesota Designated Hitter",
     "team": "Minnesota Twins",
     "position": "DH",
@@ -5112,7 +5112,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_10",
     "cardNo": 47,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Minnesota Backup Catcher",
     "team": "Minnesota Twins",
     "position": "C",
@@ -5132,7 +5132,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_11",
     "cardNo": 48,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Minnesota Bench Infielder",
     "team": "Minnesota Twins",
     "position": "2B",
@@ -5152,7 +5152,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_12",
     "cardNo": 49,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Minnesota Fourth Outfielder",
     "team": "Minnesota Twins",
     "position": "LF",
@@ -5172,7 +5172,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_13",
     "cardNo": 50,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Minnesota Super Utility",
     "team": "Minnesota Twins",
     "position": "DH",
@@ -5192,7 +5192,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_14",
     "cardNo": 51,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Minnesota Ace Starting Pitcher",
     "team": "Minnesota Twins",
     "position": "SP",
@@ -5214,7 +5214,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_15",
     "cardNo": 52,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Minnesota No. 2 Starting Pitcher",
     "team": "Minnesota Twins",
     "position": "SP",
@@ -5236,7 +5236,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_16",
     "cardNo": 53,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Minnesota No. 3 Starting Pitcher",
     "team": "Minnesota Twins",
     "position": "SP",
@@ -5258,7 +5258,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_17",
     "cardNo": 54,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Minnesota No. 4 Starting Pitcher",
     "team": "Minnesota Twins",
     "position": "SP",
@@ -5280,7 +5280,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_18",
     "cardNo": 55,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Minnesota No. 5 Starting Pitcher",
     "team": "Minnesota Twins",
     "position": "SP",
@@ -5302,7 +5302,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_19",
     "cardNo": 56,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Minnesota Closer",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5324,7 +5324,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_20",
     "cardNo": 57,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Minnesota Setup Reliever",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5346,7 +5346,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_21",
     "cardNo": 58,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Minnesota High Leverage RP",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5368,7 +5368,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_22",
     "cardNo": 59,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Minnesota Middle Reliever 1",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5390,7 +5390,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_23",
     "cardNo": 60,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Minnesota Middle Reliever 2",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5412,7 +5412,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_24",
     "cardNo": 61,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Minnesota Left-Handed Specialist",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5434,7 +5434,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_25",
     "cardNo": 62,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Minnesota Right-Handed Specialist",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5456,7 +5456,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIN_26",
     "cardNo": 63,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Minnesota Long Reliever",
     "team": "Minnesota Twins",
     "position": "RP",
@@ -5478,7 +5478,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_01",
     "cardNo": 64,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Yainer Diaz",
     "team": "Houston Astros",
     "position": "C",
@@ -5499,7 +5499,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_02",
     "cardNo": 65,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Jon Singleton",
     "team": "Houston Astros",
     "position": "1B",
@@ -5519,7 +5519,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_03",
     "cardNo": 66,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Jose Altuve",
     "team": "Houston Astros",
     "position": "2B",
@@ -5540,7 +5540,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_04",
     "cardNo": 67,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Alex Bregman",
     "team": "Houston Astros",
     "position": "3B",
@@ -5560,7 +5560,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_05",
     "cardNo": 68,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Jeremy Peña",
     "team": "Houston Astros",
     "position": "SS",
@@ -5580,7 +5580,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_06",
     "cardNo": 69,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Jason Heyward",
     "team": "Houston Astros",
     "position": "LF",
@@ -5600,7 +5600,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_07",
     "cardNo": 70,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Jake Meyers",
     "team": "Houston Astros",
     "position": "CF",
@@ -5620,7 +5620,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_08",
     "cardNo": 71,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Kyle Tucker",
     "team": "Houston Astros",
     "position": "RF",
@@ -5640,7 +5640,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_09",
     "cardNo": 72,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Yordan Alvarez",
     "team": "Houston Astros",
     "position": "DH",
@@ -5660,7 +5660,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_10",
     "cardNo": 73,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Craig Biggio",
     "team": "Houston Astros",
     "position": "2B",
@@ -5681,7 +5681,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_11",
     "cardNo": 74,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Victor Caratini",
     "team": "Houston Astros",
     "position": "C",
@@ -5701,7 +5701,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_12",
     "cardNo": 75,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Mauricio Dubón",
     "team": "Houston Astros",
     "position": "CF",
@@ -5721,7 +5721,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_13",
     "cardNo": 76,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Chas McCormick",
     "team": "Houston Astros",
     "position": "LF",
@@ -5741,7 +5741,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_14",
     "cardNo": 77,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Framber Valdez",
     "team": "Houston Astros",
     "position": "SP",
@@ -5763,7 +5763,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_15",
     "cardNo": 78,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Hunter Brown",
     "team": "Houston Astros",
     "position": "SP",
@@ -5785,7 +5785,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_16",
     "cardNo": 79,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Ronel Blanco",
     "team": "Houston Astros",
     "position": "SP",
@@ -5807,7 +5807,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_17",
     "cardNo": 80,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Spencer Arrighetti",
     "team": "Houston Astros",
     "position": "SP",
@@ -5829,7 +5829,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_18",
     "cardNo": 81,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Justin Verlander",
     "team": "Houston Astros",
     "position": "SP",
@@ -5852,7 +5852,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_19",
     "cardNo": 82,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Josh Hader",
     "team": "Houston Astros",
     "position": "RP",
@@ -5874,7 +5874,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_20",
     "cardNo": 83,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Ryan Pressly",
     "team": "Houston Astros",
     "position": "RP",
@@ -5896,7 +5896,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_21",
     "cardNo": 84,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Bryan Abreu",
     "team": "Houston Astros",
     "position": "RP",
@@ -5918,7 +5918,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_22",
     "cardNo": 85,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Tayler Scott",
     "team": "Houston Astros",
     "position": "RP",
@@ -5940,7 +5940,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_23",
     "cardNo": 86,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Shawn Dubin",
     "team": "Houston Astros",
     "position": "RP",
@@ -5962,7 +5962,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_24",
     "cardNo": 87,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Caleb Ferguson",
     "team": "Houston Astros",
     "position": "RP",
@@ -5984,7 +5984,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_25",
     "cardNo": 88,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Seth Martinez",
     "team": "Houston Astros",
     "position": "RP",
@@ -6006,7 +6006,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "HOU_26",
     "cardNo": 89,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Kaleb Ort",
     "team": "Houston Astros",
     "position": "RP",
@@ -6028,7 +6028,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_01",
     "cardNo": 90,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Los Angeles Starting Catcher",
     "team": "Los Angeles Angels",
     "position": "C",
@@ -6048,7 +6048,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_02",
     "cardNo": 91,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Los Angeles Starting 1st Base",
     "team": "Los Angeles Angels",
     "position": "1B",
@@ -6068,7 +6068,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_03",
     "cardNo": 92,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Los Angeles Starting 2nd Base",
     "team": "Los Angeles Angels",
     "position": "2B",
@@ -6088,7 +6088,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_04",
     "cardNo": 93,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Los Angeles Starting 3rd Base",
     "team": "Los Angeles Angels",
     "position": "3B",
@@ -6108,7 +6108,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_05",
     "cardNo": 94,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Los Angeles Starting Shortstop",
     "team": "Los Angeles Angels",
     "position": "SS",
@@ -6148,7 +6148,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_07",
     "cardNo": 96,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Mike Trout",
     "team": "Los Angeles Angels",
     "position": "CF",
@@ -6169,7 +6169,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_08",
     "cardNo": 97,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Los Angeles Starting Right Field",
     "team": "Los Angeles Angels",
     "position": "RF",
@@ -6189,7 +6189,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_09",
     "cardNo": 98,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Los Angeles Designated Hitter",
     "team": "Los Angeles Angels",
     "position": "DH",
@@ -6209,7 +6209,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_10",
     "cardNo": 99,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Los Angeles Backup Catcher",
     "team": "Los Angeles Angels",
     "position": "C",
@@ -6229,7 +6229,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_11",
     "cardNo": 1,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Los Angeles Bench Infielder",
     "team": "Los Angeles Angels",
     "position": "2B",
@@ -6249,7 +6249,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_12",
     "cardNo": 2,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Los Angeles Fourth Outfielder",
     "team": "Los Angeles Angels",
     "position": "LF",
@@ -6269,7 +6269,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_13",
     "cardNo": 3,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Los Angeles Super Utility",
     "team": "Los Angeles Angels",
     "position": "DH",
@@ -6311,7 +6311,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_15",
     "cardNo": 5,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Los Angeles No. 2 Starting Pitcher",
     "team": "Los Angeles Angels",
     "position": "SP",
@@ -6333,7 +6333,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_16",
     "cardNo": 6,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Los Angeles No. 3 Starting Pitcher",
     "team": "Los Angeles Angels",
     "position": "SP",
@@ -6355,7 +6355,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_17",
     "cardNo": 7,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Los Angeles No. 4 Starting Pitcher",
     "team": "Los Angeles Angels",
     "position": "SP",
@@ -6377,7 +6377,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_18",
     "cardNo": 8,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Los Angeles No. 5 Starting Pitcher",
     "team": "Los Angeles Angels",
     "position": "SP",
@@ -6399,7 +6399,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_19",
     "cardNo": 9,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Los Angeles Closer",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6421,7 +6421,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_20",
     "cardNo": 10,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Los Angeles Setup Reliever",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6443,7 +6443,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_21",
     "cardNo": 11,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Los Angeles High Leverage RP",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6487,7 +6487,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_23",
     "cardNo": 13,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Los Angeles Middle Reliever 2",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6509,7 +6509,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_24",
     "cardNo": 14,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Los Angeles Left-Handed Specialist",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6531,7 +6531,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_25",
     "cardNo": 15,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Los Angeles Right-Handed Specialist",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6553,7 +6553,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAA_26",
     "cardNo": 16,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Los Angeles Long Reliever",
     "team": "Los Angeles Angels",
     "position": "RP",
@@ -6575,7 +6575,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_01",
     "cardNo": 17,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Oakland Starting Catcher",
     "team": "Oakland Athletics",
     "position": "C",
@@ -6595,7 +6595,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_02",
     "cardNo": 18,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Oakland Starting 1st Base",
     "team": "Oakland Athletics",
     "position": "1B",
@@ -6615,7 +6615,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_03",
     "cardNo": 19,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Oakland Starting 2nd Base",
     "team": "Oakland Athletics",
     "position": "2B",
@@ -6635,7 +6635,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_04",
     "cardNo": 20,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Oakland Starting 3rd Base",
     "team": "Oakland Athletics",
     "position": "3B",
@@ -6655,7 +6655,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_05",
     "cardNo": 21,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Oakland Starting Shortstop",
     "team": "Oakland Athletics",
     "position": "SS",
@@ -6735,7 +6735,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_09",
     "cardNo": 25,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Brent Rooker",
     "team": "Oakland Athletics",
     "position": "DH",
@@ -6755,7 +6755,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_10",
     "cardNo": 26,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Oakland Backup Catcher",
     "team": "Oakland Athletics",
     "position": "C",
@@ -6775,7 +6775,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_11",
     "cardNo": 27,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Oakland Bench Infielder",
     "team": "Oakland Athletics",
     "position": "2B",
@@ -6795,7 +6795,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_12",
     "cardNo": 28,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Oakland Fourth Outfielder",
     "team": "Oakland Athletics",
     "position": "LF",
@@ -6815,7 +6815,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_13",
     "cardNo": 29,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Oakland Super Utility",
     "team": "Oakland Athletics",
     "position": "DH",
@@ -6901,7 +6901,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_17",
     "cardNo": 33,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Oakland No. 4 Starting Pitcher",
     "team": "Oakland Athletics",
     "position": "SP",
@@ -6923,7 +6923,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_18",
     "cardNo": 34,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Oakland No. 5 Starting Pitcher",
     "team": "Oakland Athletics",
     "position": "SP",
@@ -6945,7 +6945,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_19",
     "cardNo": 35,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Oakland Closer",
     "team": "Oakland Athletics",
     "position": "RP",
@@ -6967,7 +6967,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_20",
     "cardNo": 36,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Oakland Setup Reliever",
     "team": "Oakland Athletics",
     "position": "RP",
@@ -6989,7 +6989,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_21",
     "cardNo": 37,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Oakland High Leverage RP",
     "team": "Oakland Athletics",
     "position": "RP",
@@ -7077,7 +7077,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_25",
     "cardNo": 41,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Oakland Right-Handed Specialist",
     "team": "Oakland Athletics",
     "position": "RP",
@@ -7099,7 +7099,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "OAK_26",
     "cardNo": 42,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Oakland Long Reliever",
     "team": "Oakland Athletics",
     "position": "RP",
@@ -7121,7 +7121,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_01",
     "cardNo": 43,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Seattle Starting Catcher",
     "team": "Seattle Mariners",
     "position": "C",
@@ -7141,7 +7141,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_02",
     "cardNo": 44,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Seattle Starting 1st Base",
     "team": "Seattle Mariners",
     "position": "1B",
@@ -7161,7 +7161,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_03",
     "cardNo": 45,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Seattle Starting 2nd Base",
     "team": "Seattle Mariners",
     "position": "2B",
@@ -7181,7 +7181,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_04",
     "cardNo": 46,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Seattle Starting 3rd Base",
     "team": "Seattle Mariners",
     "position": "3B",
@@ -7201,7 +7201,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_05",
     "cardNo": 47,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Seattle Starting Shortstop",
     "team": "Seattle Mariners",
     "position": "SS",
@@ -7221,7 +7221,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_06",
     "cardNo": 48,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Seattle Starting Left Field",
     "team": "Seattle Mariners",
     "position": "LF",
@@ -7241,7 +7241,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_07",
     "cardNo": 49,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Julio Rodríguez",
     "team": "Seattle Mariners",
     "position": "CF",
@@ -7261,7 +7261,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_08",
     "cardNo": 50,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Seattle Starting Right Field",
     "team": "Seattle Mariners",
     "position": "RF",
@@ -7281,7 +7281,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_09",
     "cardNo": 51,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Seattle Designated Hitter",
     "team": "Seattle Mariners",
     "position": "DH",
@@ -7301,7 +7301,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_10",
     "cardNo": 52,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Seattle Backup Catcher",
     "team": "Seattle Mariners",
     "position": "C",
@@ -7321,7 +7321,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_11",
     "cardNo": 53,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Seattle Bench Infielder",
     "team": "Seattle Mariners",
     "position": "2B",
@@ -7341,7 +7341,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_12",
     "cardNo": 54,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Seattle Fourth Outfielder",
     "team": "Seattle Mariners",
     "position": "LF",
@@ -7361,7 +7361,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_13",
     "cardNo": 55,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Seattle Super Utility",
     "team": "Seattle Mariners",
     "position": "DH",
@@ -7381,7 +7381,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_14",
     "cardNo": 56,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Seattle Ace Starting Pitcher",
     "team": "Seattle Mariners",
     "position": "SP",
@@ -7403,7 +7403,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_15",
     "cardNo": 57,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Seattle No. 2 Starting Pitcher",
     "team": "Seattle Mariners",
     "position": "SP",
@@ -7425,7 +7425,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_16",
     "cardNo": 58,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Seattle No. 3 Starting Pitcher",
     "team": "Seattle Mariners",
     "position": "SP",
@@ -7447,7 +7447,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_17",
     "cardNo": 59,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Seattle No. 4 Starting Pitcher",
     "team": "Seattle Mariners",
     "position": "SP",
@@ -7469,7 +7469,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_18",
     "cardNo": 60,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Seattle No. 5 Starting Pitcher",
     "team": "Seattle Mariners",
     "position": "SP",
@@ -7491,7 +7491,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_19",
     "cardNo": 61,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Seattle Closer",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7513,7 +7513,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_20",
     "cardNo": 62,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Seattle Setup Reliever",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7535,7 +7535,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_21",
     "cardNo": 63,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Seattle High Leverage RP",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7557,7 +7557,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_22",
     "cardNo": 64,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Seattle Middle Reliever 1",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7579,7 +7579,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_23",
     "cardNo": 65,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Seattle Middle Reliever 2",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7601,7 +7601,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_24",
     "cardNo": 66,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Seattle Left-Handed Specialist",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7623,7 +7623,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_25",
     "cardNo": 67,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Seattle Right-Handed Specialist",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7645,7 +7645,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SEA_26",
     "cardNo": 68,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Seattle Long Reliever",
     "team": "Seattle Mariners",
     "position": "RP",
@@ -7667,7 +7667,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_01",
     "cardNo": 69,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Texas Starting Catcher",
     "team": "Texas Rangers",
     "position": "C",
@@ -7687,7 +7687,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_02",
     "cardNo": 70,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Texas Starting 1st Base",
     "team": "Texas Rangers",
     "position": "1B",
@@ -7707,7 +7707,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_03",
     "cardNo": 71,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Texas Starting 2nd Base",
     "team": "Texas Rangers",
     "position": "2B",
@@ -7727,7 +7727,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_04",
     "cardNo": 72,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Texas Starting 3rd Base",
     "team": "Texas Rangers",
     "position": "3B",
@@ -7747,7 +7747,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_05",
     "cardNo": 73,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Corey Seager",
     "team": "Texas Rangers",
     "position": "SS",
@@ -7767,7 +7767,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_06",
     "cardNo": 74,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Texas Starting Left Field",
     "team": "Texas Rangers",
     "position": "LF",
@@ -7787,7 +7787,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_07",
     "cardNo": 75,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Texas Starting Center Field",
     "team": "Texas Rangers",
     "position": "CF",
@@ -7807,7 +7807,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_08",
     "cardNo": 76,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Texas Starting Right Field",
     "team": "Texas Rangers",
     "position": "RF",
@@ -7827,7 +7827,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_09",
     "cardNo": 77,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Texas Designated Hitter",
     "team": "Texas Rangers",
     "position": "DH",
@@ -7847,7 +7847,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_10",
     "cardNo": 78,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Texas Backup Catcher",
     "team": "Texas Rangers",
     "position": "C",
@@ -7867,7 +7867,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_11",
     "cardNo": 79,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Texas Bench Infielder",
     "team": "Texas Rangers",
     "position": "2B",
@@ -7887,7 +7887,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_12",
     "cardNo": 80,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Texas Fourth Outfielder",
     "team": "Texas Rangers",
     "position": "LF",
@@ -7907,7 +7907,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_13",
     "cardNo": 81,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Texas Super Utility",
     "team": "Texas Rangers",
     "position": "DH",
@@ -7927,7 +7927,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_14",
     "cardNo": 82,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Texas Ace Starting Pitcher",
     "team": "Texas Rangers",
     "position": "SP",
@@ -7949,7 +7949,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_15",
     "cardNo": 83,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Texas No. 2 Starting Pitcher",
     "team": "Texas Rangers",
     "position": "SP",
@@ -7971,7 +7971,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_16",
     "cardNo": 84,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Texas No. 3 Starting Pitcher",
     "team": "Texas Rangers",
     "position": "SP",
@@ -7993,7 +7993,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_17",
     "cardNo": 85,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Texas No. 4 Starting Pitcher",
     "team": "Texas Rangers",
     "position": "SP",
@@ -8015,7 +8015,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_18",
     "cardNo": 86,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Texas No. 5 Starting Pitcher",
     "team": "Texas Rangers",
     "position": "SP",
@@ -8037,7 +8037,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_19",
     "cardNo": 87,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Texas Closer",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8059,7 +8059,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_20",
     "cardNo": 88,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Texas Setup Reliever",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8081,7 +8081,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_21",
     "cardNo": 89,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Texas High Leverage RP",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8103,7 +8103,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_22",
     "cardNo": 90,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Texas Middle Reliever 1",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8125,7 +8125,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_23",
     "cardNo": 91,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Texas Middle Reliever 2",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8147,7 +8147,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_24",
     "cardNo": 92,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Texas Left-Handed Specialist",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8169,7 +8169,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_25",
     "cardNo": 93,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Texas Right-Handed Specialist",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8191,7 +8191,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "TEX_26",
     "cardNo": 94,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Texas Long Reliever",
     "team": "Texas Rangers",
     "position": "RP",
@@ -8213,7 +8213,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_01",
     "cardNo": 95,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Sean Murphy",
     "team": "Atlanta Braves",
     "position": "C",
@@ -8234,7 +8234,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_02",
     "cardNo": 96,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Matt Olson",
     "team": "Atlanta Braves",
     "position": "1B",
@@ -8254,7 +8254,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_03",
     "cardNo": 97,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Ozzie Albies",
     "team": "Atlanta Braves",
     "position": "2B",
@@ -8274,7 +8274,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_04",
     "cardNo": 98,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Austin Riley",
     "team": "Atlanta Braves",
     "position": "3B",
@@ -8294,7 +8294,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_05",
     "cardNo": 99,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Orlando Arcia",
     "team": "Atlanta Braves",
     "position": "SS",
@@ -8334,7 +8334,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_07",
     "cardNo": 2,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Michael Harris II",
     "team": "Atlanta Braves",
     "position": "CF",
@@ -8354,7 +8354,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_08",
     "cardNo": 3,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Ronald Acuña Jr.",
     "team": "Atlanta Braves",
     "position": "RF",
@@ -8374,7 +8374,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_09",
     "cardNo": 4,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Marcell Ozuna",
     "team": "Atlanta Braves",
     "position": "DH",
@@ -8394,7 +8394,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_10",
     "cardNo": 5,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Chipper Jones",
     "team": "Atlanta Braves",
     "position": "3B",
@@ -8415,7 +8415,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_11",
     "cardNo": 6,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Travis d'Arnaud",
     "team": "Atlanta Braves",
     "position": "C",
@@ -8435,7 +8435,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_12",
     "cardNo": 7,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Whit Merrifield",
     "team": "Atlanta Braves",
     "position": "2B",
@@ -8455,7 +8455,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_13",
     "cardNo": 8,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Ramón Laureano",
     "team": "Atlanta Braves",
     "position": "RF",
@@ -8498,7 +8498,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_15",
     "cardNo": 10,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Reynaldo López",
     "team": "Atlanta Braves",
     "position": "SP",
@@ -8520,7 +8520,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_16",
     "cardNo": 11,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Max Fried",
     "team": "Atlanta Braves",
     "position": "SP",
@@ -8542,7 +8542,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_17",
     "cardNo": 12,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Spencer Schwellenbach",
     "team": "Atlanta Braves",
     "position": "SP",
@@ -8564,7 +8564,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_18",
     "cardNo": 13,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Spencer Strider",
     "team": "Atlanta Braves",
     "position": "SP",
@@ -8586,7 +8586,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_19",
     "cardNo": 14,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Raisel Iglesias",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8608,7 +8608,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_20",
     "cardNo": 15,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Joe Jiménez",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8630,7 +8630,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_21",
     "cardNo": 16,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Pierce Johnson",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8674,7 +8674,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_23",
     "cardNo": 18,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Aaron Bummer",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8696,7 +8696,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_24",
     "cardNo": 19,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Jesse Chavez",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8718,7 +8718,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_25",
     "cardNo": 20,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Daysbel Hernández",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8740,7 +8740,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "ATL_26",
     "cardNo": 21,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Charlie Morton",
     "team": "Atlanta Braves",
     "position": "RP",
@@ -8762,7 +8762,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_01",
     "cardNo": 22,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Miami Starting Catcher",
     "team": "Miami Marlins",
     "position": "C",
@@ -8782,7 +8782,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_02",
     "cardNo": 23,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Miami Starting 1st Base",
     "team": "Miami Marlins",
     "position": "1B",
@@ -8802,7 +8802,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_03",
     "cardNo": 24,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Miami Starting 2nd Base",
     "team": "Miami Marlins",
     "position": "2B",
@@ -8822,7 +8822,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_04",
     "cardNo": 25,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Miami Starting 3rd Base",
     "team": "Miami Marlins",
     "position": "3B",
@@ -8842,7 +8842,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_05",
     "cardNo": 26,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Miami Starting Shortstop",
     "team": "Miami Marlins",
     "position": "SS",
@@ -8922,7 +8922,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_09",
     "cardNo": 30,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Jake Burger",
     "team": "Miami Marlins",
     "position": "DH",
@@ -8942,7 +8942,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_10",
     "cardNo": 31,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Miami Backup Catcher",
     "team": "Miami Marlins",
     "position": "C",
@@ -8962,7 +8962,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_11",
     "cardNo": 32,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Miami Bench Infielder",
     "team": "Miami Marlins",
     "position": "2B",
@@ -8982,7 +8982,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_12",
     "cardNo": 33,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Miami Fourth Outfielder",
     "team": "Miami Marlins",
     "position": "LF",
@@ -9002,7 +9002,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_13",
     "cardNo": 34,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Miami Super Utility",
     "team": "Miami Marlins",
     "position": "DH",
@@ -9088,7 +9088,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_17",
     "cardNo": 38,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Miami No. 4 Starting Pitcher",
     "team": "Miami Marlins",
     "position": "SP",
@@ -9110,7 +9110,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_18",
     "cardNo": 39,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Miami No. 5 Starting Pitcher",
     "team": "Miami Marlins",
     "position": "SP",
@@ -9132,7 +9132,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_19",
     "cardNo": 40,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Miami Closer",
     "team": "Miami Marlins",
     "position": "RP",
@@ -9154,7 +9154,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_20",
     "cardNo": 41,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Miami Setup Reliever",
     "team": "Miami Marlins",
     "position": "RP",
@@ -9176,7 +9176,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_21",
     "cardNo": 42,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Miami High Leverage RP",
     "team": "Miami Marlins",
     "position": "RP",
@@ -9264,7 +9264,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_25",
     "cardNo": 46,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Miami Right-Handed Specialist",
     "team": "Miami Marlins",
     "position": "RP",
@@ -9286,7 +9286,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIA_26",
     "cardNo": 47,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Miami Long Reliever",
     "team": "Miami Marlins",
     "position": "RP",
@@ -9308,7 +9308,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_01",
     "cardNo": 48,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "New York Starting Catcher",
     "team": "New York Mets",
     "position": "C",
@@ -9328,7 +9328,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_02",
     "cardNo": 49,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "New York Starting 1st Base",
     "team": "New York Mets",
     "position": "1B",
@@ -9348,7 +9348,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_03",
     "cardNo": 50,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "New York Starting 2nd Base",
     "team": "New York Mets",
     "position": "2B",
@@ -9368,7 +9368,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_04",
     "cardNo": 51,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "New York Starting 3rd Base",
     "team": "New York Mets",
     "position": "3B",
@@ -9388,7 +9388,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_05",
     "cardNo": 52,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Francisco Lindor",
     "team": "New York Mets",
     "position": "SS",
@@ -9408,7 +9408,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_06",
     "cardNo": 53,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "New York Starting Left Field",
     "team": "New York Mets",
     "position": "LF",
@@ -9428,7 +9428,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_07",
     "cardNo": 54,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "New York Starting Center Field",
     "team": "New York Mets",
     "position": "CF",
@@ -9448,7 +9448,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_08",
     "cardNo": 55,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "New York Starting Right Field",
     "team": "New York Mets",
     "position": "RF",
@@ -9468,7 +9468,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_09",
     "cardNo": 56,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "New York Designated Hitter",
     "team": "New York Mets",
     "position": "DH",
@@ -9488,7 +9488,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_10",
     "cardNo": 57,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "New York Backup Catcher",
     "team": "New York Mets",
     "position": "C",
@@ -9508,7 +9508,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_11",
     "cardNo": 58,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "New York Bench Infielder",
     "team": "New York Mets",
     "position": "2B",
@@ -9528,7 +9528,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_12",
     "cardNo": 59,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "New York Fourth Outfielder",
     "team": "New York Mets",
     "position": "LF",
@@ -9548,7 +9548,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_13",
     "cardNo": 60,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "New York Super Utility",
     "team": "New York Mets",
     "position": "DH",
@@ -9568,7 +9568,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_14",
     "cardNo": 61,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "New York Ace Starting Pitcher",
     "team": "New York Mets",
     "position": "SP",
@@ -9590,7 +9590,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_15",
     "cardNo": 62,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "New York No. 2 Starting Pitcher",
     "team": "New York Mets",
     "position": "SP",
@@ -9612,7 +9612,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_16",
     "cardNo": 63,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "New York No. 3 Starting Pitcher",
     "team": "New York Mets",
     "position": "SP",
@@ -9634,7 +9634,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_17",
     "cardNo": 64,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "New York No. 4 Starting Pitcher",
     "team": "New York Mets",
     "position": "SP",
@@ -9656,7 +9656,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_18",
     "cardNo": 65,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "New York No. 5 Starting Pitcher",
     "team": "New York Mets",
     "position": "SP",
@@ -9678,7 +9678,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_19",
     "cardNo": 66,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "New York Closer",
     "team": "New York Mets",
     "position": "RP",
@@ -9700,7 +9700,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_20",
     "cardNo": 67,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "New York Setup Reliever",
     "team": "New York Mets",
     "position": "RP",
@@ -9722,7 +9722,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_21",
     "cardNo": 68,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "New York High Leverage RP",
     "team": "New York Mets",
     "position": "RP",
@@ -9744,7 +9744,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_22",
     "cardNo": 69,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "New York Middle Reliever 1",
     "team": "New York Mets",
     "position": "RP",
@@ -9766,7 +9766,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_23",
     "cardNo": 70,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "New York Middle Reliever 2",
     "team": "New York Mets",
     "position": "RP",
@@ -9788,7 +9788,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_24",
     "cardNo": 71,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "New York Left-Handed Specialist",
     "team": "New York Mets",
     "position": "RP",
@@ -9810,7 +9810,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_25",
     "cardNo": 72,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "New York Right-Handed Specialist",
     "team": "New York Mets",
     "position": "RP",
@@ -9832,7 +9832,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "NYM_26",
     "cardNo": 73,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "New York Long Reliever",
     "team": "New York Mets",
     "position": "RP",
@@ -9854,7 +9854,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_01",
     "cardNo": 74,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "J.T. Realmuto",
     "team": "Philadelphia Phillies",
     "position": "C",
@@ -9875,7 +9875,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_02",
     "cardNo": 75,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Bryce Harper",
     "team": "Philadelphia Phillies",
     "position": "1B",
@@ -9896,7 +9896,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_03",
     "cardNo": 76,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Bryson Stott",
     "team": "Philadelphia Phillies",
     "position": "2B",
@@ -9916,7 +9916,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_04",
     "cardNo": 77,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Alec Bohm",
     "team": "Philadelphia Phillies",
     "position": "3B",
@@ -9936,7 +9936,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_05",
     "cardNo": 78,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Trea Turner",
     "team": "Philadelphia Phillies",
     "position": "SS",
@@ -9956,7 +9956,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_06",
     "cardNo": 79,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Brandon Marsh",
     "team": "Philadelphia Phillies",
     "position": "LF",
@@ -9976,7 +9976,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_07",
     "cardNo": 80,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Johan Rojas",
     "team": "Philadelphia Phillies",
     "position": "CF",
@@ -9996,7 +9996,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_08",
     "cardNo": 81,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Nick Castellanos",
     "team": "Philadelphia Phillies",
     "position": "RF",
@@ -10016,7 +10016,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_09",
     "cardNo": 82,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Kyle Schwarber",
     "team": "Philadelphia Phillies",
     "position": "DH",
@@ -10036,7 +10036,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_10",
     "cardNo": 83,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Mike Schmidt",
     "team": "Philadelphia Phillies",
     "position": "3B",
@@ -10057,7 +10057,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_11",
     "cardNo": 84,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Garrett Stubbs",
     "team": "Philadelphia Phillies",
     "position": "C",
@@ -10077,7 +10077,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_12",
     "cardNo": 85,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Edmundo Sosa",
     "team": "Philadelphia Phillies",
     "position": "3B",
@@ -10097,7 +10097,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_13",
     "cardNo": 86,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Austin Hays",
     "team": "Philadelphia Phillies",
     "position": "LF",
@@ -10117,7 +10117,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_14",
     "cardNo": 87,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Zack Wheeler",
     "team": "Philadelphia Phillies",
     "position": "SP",
@@ -10139,7 +10139,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_15",
     "cardNo": 88,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Aaron Nola",
     "team": "Philadelphia Phillies",
     "position": "SP",
@@ -10161,7 +10161,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_16",
     "cardNo": 89,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Cristopher Sánchez",
     "team": "Philadelphia Phillies",
     "position": "SP",
@@ -10183,7 +10183,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_17",
     "cardNo": 90,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Ranger Suárez",
     "team": "Philadelphia Phillies",
     "position": "SP",
@@ -10205,7 +10205,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_18",
     "cardNo": 91,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Taijuan Walker",
     "team": "Philadelphia Phillies",
     "position": "SP",
@@ -10227,7 +10227,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_19",
     "cardNo": 92,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Carlos Estévez",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10249,7 +10249,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_20",
     "cardNo": 93,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Jeff Hoffman",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10271,7 +10271,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_21",
     "cardNo": 94,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Matt Strahm",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10293,7 +10293,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_22",
     "cardNo": 95,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Orion Kerkering",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10315,7 +10315,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_23",
     "cardNo": 96,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "José Alvarado",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10337,7 +10337,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_24",
     "cardNo": 97,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Tanner Banks",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10359,7 +10359,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_25",
     "cardNo": 98,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "José Ruiz",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10381,7 +10381,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PHI_26",
     "cardNo": 99,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Kolby Allard",
     "team": "Philadelphia Phillies",
     "position": "RP",
@@ -10403,7 +10403,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_01",
     "cardNo": 1,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Washington Starting Catcher",
     "team": "Washington Nationals",
     "position": "C",
@@ -10423,7 +10423,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_02",
     "cardNo": 2,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Washington Starting 1st Base",
     "team": "Washington Nationals",
     "position": "1B",
@@ -10443,7 +10443,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_03",
     "cardNo": 3,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Washington Starting 2nd Base",
     "team": "Washington Nationals",
     "position": "2B",
@@ -10463,7 +10463,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_04",
     "cardNo": 4,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Washington Starting 3rd Base",
     "team": "Washington Nationals",
     "position": "3B",
@@ -10483,7 +10483,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_05",
     "cardNo": 5,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "CJ Abrams",
     "team": "Washington Nationals",
     "position": "SS",
@@ -10523,7 +10523,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_07",
     "cardNo": 7,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Washington Starting Center Field",
     "team": "Washington Nationals",
     "position": "CF",
@@ -10543,7 +10543,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_08",
     "cardNo": 8,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Washington Starting Right Field",
     "team": "Washington Nationals",
     "position": "RF",
@@ -10563,7 +10563,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_09",
     "cardNo": 9,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Washington Designated Hitter",
     "team": "Washington Nationals",
     "position": "DH",
@@ -10583,7 +10583,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_10",
     "cardNo": 10,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Washington Backup Catcher",
     "team": "Washington Nationals",
     "position": "C",
@@ -10603,7 +10603,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_11",
     "cardNo": 11,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Washington Bench Infielder",
     "team": "Washington Nationals",
     "position": "2B",
@@ -10623,7 +10623,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_12",
     "cardNo": 12,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Washington Fourth Outfielder",
     "team": "Washington Nationals",
     "position": "LF",
@@ -10643,7 +10643,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_13",
     "cardNo": 13,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Washington Super Utility",
     "team": "Washington Nationals",
     "position": "DH",
@@ -10685,7 +10685,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_15",
     "cardNo": 15,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Washington No. 2 Starting Pitcher",
     "team": "Washington Nationals",
     "position": "SP",
@@ -10707,7 +10707,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_16",
     "cardNo": 16,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Washington No. 3 Starting Pitcher",
     "team": "Washington Nationals",
     "position": "SP",
@@ -10729,7 +10729,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_17",
     "cardNo": 17,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Washington No. 4 Starting Pitcher",
     "team": "Washington Nationals",
     "position": "SP",
@@ -10751,7 +10751,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_18",
     "cardNo": 18,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Washington No. 5 Starting Pitcher",
     "team": "Washington Nationals",
     "position": "SP",
@@ -10773,7 +10773,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_19",
     "cardNo": 19,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Washington Closer",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10795,7 +10795,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_20",
     "cardNo": 20,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Washington Setup Reliever",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10817,7 +10817,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_21",
     "cardNo": 21,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Washington High Leverage RP",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10861,7 +10861,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_23",
     "cardNo": 23,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Washington Middle Reliever 2",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10883,7 +10883,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_24",
     "cardNo": 24,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Washington Left-Handed Specialist",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10905,7 +10905,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_25",
     "cardNo": 25,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Washington Right-Handed Specialist",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10927,7 +10927,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "WSH_26",
     "cardNo": 26,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Washington Long Reliever",
     "team": "Washington Nationals",
     "position": "RP",
@@ -10949,7 +10949,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_01",
     "cardNo": 27,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Chicago Starting Catcher",
     "team": "Chicago Cubs",
     "position": "C",
@@ -10969,7 +10969,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_02",
     "cardNo": 28,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Chicago Starting 1st Base",
     "team": "Chicago Cubs",
     "position": "1B",
@@ -10989,7 +10989,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_03",
     "cardNo": 29,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Starting 2nd Base",
     "team": "Chicago Cubs",
     "position": "2B",
@@ -11009,7 +11009,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_04",
     "cardNo": 30,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Starting 3rd Base",
     "team": "Chicago Cubs",
     "position": "3B",
@@ -11029,7 +11029,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_05",
     "cardNo": 31,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago Starting Shortstop",
     "team": "Chicago Cubs",
     "position": "SS",
@@ -11109,7 +11109,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_09",
     "cardNo": 35,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Chicago Designated Hitter",
     "team": "Chicago Cubs",
     "position": "DH",
@@ -11129,7 +11129,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_10",
     "cardNo": 36,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Chicago Backup Catcher",
     "team": "Chicago Cubs",
     "position": "C",
@@ -11149,7 +11149,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_11",
     "cardNo": 37,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Bench Infielder",
     "team": "Chicago Cubs",
     "position": "2B",
@@ -11169,7 +11169,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_12",
     "cardNo": 38,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Fourth Outfielder",
     "team": "Chicago Cubs",
     "position": "LF",
@@ -11189,7 +11189,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_13",
     "cardNo": 39,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago Super Utility",
     "team": "Chicago Cubs",
     "position": "DH",
@@ -11275,7 +11275,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_17",
     "cardNo": 43,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Chicago No. 4 Starting Pitcher",
     "team": "Chicago Cubs",
     "position": "SP",
@@ -11297,7 +11297,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_18",
     "cardNo": 44,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Chicago No. 5 Starting Pitcher",
     "team": "Chicago Cubs",
     "position": "SP",
@@ -11319,7 +11319,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_19",
     "cardNo": 45,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "Chicago Closer",
     "team": "Chicago Cubs",
     "position": "RP",
@@ -11341,7 +11341,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_20",
     "cardNo": 46,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Chicago Setup Reliever",
     "team": "Chicago Cubs",
     "position": "RP",
@@ -11363,7 +11363,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_21",
     "cardNo": 47,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Chicago High Leverage RP",
     "team": "Chicago Cubs",
     "position": "RP",
@@ -11451,7 +11451,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_25",
     "cardNo": 51,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "Chicago Right-Handed Specialist",
     "team": "Chicago Cubs",
     "position": "RP",
@@ -11473,7 +11473,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CHC_26",
     "cardNo": 52,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "Chicago Long Reliever",
     "team": "Chicago Cubs",
     "position": "RP",
@@ -11495,7 +11495,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_01",
     "cardNo": 53,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Cincinnati Starting Catcher",
     "team": "Cincinnati Reds",
     "position": "C",
@@ -11515,7 +11515,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_02",
     "cardNo": 54,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Cincinnati Starting 1st Base",
     "team": "Cincinnati Reds",
     "position": "1B",
@@ -11535,7 +11535,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_03",
     "cardNo": 55,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cincinnati Starting 2nd Base",
     "team": "Cincinnati Reds",
     "position": "2B",
@@ -11555,7 +11555,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_04",
     "cardNo": 56,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Cincinnati Starting 3rd Base",
     "team": "Cincinnati Reds",
     "position": "3B",
@@ -11575,7 +11575,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_05",
     "cardNo": 57,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Elly De La Cruz",
     "team": "Cincinnati Reds",
     "position": "SS",
@@ -11595,7 +11595,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_06",
     "cardNo": 58,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Cincinnati Starting Left Field",
     "team": "Cincinnati Reds",
     "position": "LF",
@@ -11615,7 +11615,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_07",
     "cardNo": 59,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Cincinnati Starting Center Field",
     "team": "Cincinnati Reds",
     "position": "CF",
@@ -11635,7 +11635,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_08",
     "cardNo": 60,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Cincinnati Starting Right Field",
     "team": "Cincinnati Reds",
     "position": "RF",
@@ -11655,7 +11655,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_09",
     "cardNo": 61,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Cincinnati Designated Hitter",
     "team": "Cincinnati Reds",
     "position": "DH",
@@ -11675,7 +11675,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_10",
     "cardNo": 62,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Cincinnati Backup Catcher",
     "team": "Cincinnati Reds",
     "position": "C",
@@ -11695,7 +11695,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_11",
     "cardNo": 63,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cincinnati Bench Infielder",
     "team": "Cincinnati Reds",
     "position": "2B",
@@ -11715,7 +11715,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_12",
     "cardNo": 64,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Cincinnati Fourth Outfielder",
     "team": "Cincinnati Reds",
     "position": "LF",
@@ -11735,7 +11735,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_13",
     "cardNo": 65,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Cincinnati Super Utility",
     "team": "Cincinnati Reds",
     "position": "DH",
@@ -11755,7 +11755,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_14",
     "cardNo": 66,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Cincinnati Ace Starting Pitcher",
     "team": "Cincinnati Reds",
     "position": "SP",
@@ -11777,7 +11777,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_15",
     "cardNo": 67,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Cincinnati No. 2 Starting Pitcher",
     "team": "Cincinnati Reds",
     "position": "SP",
@@ -11799,7 +11799,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_16",
     "cardNo": 68,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Cincinnati No. 3 Starting Pitcher",
     "team": "Cincinnati Reds",
     "position": "SP",
@@ -11821,7 +11821,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_17",
     "cardNo": 69,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Cincinnati No. 4 Starting Pitcher",
     "team": "Cincinnati Reds",
     "position": "SP",
@@ -11843,7 +11843,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_18",
     "cardNo": 70,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Cincinnati No. 5 Starting Pitcher",
     "team": "Cincinnati Reds",
     "position": "SP",
@@ -11865,7 +11865,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_19",
     "cardNo": 71,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Cincinnati Closer",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11887,7 +11887,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_20",
     "cardNo": 72,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Cincinnati Setup Reliever",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11909,7 +11909,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_21",
     "cardNo": 73,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Cincinnati High Leverage RP",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11931,7 +11931,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_22",
     "cardNo": 74,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Cincinnati Middle Reliever 1",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11953,7 +11953,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_23",
     "cardNo": 75,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Cincinnati Middle Reliever 2",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11975,7 +11975,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_24",
     "cardNo": 76,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Cincinnati Left-Handed Specialist",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -11997,7 +11997,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_25",
     "cardNo": 77,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Cincinnati Right-Handed Specialist",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -12019,7 +12019,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "CIN_26",
     "cardNo": 78,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Cincinnati Long Reliever",
     "team": "Cincinnati Reds",
     "position": "RP",
@@ -12041,7 +12041,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_01",
     "cardNo": 79,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Milwaukee Starting Catcher",
     "team": "Milwaukee Brewers",
     "position": "C",
@@ -12061,7 +12061,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_02",
     "cardNo": 80,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Milwaukee Starting 1st Base",
     "team": "Milwaukee Brewers",
     "position": "1B",
@@ -12081,7 +12081,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_03",
     "cardNo": 81,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Milwaukee Starting 2nd Base",
     "team": "Milwaukee Brewers",
     "position": "2B",
@@ -12101,7 +12101,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_04",
     "cardNo": 82,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Milwaukee Starting 3rd Base",
     "team": "Milwaukee Brewers",
     "position": "3B",
@@ -12121,7 +12121,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_05",
     "cardNo": 83,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Milwaukee Starting Shortstop",
     "team": "Milwaukee Brewers",
     "position": "SS",
@@ -12141,7 +12141,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_06",
     "cardNo": 84,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Milwaukee Starting Left Field",
     "team": "Milwaukee Brewers",
     "position": "LF",
@@ -12161,7 +12161,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_07",
     "cardNo": 85,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Milwaukee Starting Center Field",
     "team": "Milwaukee Brewers",
     "position": "CF",
@@ -12181,7 +12181,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_08",
     "cardNo": 86,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Milwaukee Starting Right Field",
     "team": "Milwaukee Brewers",
     "position": "RF",
@@ -12201,7 +12201,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_09",
     "cardNo": 87,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Christian Yelich",
     "team": "Milwaukee Brewers",
     "position": "DH",
@@ -12221,7 +12221,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_10",
     "cardNo": 88,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Milwaukee Backup Catcher",
     "team": "Milwaukee Brewers",
     "position": "C",
@@ -12241,7 +12241,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_11",
     "cardNo": 89,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Milwaukee Bench Infielder",
     "team": "Milwaukee Brewers",
     "position": "2B",
@@ -12261,7 +12261,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_12",
     "cardNo": 90,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Milwaukee Fourth Outfielder",
     "team": "Milwaukee Brewers",
     "position": "LF",
@@ -12281,7 +12281,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_13",
     "cardNo": 91,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Milwaukee Super Utility",
     "team": "Milwaukee Brewers",
     "position": "DH",
@@ -12301,7 +12301,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_14",
     "cardNo": 92,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Milwaukee Ace Starting Pitcher",
     "team": "Milwaukee Brewers",
     "position": "SP",
@@ -12323,7 +12323,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_15",
     "cardNo": 93,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Milwaukee No. 2 Starting Pitcher",
     "team": "Milwaukee Brewers",
     "position": "SP",
@@ -12345,7 +12345,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_16",
     "cardNo": 94,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Milwaukee No. 3 Starting Pitcher",
     "team": "Milwaukee Brewers",
     "position": "SP",
@@ -12367,7 +12367,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_17",
     "cardNo": 95,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Milwaukee No. 4 Starting Pitcher",
     "team": "Milwaukee Brewers",
     "position": "SP",
@@ -12389,7 +12389,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_18",
     "cardNo": 96,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Milwaukee No. 5 Starting Pitcher",
     "team": "Milwaukee Brewers",
     "position": "SP",
@@ -12411,7 +12411,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_19",
     "cardNo": 97,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Milwaukee Closer",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12433,7 +12433,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_20",
     "cardNo": 98,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Milwaukee Setup Reliever",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12455,7 +12455,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_21",
     "cardNo": 99,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Milwaukee High Leverage RP",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12477,7 +12477,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_22",
     "cardNo": 1,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Milwaukee Middle Reliever 1",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12499,7 +12499,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_23",
     "cardNo": 2,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Milwaukee Middle Reliever 2",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12521,7 +12521,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_24",
     "cardNo": 3,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Milwaukee Left-Handed Specialist",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12543,7 +12543,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_25",
     "cardNo": 4,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Milwaukee Right-Handed Specialist",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12565,7 +12565,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "MIL_26",
     "cardNo": 5,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Milwaukee Long Reliever",
     "team": "Milwaukee Brewers",
     "position": "RP",
@@ -12587,7 +12587,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_01",
     "cardNo": 6,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Pittsburgh Starting Catcher",
     "team": "Pittsburgh Pirates",
     "position": "C",
@@ -12607,7 +12607,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_02",
     "cardNo": 7,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Pittsburgh Starting 1st Base",
     "team": "Pittsburgh Pirates",
     "position": "1B",
@@ -12627,7 +12627,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_03",
     "cardNo": 8,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Pittsburgh Starting 2nd Base",
     "team": "Pittsburgh Pirates",
     "position": "2B",
@@ -12647,7 +12647,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_04",
     "cardNo": 9,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Pittsburgh Starting 3rd Base",
     "team": "Pittsburgh Pirates",
     "position": "3B",
@@ -12667,7 +12667,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_05",
     "cardNo": 10,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Pittsburgh Starting Shortstop",
     "team": "Pittsburgh Pirates",
     "position": "SS",
@@ -12707,7 +12707,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_07",
     "cardNo": 12,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Pittsburgh Starting Center Field",
     "team": "Pittsburgh Pirates",
     "position": "CF",
@@ -12727,7 +12727,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_08",
     "cardNo": 13,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Pittsburgh Starting Right Field",
     "team": "Pittsburgh Pirates",
     "position": "RF",
@@ -12747,7 +12747,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_09",
     "cardNo": 14,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Pittsburgh Designated Hitter",
     "team": "Pittsburgh Pirates",
     "position": "DH",
@@ -12767,7 +12767,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_10",
     "cardNo": 15,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Pittsburgh Backup Catcher",
     "team": "Pittsburgh Pirates",
     "position": "C",
@@ -12787,7 +12787,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_11",
     "cardNo": 16,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Pittsburgh Bench Infielder",
     "team": "Pittsburgh Pirates",
     "position": "2B",
@@ -12807,7 +12807,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_12",
     "cardNo": 17,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Pittsburgh Fourth Outfielder",
     "team": "Pittsburgh Pirates",
     "position": "LF",
@@ -12827,7 +12827,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_13",
     "cardNo": 18,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Pittsburgh Super Utility",
     "team": "Pittsburgh Pirates",
     "position": "DH",
@@ -12869,7 +12869,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_15",
     "cardNo": 20,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Pittsburgh No. 2 Starting Pitcher",
     "team": "Pittsburgh Pirates",
     "position": "SP",
@@ -12891,7 +12891,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_16",
     "cardNo": 21,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Pittsburgh No. 3 Starting Pitcher",
     "team": "Pittsburgh Pirates",
     "position": "SP",
@@ -12913,7 +12913,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_17",
     "cardNo": 22,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Pittsburgh No. 4 Starting Pitcher",
     "team": "Pittsburgh Pirates",
     "position": "SP",
@@ -12935,7 +12935,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_18",
     "cardNo": 23,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Pittsburgh No. 5 Starting Pitcher",
     "team": "Pittsburgh Pirates",
     "position": "SP",
@@ -12957,7 +12957,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_19",
     "cardNo": 24,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Pittsburgh Closer",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -12979,7 +12979,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_20",
     "cardNo": 25,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Pittsburgh Setup Reliever",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13001,7 +13001,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_21",
     "cardNo": 26,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Pittsburgh High Leverage RP",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13045,7 +13045,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_23",
     "cardNo": 28,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Pittsburgh Middle Reliever 2",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13067,7 +13067,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_24",
     "cardNo": 29,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Pittsburgh Left-Handed Specialist",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13089,7 +13089,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_25",
     "cardNo": 30,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Pittsburgh Right-Handed Specialist",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13111,7 +13111,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "PIT_26",
     "cardNo": 31,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Pittsburgh Long Reliever",
     "team": "Pittsburgh Pirates",
     "position": "RP",
@@ -13133,7 +13133,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_01",
     "cardNo": 32,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "St. Louis Starting Catcher",
     "team": "St. Louis Cardinals",
     "position": "C",
@@ -13153,7 +13153,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_02",
     "cardNo": 33,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "St. Louis Starting 1st Base",
     "team": "St. Louis Cardinals",
     "position": "1B",
@@ -13173,7 +13173,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_03",
     "cardNo": 34,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "St. Louis Starting 2nd Base",
     "team": "St. Louis Cardinals",
     "position": "2B",
@@ -13193,7 +13193,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_04",
     "cardNo": 35,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "Nolan Arenado",
     "team": "St. Louis Cardinals",
     "position": "3B",
@@ -13214,7 +13214,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_05",
     "cardNo": 36,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "St. Louis Starting Shortstop",
     "team": "St. Louis Cardinals",
     "position": "SS",
@@ -13294,7 +13294,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_09",
     "cardNo": 40,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "St. Louis Designated Hitter",
     "team": "St. Louis Cardinals",
     "position": "DH",
@@ -13314,7 +13314,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_10",
     "cardNo": 41,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "St. Louis Backup Catcher",
     "team": "St. Louis Cardinals",
     "position": "C",
@@ -13334,7 +13334,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_11",
     "cardNo": 42,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "St. Louis Bench Infielder",
     "team": "St. Louis Cardinals",
     "position": "2B",
@@ -13354,7 +13354,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_12",
     "cardNo": 43,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "St. Louis Fourth Outfielder",
     "team": "St. Louis Cardinals",
     "position": "LF",
@@ -13374,7 +13374,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_13",
     "cardNo": 44,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "St. Louis Super Utility",
     "team": "St. Louis Cardinals",
     "position": "DH",
@@ -13460,7 +13460,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_17",
     "cardNo": 48,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "St. Louis No. 4 Starting Pitcher",
     "team": "St. Louis Cardinals",
     "position": "SP",
@@ -13482,7 +13482,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_18",
     "cardNo": 49,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "St. Louis No. 5 Starting Pitcher",
     "team": "St. Louis Cardinals",
     "position": "SP",
@@ -13504,7 +13504,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_19",
     "cardNo": 50,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "St. Louis Closer",
     "team": "St. Louis Cardinals",
     "position": "RP",
@@ -13526,7 +13526,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_20",
     "cardNo": 51,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "St. Louis Setup Reliever",
     "team": "St. Louis Cardinals",
     "position": "RP",
@@ -13548,7 +13548,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_21",
     "cardNo": 52,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "St. Louis High Leverage RP",
     "team": "St. Louis Cardinals",
     "position": "RP",
@@ -13636,7 +13636,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_25",
     "cardNo": 56,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "St. Louis Right-Handed Specialist",
     "team": "St. Louis Cardinals",
     "position": "RP",
@@ -13658,7 +13658,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "STL_26",
     "cardNo": 57,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "St. Louis Long Reliever",
     "team": "St. Louis Cardinals",
     "position": "RP",
@@ -13680,7 +13680,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_01",
     "cardNo": 58,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Arizona Starting Catcher",
     "team": "Arizona Diamondbacks",
     "position": "C",
@@ -13700,7 +13700,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_02",
     "cardNo": 59,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Arizona Starting 1st Base",
     "team": "Arizona Diamondbacks",
     "position": "1B",
@@ -13720,7 +13720,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_03",
     "cardNo": 60,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Arizona Starting 2nd Base",
     "team": "Arizona Diamondbacks",
     "position": "2B",
@@ -13740,7 +13740,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_04",
     "cardNo": 61,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Arizona Starting 3rd Base",
     "team": "Arizona Diamondbacks",
     "position": "3B",
@@ -13760,7 +13760,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_05",
     "cardNo": 62,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Arizona Starting Shortstop",
     "team": "Arizona Diamondbacks",
     "position": "SS",
@@ -13780,7 +13780,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_06",
     "cardNo": 63,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Arizona Starting Left Field",
     "team": "Arizona Diamondbacks",
     "position": "LF",
@@ -13800,7 +13800,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_07",
     "cardNo": 64,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Corbin Carroll",
     "team": "Arizona Diamondbacks",
     "position": "CF",
@@ -13820,7 +13820,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_08",
     "cardNo": 65,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Arizona Starting Right Field",
     "team": "Arizona Diamondbacks",
     "position": "RF",
@@ -13840,7 +13840,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_09",
     "cardNo": 66,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Arizona Designated Hitter",
     "team": "Arizona Diamondbacks",
     "position": "DH",
@@ -13860,7 +13860,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_10",
     "cardNo": 67,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Arizona Backup Catcher",
     "team": "Arizona Diamondbacks",
     "position": "C",
@@ -13880,7 +13880,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_11",
     "cardNo": 68,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Arizona Bench Infielder",
     "team": "Arizona Diamondbacks",
     "position": "2B",
@@ -13900,7 +13900,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_12",
     "cardNo": 69,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Arizona Fourth Outfielder",
     "team": "Arizona Diamondbacks",
     "position": "LF",
@@ -13920,7 +13920,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_13",
     "cardNo": 70,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Arizona Super Utility",
     "team": "Arizona Diamondbacks",
     "position": "DH",
@@ -13940,7 +13940,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_14",
     "cardNo": 71,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Arizona Ace Starting Pitcher",
     "team": "Arizona Diamondbacks",
     "position": "SP",
@@ -13962,7 +13962,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_15",
     "cardNo": 72,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Arizona No. 2 Starting Pitcher",
     "team": "Arizona Diamondbacks",
     "position": "SP",
@@ -13984,7 +13984,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_16",
     "cardNo": 73,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Arizona No. 3 Starting Pitcher",
     "team": "Arizona Diamondbacks",
     "position": "SP",
@@ -14006,7 +14006,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_17",
     "cardNo": 74,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Arizona No. 4 Starting Pitcher",
     "team": "Arizona Diamondbacks",
     "position": "SP",
@@ -14028,7 +14028,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_18",
     "cardNo": 75,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Arizona No. 5 Starting Pitcher",
     "team": "Arizona Diamondbacks",
     "position": "SP",
@@ -14050,7 +14050,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_19",
     "cardNo": 76,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Arizona Closer",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14072,7 +14072,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_20",
     "cardNo": 77,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Arizona Setup Reliever",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14094,7 +14094,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_21",
     "cardNo": 78,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Arizona High Leverage RP",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14116,7 +14116,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_22",
     "cardNo": 79,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Arizona Middle Reliever 1",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14138,7 +14138,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_23",
     "cardNo": 80,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "Arizona Middle Reliever 2",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14160,7 +14160,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_24",
     "cardNo": 81,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "Arizona Left-Handed Specialist",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14182,7 +14182,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_25",
     "cardNo": 82,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "Arizona Right-Handed Specialist",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14204,7 +14204,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "AZ_26",
     "cardNo": 83,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "Arizona Long Reliever",
     "team": "Arizona Diamondbacks",
     "position": "RP",
@@ -14226,7 +14226,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_01",
     "cardNo": 84,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Colorado Starting Catcher",
     "team": "Colorado Rockies",
     "position": "C",
@@ -14246,7 +14246,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_02",
     "cardNo": 85,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Colorado Starting 1st Base",
     "team": "Colorado Rockies",
     "position": "1B",
@@ -14266,7 +14266,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_03",
     "cardNo": 86,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Colorado Starting 2nd Base",
     "team": "Colorado Rockies",
     "position": "2B",
@@ -14286,7 +14286,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_04",
     "cardNo": 87,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Colorado Starting 3rd Base",
     "team": "Colorado Rockies",
     "position": "3B",
@@ -14306,7 +14306,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_05",
     "cardNo": 88,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Ezequiel Tovar",
     "team": "Colorado Rockies",
     "position": "SS",
@@ -14326,7 +14326,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_06",
     "cardNo": 89,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Colorado Starting Left Field",
     "team": "Colorado Rockies",
     "position": "LF",
@@ -14346,7 +14346,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_07",
     "cardNo": 90,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Colorado Starting Center Field",
     "team": "Colorado Rockies",
     "position": "CF",
@@ -14366,7 +14366,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_08",
     "cardNo": 91,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Colorado Starting Right Field",
     "team": "Colorado Rockies",
     "position": "RF",
@@ -14386,7 +14386,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_09",
     "cardNo": 92,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Colorado Designated Hitter",
     "team": "Colorado Rockies",
     "position": "DH",
@@ -14406,7 +14406,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_10",
     "cardNo": 93,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Colorado Backup Catcher",
     "team": "Colorado Rockies",
     "position": "C",
@@ -14426,7 +14426,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_11",
     "cardNo": 94,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Colorado Bench Infielder",
     "team": "Colorado Rockies",
     "position": "2B",
@@ -14446,7 +14446,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_12",
     "cardNo": 95,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Colorado Fourth Outfielder",
     "team": "Colorado Rockies",
     "position": "LF",
@@ -14466,7 +14466,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_13",
     "cardNo": 96,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Colorado Super Utility",
     "team": "Colorado Rockies",
     "position": "DH",
@@ -14486,7 +14486,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_14",
     "cardNo": 97,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Colorado Ace Starting Pitcher",
     "team": "Colorado Rockies",
     "position": "SP",
@@ -14508,7 +14508,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_15",
     "cardNo": 98,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Colorado No. 2 Starting Pitcher",
     "team": "Colorado Rockies",
     "position": "SP",
@@ -14530,7 +14530,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_16",
     "cardNo": 99,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Colorado No. 3 Starting Pitcher",
     "team": "Colorado Rockies",
     "position": "SP",
@@ -14552,7 +14552,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_17",
     "cardNo": 1,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Colorado No. 4 Starting Pitcher",
     "team": "Colorado Rockies",
     "position": "SP",
@@ -14574,7 +14574,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_18",
     "cardNo": 2,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Colorado No. 5 Starting Pitcher",
     "team": "Colorado Rockies",
     "position": "SP",
@@ -14596,7 +14596,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_19",
     "cardNo": 3,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Colorado Closer",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14618,7 +14618,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_20",
     "cardNo": 4,
-    "cardSetId": "CHROME",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Colorado Setup Reliever",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14640,7 +14640,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_21",
     "cardNo": 5,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_1",
     "name": "Colorado High Leverage RP",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14662,7 +14662,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_22",
     "cardNo": 6,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "HERITAGE",
     "name": "Colorado Middle Reliever 1",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14684,7 +14684,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_23",
     "cardNo": 7,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "BOWMAN",
     "name": "Colorado Middle Reliever 2",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14706,7 +14706,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_24",
     "cardNo": 8,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_2",
     "name": "Colorado Left-Handed Specialist",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14728,7 +14728,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_25",
     "cardNo": 9,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Colorado Right-Handed Specialist",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14750,7 +14750,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "COL_26",
     "cardNo": 10,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "CHROME",
     "name": "Colorado Long Reliever",
     "team": "Colorado Rockies",
     "position": "RP",
@@ -14772,7 +14772,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_01",
     "cardNo": 11,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Will Smith",
     "team": "Los Angeles Dodgers",
     "position": "C",
@@ -14793,7 +14793,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_02",
     "cardNo": 12,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Freddie Freeman",
     "team": "Los Angeles Dodgers",
     "position": "1B",
@@ -14814,7 +14814,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_03",
     "cardNo": 13,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Mookie Betts",
     "team": "Los Angeles Dodgers",
     "position": "2B",
@@ -14835,7 +14835,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_04",
     "cardNo": 14,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Max Muncy",
     "team": "Los Angeles Dodgers",
     "position": "3B",
@@ -14855,7 +14855,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_05",
     "cardNo": 15,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Miguel Rojas",
     "team": "Los Angeles Dodgers",
     "position": "SS",
@@ -14895,7 +14895,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_07",
     "cardNo": 17,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Tommy Edman",
     "team": "Los Angeles Dodgers",
     "position": "CF",
@@ -14915,7 +14915,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_08",
     "cardNo": 18,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Andy Pages",
     "team": "Los Angeles Dodgers",
     "position": "RF",
@@ -14935,7 +14935,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_09",
     "cardNo": 19,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Shohei Ohtani",
     "team": "Los Angeles Dodgers",
     "position": "DH",
@@ -14955,7 +14955,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_10",
     "cardNo": 20,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Jackie Robinson",
     "team": "Los Angeles Dodgers",
     "position": "2B",
@@ -14976,7 +14976,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_11",
     "cardNo": 21,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Austin Barnes",
     "team": "Los Angeles Dodgers",
     "position": "C",
@@ -14996,7 +14996,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_12",
     "cardNo": 22,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Gavin Lux",
     "team": "Los Angeles Dodgers",
     "position": "2B",
@@ -15016,7 +15016,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_13",
     "cardNo": 23,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Chris Taylor",
     "team": "Los Angeles Dodgers",
     "position": "LF",
@@ -15058,7 +15058,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_15",
     "cardNo": 25,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Tyler Glasnow",
     "team": "Los Angeles Dodgers",
     "position": "SP",
@@ -15080,7 +15080,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_16",
     "cardNo": 26,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Clayton Kershaw",
     "team": "Los Angeles Dodgers",
     "position": "SP",
@@ -15103,7 +15103,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_17",
     "cardNo": 27,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Jack Flaherty",
     "team": "Los Angeles Dodgers",
     "position": "SP",
@@ -15125,7 +15125,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_18",
     "cardNo": 28,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Sandy Koufax",
     "team": "Los Angeles Dodgers",
     "position": "SP",
@@ -15147,7 +15147,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_19",
     "cardNo": 29,
-    "cardSetId": "CHROME",
+    "cardSetId": "SERIES_1",
     "name": "Evan Phillips",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15169,7 +15169,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_20",
     "cardNo": 30,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "HERITAGE",
     "name": "Blake Treinen",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15191,7 +15191,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_21",
     "cardNo": 31,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "BOWMAN",
     "name": "Michael Kopech",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15235,7 +15235,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_23",
     "cardNo": 33,
-    "cardSetId": "CHROME",
+    "cardSetId": "STADIUM_CLUB",
     "name": "Daniel Hudson",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15257,7 +15257,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_24",
     "cardNo": 34,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "CHROME",
     "name": "Anthony Banda",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15279,7 +15279,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_25",
     "cardNo": 35,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "ALLEN_GINTER",
     "name": "Edgardo Henriquez",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15301,7 +15301,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "LAD_26",
     "cardNo": 36,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "UPDATE_SERIES",
     "name": "Walker Buehler",
     "team": "Los Angeles Dodgers",
     "position": "RP",
@@ -15323,7 +15323,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_01",
     "cardNo": 37,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "San Diego Starting Catcher",
     "team": "San Diego Padres",
     "position": "C",
@@ -15343,7 +15343,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_02",
     "cardNo": 38,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "San Diego Starting 1st Base",
     "team": "San Diego Padres",
     "position": "1B",
@@ -15363,7 +15363,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_03",
     "cardNo": 39,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "San Diego Starting 2nd Base",
     "team": "San Diego Padres",
     "position": "2B",
@@ -15383,7 +15383,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_04",
     "cardNo": 40,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "San Diego Starting 3rd Base",
     "team": "San Diego Padres",
     "position": "3B",
@@ -15403,7 +15403,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_05",
     "cardNo": 41,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Diego Starting Shortstop",
     "team": "San Diego Padres",
     "position": "SS",
@@ -15483,7 +15483,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_09",
     "cardNo": 45,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "San Diego Designated Hitter",
     "team": "San Diego Padres",
     "position": "DH",
@@ -15503,7 +15503,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_10",
     "cardNo": 46,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "San Diego Backup Catcher",
     "team": "San Diego Padres",
     "position": "C",
@@ -15523,7 +15523,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_11",
     "cardNo": 47,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "San Diego Bench Infielder",
     "team": "San Diego Padres",
     "position": "2B",
@@ -15543,7 +15543,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_12",
     "cardNo": 48,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "San Diego Fourth Outfielder",
     "team": "San Diego Padres",
     "position": "LF",
@@ -15563,7 +15563,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_13",
     "cardNo": 49,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Diego Super Utility",
     "team": "San Diego Padres",
     "position": "DH",
@@ -15649,7 +15649,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_17",
     "cardNo": 53,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "San Diego No. 4 Starting Pitcher",
     "team": "San Diego Padres",
     "position": "SP",
@@ -15671,7 +15671,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_18",
     "cardNo": 54,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "San Diego No. 5 Starting Pitcher",
     "team": "San Diego Padres",
     "position": "SP",
@@ -15693,7 +15693,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_19",
     "cardNo": 55,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "BOWMAN",
     "name": "San Diego Closer",
     "team": "San Diego Padres",
     "position": "RP",
@@ -15715,7 +15715,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_20",
     "cardNo": 56,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_2",
     "name": "San Diego Setup Reliever",
     "team": "San Diego Padres",
     "position": "RP",
@@ -15737,7 +15737,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_21",
     "cardNo": 57,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Diego High Leverage RP",
     "team": "San Diego Padres",
     "position": "RP",
@@ -15825,7 +15825,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_25",
     "cardNo": 61,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "SERIES_1",
     "name": "San Diego Right-Handed Specialist",
     "team": "San Diego Padres",
     "position": "RP",
@@ -15847,7 +15847,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SD_26",
     "cardNo": 62,
-    "cardSetId": "CHROME",
+    "cardSetId": "HERITAGE",
     "name": "San Diego Long Reliever",
     "team": "San Diego Padres",
     "position": "RP",
@@ -15869,7 +15869,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_01",
     "cardNo": 63,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "San Francisco Starting Catcher",
     "team": "San Francisco Giants",
     "position": "C",
@@ -15889,7 +15889,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_02",
     "cardNo": 64,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "San Francisco Starting 1st Base",
     "team": "San Francisco Giants",
     "position": "1B",
@@ -15909,7 +15909,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_03",
     "cardNo": 65,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Francisco Starting 2nd Base",
     "team": "San Francisco Giants",
     "position": "2B",
@@ -15929,7 +15929,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_04",
     "cardNo": 66,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "Matt Chapman",
     "team": "San Francisco Giants",
     "position": "3B",
@@ -15949,7 +15949,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_05",
     "cardNo": 67,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "San Francisco Starting Shortstop",
     "team": "San Francisco Giants",
     "position": "SS",
@@ -15969,7 +15969,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_06",
     "cardNo": 68,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "San Francisco Starting Left Field",
     "team": "San Francisco Giants",
     "position": "LF",
@@ -15989,7 +15989,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_07",
     "cardNo": 69,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "San Francisco Starting Center Field",
     "team": "San Francisco Giants",
     "position": "CF",
@@ -16009,7 +16009,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_08",
     "cardNo": 70,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "San Francisco Starting Right Field",
     "team": "San Francisco Giants",
     "position": "RF",
@@ -16029,7 +16029,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_09",
     "cardNo": 71,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "San Francisco Designated Hitter",
     "team": "San Francisco Giants",
     "position": "DH",
@@ -16049,7 +16049,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_10",
     "cardNo": 72,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "San Francisco Backup Catcher",
     "team": "San Francisco Giants",
     "position": "C",
@@ -16069,7 +16069,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_11",
     "cardNo": 73,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Francisco Bench Infielder",
     "team": "San Francisco Giants",
     "position": "2B",
@@ -16089,7 +16089,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_12",
     "cardNo": 74,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "San Francisco Fourth Outfielder",
     "team": "San Francisco Giants",
     "position": "LF",
@@ -16109,7 +16109,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_13",
     "cardNo": 75,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "San Francisco Super Utility",
     "team": "San Francisco Giants",
     "position": "DH",
@@ -16129,7 +16129,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_14",
     "cardNo": 76,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "San Francisco Ace Starting Pitcher",
     "team": "San Francisco Giants",
     "position": "SP",
@@ -16151,7 +16151,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_15",
     "cardNo": 77,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "San Francisco No. 2 Starting Pitcher",
     "team": "San Francisco Giants",
     "position": "SP",
@@ -16173,7 +16173,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_16",
     "cardNo": 78,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "San Francisco No. 3 Starting Pitcher",
     "team": "San Francisco Giants",
     "position": "SP",
@@ -16195,7 +16195,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_17",
     "cardNo": 79,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "San Francisco No. 4 Starting Pitcher",
     "team": "San Francisco Giants",
     "position": "SP",
@@ -16217,7 +16217,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_18",
     "cardNo": 80,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "San Francisco No. 5 Starting Pitcher",
     "team": "San Francisco Giants",
     "position": "SP",
@@ -16239,7 +16239,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_19",
     "cardNo": 81,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "STADIUM_CLUB",
     "name": "San Francisco Closer",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16261,7 +16261,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_20",
     "cardNo": 82,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "CHROME",
     "name": "San Francisco Setup Reliever",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16283,7 +16283,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_21",
     "cardNo": 83,
-    "cardSetId": "CHROME",
+    "cardSetId": "ALLEN_GINTER",
     "name": "San Francisco High Leverage RP",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16305,7 +16305,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_22",
     "cardNo": 84,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "UPDATE_SERIES",
     "name": "San Francisco Middle Reliever 1",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16327,7 +16327,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_23",
     "cardNo": 85,
-    "cardSetId": "UPDATE_SERIES",
+    "cardSetId": "SERIES_1",
     "name": "San Francisco Middle Reliever 2",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16349,7 +16349,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_24",
     "cardNo": 86,
-    "cardSetId": "SERIES_2",
+    "cardSetId": "HERITAGE",
     "name": "San Francisco Left-Handed Specialist",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16371,7 +16371,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_25",
     "cardNo": 87,
-    "cardSetId": "CHROME",
+    "cardSetId": "BOWMAN",
     "name": "San Francisco Right-Handed Specialist",
     "team": "San Francisco Giants",
     "position": "RP",
@@ -16393,7 +16393,7 @@ export const ALL_PLAYERS: PlayerCard[] = [
   {
     "id": "SF_26",
     "cardNo": 88,
-    "cardSetId": "ALLEN_GINTER",
+    "cardSetId": "SERIES_2",
     "name": "San Francisco Long Reliever",
     "team": "San Francisco Giants",
     "position": "RP",
