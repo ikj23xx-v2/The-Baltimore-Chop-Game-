@@ -54,6 +54,7 @@ import { Scoreboard } from './components/Scoreboard';
 import { Card3D } from './components/Card3D';
 import { AtBatArena } from './components/AtBatArena';
 import { JackpotDraftModal } from './components/JackpotDraftModal';
+import { SleeperMockDraftModal } from './components/SleeperMockDraftModal';
 import { VendingMachineModal } from './components/VendingMachineModal';
 import { RefractorForgeModal } from './components/RefractorForgeModal';
 import { RosterManagerModal } from './components/RosterManagerModal';
@@ -200,6 +201,7 @@ export default function App() {
 
   // --- MODAL CONTROLS ---
   const [isDraftOpen, setIsDraftOpen] = useState(false);
+  const [isSleeperMockOpen, setIsSleeperMockOpen] = useState(false);
   const [isVendingOpen, setIsVendingOpen] = useState(false);
   const [isForgeOpen, setIsForgeOpen] = useState(false);
   const [isRosterOpen, setIsRosterOpen] = useState(false);
@@ -1441,6 +1443,7 @@ export default function App() {
             }}
             onInspectCard={(card) => setInspectedCardForStats(card)}
             onOpenDraft={() => setIsDraftOpen(true)}
+            onOpenSleeperMockDraft={() => setIsSleeperMockOpen(true)}
             onOpenForge={() => setIsForgeOpen(true)}
             onAutoDraft={handleAutoDraft}
             onClearRoster={handleClearRoster}
@@ -2004,6 +2007,18 @@ export default function App() {
         activeSetId={activeSetId}
       />
 
+      {/* Sleeper App Style Snake Mock Draft Modal with Simulated Bot GMs */}
+      <SleeperMockDraftModal
+        isOpen={isSleeperMockOpen}
+        onClose={() => setIsSleeperMockOpen(false)}
+        userTeamName={currentTeamTheme.name}
+        onApplyRoster={(newRoster) => {
+          setRoster(newRoster);
+          setActiveBatterIndex(0);
+          addLog(`⚡ SLEEPER MOCK COMPLETED: 26-man roster assembled and applied to active lineup!`, 'chop');
+        }}
+      />
+
       {/* Seasonal Sets Modal */}
       <SeasonalSetsModal
         isOpen={isSetsOpen}
@@ -2205,6 +2220,7 @@ export default function App() {
         onOpenSwitchTeam={() => setIsFranchiseOpen(true)}
         onOpenFeedback={() => setIsBetaFeedbackOpen(true)}
         onOpenSplashGate={() => setIsSplashLoginOpen(true)}
+        onOpenSleeperMockDraft={() => setIsSleeperMockOpen(true)}
         onSelectMode={(mode) => {
           if (['ARENA', 'DEPTH_CHART', 'REFRAC_FORGE', 'MARKETPLACE', 'CHOP_HOUSE', 'GM_CONSOLE', 'HOBBY_OUTPOST'].includes(mode)) {
             setMainTab(mode as ActiveTab);

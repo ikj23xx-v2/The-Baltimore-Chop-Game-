@@ -25,6 +25,7 @@ interface DraftBoardGridProps {
   onInspectCard: (player: PlayerCard) => void;
   onOpenForge: () => void;
   onOpenDraft: () => void;
+  onOpenSleeperMockDraft?: () => void;
   onAutoDraft?: () => void;
   onClearRoster?: () => void;
   teamName?: string;
@@ -40,6 +41,7 @@ export const DraftBoardGrid: React.FC<DraftBoardGridProps> = ({
   onInspectCard,
   onOpenForge,
   onOpenDraft,
+  onOpenSleeperMockDraft,
   onAutoDraft,
   onClearRoster,
   teamName = 'All-MLB All-Stars',
@@ -209,6 +211,17 @@ export const DraftBoardGrid: React.FC<DraftBoardGridProps> = ({
             <span>🎰</span> {isRosterBlank ? 'Start 26-Man Draft' : 'Open Draft Room'}
           </button>
 
+          {onOpenSleeperMockDraft && (
+            <button
+              type="button"
+              onClick={onOpenSleeperMockDraft}
+              className="px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-display font-black text-xs uppercase rounded-xl transition-all shadow-md shadow-cyan-600/30 flex items-center gap-1.5 shrink-0 cursor-pointer active:scale-95"
+              title="Launch full Sleeper-style snake mock draft with bot AI GMs"
+            >
+              <span>⚡</span> Sleeper Mock Draft
+            </button>
+          )}
+
           {onAutoDraft && isRosterBlank && (
             <button
               type="button"
@@ -243,23 +256,32 @@ export const DraftBoardGrid: React.FC<DraftBoardGridProps> = ({
             YOUR FRANCHISE BIG BOARD IS BLANK
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 font-mono max-w-2xl mx-auto leading-relaxed">
-            No players have been pre-populated before you start. Start your draft to select 26 active MLB stars, historic Baseball-Reference WAR legends, and rare refractors for each position slot.
+            No players have been pre-populated before you start. Draft your 26-man roster using the authentic Sleeper-style mock draft with live bot GMs, or spin the casino tumbler reels.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {onOpenSleeperMockDraft && (
+              <button
+                type="button"
+                onClick={onOpenSleeperMockDraft}
+                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-blue-500 text-white font-display font-black text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span>⚡</span> SLEEPER APP MOCK DRAFT
+              </button>
+            )}
             <button
               type="button"
               onClick={onOpenDraft}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white font-display font-black text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(234,88,12,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3.5 rounded-xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white font-display font-black text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(234,88,12,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
             >
-              <span>🎰</span> START YOUR 26-MAN DRAFT
+              <span>🎰</span> CASINO REEL DRAFT
             </button>
             {onAutoDraft && (
               <button
                 type="button"
                 onClick={onAutoDraft}
-                className="px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 hover:text-white font-display font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
+                className="px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 hover:text-white font-display font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
               >
-                <span>⚡</span> QUICK AUTO-DRAFT
+                <span>⚡</span> AUTO-DRAFT
               </button>
             )}
           </div>

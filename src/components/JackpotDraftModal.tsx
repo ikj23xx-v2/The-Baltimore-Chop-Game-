@@ -37,7 +37,6 @@ export const JackpotDraftModal: React.FC<JackpotDraftModalProps> = ({
   const [selectedCard, setSelectedCard] = useState<PlayerCard | null>(null);
   const [isJackpot, setIsJackpot] = useState(false);
   const [draftedRoster, setDraftedRoster] = useState<PlayerCard[]>(currentRoster);
-  const [draftMode, setDraftMode] = useState<'SLOT_SPIN' | 'MANUAL_PICK'>('SLOT_SPIN');
 
   useEffect(() => {
     if (isOpen) {
@@ -225,39 +224,23 @@ export const JackpotDraftModal: React.FC<JackpotDraftModalProps> = ({
               </div>
             ) : null}
 
-            {/* Mode Switcher: Casino Tumbler vs Manual Pick */}
-            <div className="flex items-center justify-between gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setDraftMode('SLOT_SPIN')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
-                    draftMode === 'SLOT_SPIN'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <span>🎰</span> Spin Reel Tumbler
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDraftMode('MANUAL_PICK')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
-                    draftMode === 'MANUAL_PICK'
-                      ? 'bg-amber-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <span>📋</span> Manual Pick ({targetPosition})
-                </button>
+            {/* Casino Slot Tumbler Header & Quick Auto-Draft Action */}
+            <div className="flex items-center justify-between gap-2 bg-slate-950 p-2 rounded-2xl border border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1.5 rounded-xl text-xs font-display font-bold uppercase bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5">
+                  <span>🎰</span> 3-Reel Casino Slot Draft
+                </span>
+                <span className="text-xs font-mono text-slate-400">
+                  Target Slot: <strong className="text-amber-400">#{currentSlotIndex + 1} [{targetPosition}]</strong>
+                </span>
               </div>
 
               <button
                 type="button"
                 onClick={autoDraftAll}
-                className="px-2.5 py-1 rounded-xl bg-orange-600/30 hover:bg-orange-600 border border-orange-500/50 text-orange-300 hover:text-white font-mono font-bold text-[11px] uppercase transition-colors shrink-0 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-orange-600/30 hover:bg-orange-600 border border-orange-500/50 text-orange-300 hover:text-white font-mono font-bold text-xs uppercase transition-colors shrink-0 cursor-pointer flex items-center gap-1.5"
               >
-                ⚡ Auto-Draft All 26
+                <span>⚡</span> Auto-Draft All 26
               </button>
             </div>
 
@@ -291,116 +274,66 @@ export const JackpotDraftModal: React.FC<JackpotDraftModalProps> = ({
               ))}
             </div>
 
-            {/* DRAFT MODE 1: CASINO SLOT TUMBLER */}
-            {draftMode === 'SLOT_SPIN' && (
-              <div className="space-y-3">
-                <div className="bg-slate-950 border-2 border-slate-800 rounded-2xl p-4 shadow-inner">
-                  <span className="text-[10px] font-mono uppercase text-slate-400 block mb-2 text-center tracking-widest">
-                    — CASINO SLOT TUMBLER FOR SLOT #{currentSlotIndex + 1} [{targetPosition}] —
-                  </span>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[reel1, reel2, reel3].map((r, i) => (
-                      <div
-                        key={`reel-${i}`}
-                        className={`bg-slate-900 border rounded-xl p-3 flex flex-col items-center justify-center text-center transition-all ${
-                          isSpinning
-                            ? 'border-amber-400 scale-95 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
-                            : 'border-slate-800'
-                        }`}
-                      >
-                        <span className="text-3xl mb-1">{r.avatarIcon}</span>
-                        <span className="text-xs font-display font-bold text-white truncate w-full">
-                          {r.name}
-                        </span>
-                        <span className="text-[10px] font-mono text-orange-400">
-                          {r.position} · {r.era.split('•')[0]}
-                        </span>
-                        <span className="text-[10px] font-mono text-amber-400 font-bold mt-1">
-                          WAR: {r.bRefWar}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+            {/* CASINO SLOT TUMBLER */}
+            <div className="space-y-3">
+              <div className="bg-slate-950 border-2 border-slate-800 rounded-2xl p-4 shadow-inner">
+                <span className="text-[10px] font-mono uppercase text-slate-400 block mb-2 text-center tracking-widest">
+                  — CASINO SLOT TUMBLER FOR SLOT #{currentSlotIndex + 1} [{targetPosition}] —
+                </span>
+                <div className="grid grid-cols-3 gap-3">
+                  {[reel1, reel2, reel3].map((r, i) => (
+                    <div
+                      key={`reel-${i}`}
+                      className={`bg-slate-900 border rounded-xl p-3 flex flex-col items-center justify-center text-center transition-all ${
+                        isSpinning
+                          ? 'border-amber-400 scale-95 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                          : 'border-slate-800'
+                      }`}
+                    >
+                      <span className="text-3xl mb-1">{r.avatarIcon}</span>
+                      <span className="text-xs font-display font-bold text-white truncate w-full">
+                        {r.name}
+                      </span>
+                      <span className="text-[10px] font-mono text-orange-400">
+                        {r.position} · {r.era.split('•')[0]}
+                      </span>
+                      <span className="text-[10px] font-mono text-amber-400 font-bold mt-1">
+                        WAR: {r.bRefWar}
+                      </span>
+                    </div>
+                  ))}
                 </div>
+              </div>
 
-                <div className="space-y-2">
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  disabled={isSpinning}
+                  onClick={spinSlot}
+                  className="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-display font-black text-lg tracking-wider uppercase rounded-2xl shadow-xl transition-all transform active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  {isSpinning ? 'Tumbling Reels...' : `Pull Reel for Slot #${currentSlotIndex + 1} [${targetPosition}]`}
+                </button>
+
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    disabled={isSpinning}
-                    onClick={spinSlot}
-                    className="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-display font-black text-lg tracking-wider uppercase rounded-2xl shadow-xl transition-all transform active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                    onClick={() => setCurrentSlotIndex((prev) => (prev + 1) % DRAFT_POSITIONS.length)}
+                    className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer"
                   >
-                    <Sparkles className="w-5 h-5" />
-                    {isSpinning ? 'Tumbling Reels...' : `Pull Reel for Slot #${currentSlotIndex + 1} [${targetPosition}]`}
+                    Next Slot ({DRAFT_POSITIONS[(currentSlotIndex + 1) % DRAFT_POSITIONS.length]}) ➔
                   </button>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentSlotIndex((prev) => (prev + 1) % DRAFT_POSITIONS.length)}
-                      className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer"
-                    >
-                      Next Slot ({DRAFT_POSITIONS[(currentSlotIndex + 1) % DRAFT_POSITIONS.length]}) ➔
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentSlotIndex((prev) => (prev > 0 ? prev - 1 : DRAFT_POSITIONS.length - 1))}
-                      className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer"
-                    >
-                      ⬅ Prev Slot
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlotIndex((prev) => (prev > 0 ? prev - 1 : DRAFT_POSITIONS.length - 1))}
+                    className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer"
+                  >
+                    ⬅ Prev Slot
+                  </button>
                 </div>
               </div>
-            )}
-
-            {/* DRAFT MODE 2: MANUAL POSITION POOL BROWSER */}
-            {draftMode === 'MANUAL_PICK' && (
-              <div className="bg-slate-950 border-2 border-slate-800 rounded-2xl p-3 shadow-inner">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs font-mono">
-                  <span className="text-amber-400 font-bold uppercase">
-                    Available {targetPosition} Players ({pool.length}):
-                  </span>
-                  <span className="text-slate-500 text-[10px]">Sorted by bRef WAR</span>
-                </div>
-                <div className="space-y-1.5 max-h-[260px] overflow-y-auto pr-1">
-                  {pool
-                    .slice()
-                    .sort((a, b) => b.bRefWar - a.bRefWar)
-                    .map((player) => (
-                      <div
-                        key={player.id}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 transition-all"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-lg">{player.avatarIcon}</span>
-                          <div className="min-w-0">
-                            <span className="text-xs font-display font-bold text-white uppercase block truncate">
-                              {player.name}
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-400">
-                              {player.team} · {player.era} · CON: {player.stats.contact} POW: {player.stats.power}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs font-mono font-black text-amber-400">
-                            WAR: {player.bRefWar}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => applyDraftPick(player)}
-                            className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-display font-bold uppercase transition-transform active:scale-95 cursor-pointer"
-                          >
-                            Draft
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
+            </div>
 
             {/* Position Depth Checklist / Slot Clicker */}
             <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">

@@ -86,6 +86,7 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
   const [selectedSection, setSelectedSection] = useState<'ALL' | 'TOP_25_LEGENDS' | 'NEGRO_LEAGUES' | 'AL_EAST' | 'AL_CENTRAL' | 'AL_WEST' | 'NL_EAST' | 'NL_CENTRAL' | 'NL_WEST'>('ALL');
   const [selectedTeam, setSelectedTeam] = useState<string>('ALL');
   const [inspectedCard, setInspectedCard] = useState<PlayerCard | null>(null);
+  const [cardDisplayLimit, setCardDisplayLimit] = useState<number>(855);
 
   // Stadium Filter
   const [stadiumFilter, setStadiumFilter] = useState<'ALL' | 'AL' | 'NL' | 'HISTORIC'>('ALL');
@@ -1338,15 +1339,40 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                 </div>
               )}
 
-              {/* Player Cards Compact List with Inspect / Showdown CTAs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                {filteredPlayers.slice(0, 75).map((card) => (
+              {/* Card View Limit & Total Count Pill */}
+              <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-900 border border-white/10 text-xs font-mono">
+                <span className="text-slate-300">
+                  Displaying <strong className="text-amber-400">{Math.min(filteredPlayers.length, cardDisplayLimit)}</strong> of <strong className="text-white">{filteredPlayers.length}</strong> matching cards ({ALL_PLAYERS.length} total in Knowledge Base)
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400 text-[10px]">Show:</span>
+                  {[50, 100, 250, 855].map((cnt) => (
+                    <button
+                      key={cnt}
+                      type="button"
+                      onClick={() => setCardDisplayLimit(cnt)}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono transition-colors ${
+                        cardDisplayLimit === cnt
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {cnt === 855 ? 'All 855' : cnt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Player Cards Compact List with 3D Inspect */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-[580px] overflow-y-auto pr-1">
+                {filteredPlayers.slice(0, cardDisplayLimit).map((card) => (
                   <div
                     key={card.id}
                     onClick={() => {
+                      setInspectedCard(card);
                       if (onOpenCardDetails) onOpenCardDetails(card);
                     }}
-                    className="p-3 rounded-2xl bg-slate-950/85 border border-white/10 hover:border-orange-500/60 transition-all flex items-center justify-between gap-2.5 cursor-pointer group shadow-sm"
+                    className="p-3 rounded-2xl bg-slate-950/85 border border-white/10 hover:border-orange-500/60 transition-all flex items-center justify-between gap-2.5 cursor-pointer group shadow-sm hover:scale-[1.01]"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="w-9 h-9 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform">
@@ -1368,17 +1394,24 @@ export const FirstEnterPortalModal: React.FC<FirstEnterPortalModalProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1 shrink-0">
-                      <span className="text-[9px] font-mono text-slate-500 group-hover:text-slate-300">
-                        Inspect 360° ▶
+                      <span className="text-[9px] font-mono text-amber-400/80 group-hover:text-amber-300 font-bold">
+                        3D Card ▶
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {filteredPlayers.length > 75 && (
-                <div className="p-3 text-center text-xs font-mono text-slate-400 border border-white/5 rounded-xl bg-black/40">
-                  Showing first 75 of {filteredPlayers.length} matching cards. Use the search bar or franchise dropdown above to narrow down to any specific player.
+              {filteredPlayers.length > cardDisplayLimit && (
+                <div className="p-3 text-center text-xs font-mono text-slate-400 border border-white/5 rounded-xl bg-black/40 flex items-center justify-center gap-3">
+                  <span>Showing {cardDisplayLimit} of {filteredPlayers.length} cards.</span>
+                  <button
+                    type="button"
+                    onClick={() => setCardDisplayLimit(855)}
+                    className="px-3 py-1 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-bold font-mono text-xs uppercase"
+                  >
+                    View All {filteredPlayers.length} Cards
+                  </button>
                 </div>
               )}
 

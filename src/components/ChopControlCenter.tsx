@@ -15,6 +15,7 @@ interface ChopControlCenterProps {
   onOpenSwitchTeam?: () => void;
   onOpenFeedback: () => void;
   onOpenSplashGate?: () => void;
+  onOpenSleeperMockDraft?: () => void;
   onSelectMode: (mode: string) => void;
 }
 
@@ -28,6 +29,7 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
   onOpenSwitchTeam,
   onOpenFeedback,
   onOpenSplashGate,
+  onOpenSleeperMockDraft,
   onSelectMode,
 }) => {
   if (!isOpen) return null;
@@ -213,6 +215,23 @@ export const ChopControlCenter: React.FC<ChopControlCenterProps> = ({
                   <div className="text-[9px] text-slate-500 font-mono mt-0.5 truncate">{m.desc}</div>
                 </button>
               ))}
+
+              {onOpenSleeperMockDraft && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenSleeperMockDraft();
+                  }}
+                  className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/90 to-blue-950/90 hover:from-cyan-900 hover:to-blue-900 border border-cyan-500/50 text-left transition-all cursor-pointer group shadow col-span-2 sm:col-span-1"
+                >
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300 group-hover:text-white">
+                    <span>⚡</span>
+                    <span className="truncate">Sleeper Mock</span>
+                  </div>
+                  <div className="text-[9px] text-cyan-400 font-mono mt-0.5 truncate">Snake & Bot GMs</div>
+                </button>
+              )}
             </div>
           </div>
 
